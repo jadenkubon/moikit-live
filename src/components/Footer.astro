@@ -1,0 +1,50 @@
+---
+import { KITS } from "../data/kits";
+---
+
+<footer class="bg-ink text-cream">
+  <div class="mx-auto max-w-[1180px] px-7 pt-16 pb-10">
+    <div class="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+      <div>
+        <div class="flex items-center gap-[11px]">
+          <span
+            class="h-9 w-9 shrink-0 bg-[url('/uploads/moikit-logo-transparent.png')] bg-[length:150%] bg-[position:center_24%] bg-no-repeat"
+          ></span>
+          <span class="font-display text-xl font-bold">MoiKit</span>
+        </div>
+        <p class="mt-4 max-w-[280px] text-[14.5px] leading-relaxed text-cream/65">
+          Your home essentials, sorted. Move into an empty apartment and have a functional home the
+          day you arrive.
+        </p>
+        <p class="mt-[18px] font-mono text-xs tracking-[.04em] text-cream/50">
+          Lappeenranta · Finland · EUR
+        </p>
+      </div>
+      <div>
+        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber">Kits</div>
+        {KITS.map((k) => (
+          <a href={`/kits/${k.slug}/`} class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">
+            {k.name}
+          </a>
+        ))}
+      </div>
+      <div>
+        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber">Company</div>
+        <a href="/#faq" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">FAQ</a>
+      </div>
+      <div>
+        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber">Say moi</div>
+        <a href="https://instagram.com/moi.kit_fi" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">@moi.kit_fi</a>
+        <a href="mailto:moi@moikit.fi" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">moi@moikit.fi</a>
+      </div>
+    </div>
+    <div class="mt-11 mb-[22px] h-px bg-cream/10"></div>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <span class="text-[13px] text-cream/50">© 2026 MoiKit</span>
+      <div class="flex gap-[22px]">
+        <a href="#" class="text-[13px] text-cream/50 no-underline">Terms</a>
+        <a href="#" class="text-[13px] text-cream/50 no-underline">Privacy</a>
+      </div>
+    </div>
+  </div>
+</footer>

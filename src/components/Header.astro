@@ -1,0 +1,56 @@
+---
+const nav = [
+  { href: "/#kits", label: "Sleep kits" },
+  { href: "/#rooms", label: "Room kits" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#faq", label: "FAQ" },
+];
+---
+
+<div class="sticky top-0 z-50">
+  <div class="flex h-[34px] items-center justify-center bg-teal text-cream">
+    <span
+      id="trust-rotator"
+      class="font-mono text-[11.5px] uppercase tracking-[.18em] whitespace-nowrap animate-trust"
+    >◆&ensp;One delivery&ensp;◆</span>
+  </div>
+
+  <header class="border-b border-sand bg-cream/85 backdrop-blur-md">
+    <div class="mx-auto flex max-w-[1180px] items-center justify-between gap-5 px-7 py-3.5">
+      <a href="/" class="flex items-center gap-[11px] text-ink no-underline">
+        <span
+          class="h-[38px] w-[38px] shrink-0 bg-[url('/uploads/moikit-logo-transparent.png')] bg-[length:150%] bg-[position:center_24%] bg-no-repeat"
+        ></span>
+        <span class="font-display text-[21px] font-bold tracking-[.01em]">MoiKit</span>
+      </a>
+
+      <nav class="flex items-center gap-7">
+        {nav.map((n) => (
+          <a href={n.href} class="hidden text-[15px] font-medium text-body-2 no-underline md:block">
+            {n.label}
+          </a>
+        ))}
+        <a
+          href="/#kits"
+          class="rounded-full bg-teal px-5 py-[11px] font-display text-[14.5px] font-semibold text-cream no-underline transition-opacity hover:opacity-90"
+        >Shop kits</a>
+      </nav>
+    </div>
+  </header>
+</div>
+
+<script>
+  const el = document.getElementById("trust-rotator");
+  const points = ["One delivery", "Ready when you arrive", "Lappeenranta-based"];
+  let i = 0;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (el && !reduce) {
+    setInterval(() => {
+      i++;
+      el.textContent = `◆ ${points[i % points.length]} ◆`;
+      el.style.animation = "none";
+      void el.offsetWidth;
+      el.style.animation = "";
+    }, 2600);
+  }
+</script>

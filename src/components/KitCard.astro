@@ -1,0 +1,70 @@
+---
+import { itemCount, eur, kitHref, type Kit } from "../data/kits";
+
+interface Props {
+  kit: Kit;
+  featured?: boolean;
+}
+
+const { kit, featured = false } = Astro.props;
+---
+
+<div
+  class:list={[
+    "flex flex-col rounded-[18px] px-[26px] pt-7 pb-[30px] transition-[transform,box-shadow] duration-300 hover:-translate-y-1.5 hover:shadow-[0_34px_70px_-34px_rgba(22,33,31,.5)]",
+    featured
+      ? "bg-teal text-cream shadow-[0_30px_60px_-30px_rgba(31,58,61,.6)]"
+      : "border border-sand bg-white text-ink shadow-[0_14px_30px_-22px_rgba(22,33,31,.4)]",
+  ]}
+>
+  <div class="flex min-h-[26px] items-center justify-end">
+    {kit.badge && (
+      <span class="rounded-full bg-amber px-[11px] py-1.5 font-display text-[10px] font-bold uppercase tracking-[.16em] text-ink">
+        {kit.badge}
+      </span>
+    )}
+  </div>
+
+  <h3 class="mt-4 font-display text-[29px] font-bold tracking-[-.01em]">{kit.name}</h3>
+
+  <span class="mt-3 block font-display text-[44px] leading-none font-bold tracking-[-.02em]">
+    {eur(kit.priceEur)}
+  </span>
+  <div class:list={["mt-2 font-mono text-xs", featured ? "text-cream/60" : "text-muted"]}>
+    + delivery fee · {itemCount(kit)} items, itemized
+  </div>
+
+  <p class:list={["mt-[18px] text-[14.5px] leading-normal", featured ? "text-cream/80" : "text-body"]}>
+    {kit.blurb}
+  </p>
+
+  <div class:list={["my-5 h-px", featured ? "bg-cream/15" : "bg-sand"]}></div>
+
+  <ul class="flex flex-col gap-2.5">
+    {kit.highlights.map((h) => (
+      <li
+        class:list={[
+          "flex items-start gap-2.5 text-sm leading-snug",
+          featured ? "text-cream/80" : "text-body",
+        ]}
+      >
+        <span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber"></span>
+        <span>{h}</span>
+      </li>
+    ))}
+  </ul>
+
+  <a
+    href={kitHref(kit.slug)}
+    class:list={[
+      "mt-auto pt-[26px]",
+    ]}
+  >
+    <span
+      class:list={[
+        "block rounded-full px-[18px] py-3.5 text-center font-display text-[15px] font-semibold no-underline transition-opacity hover:opacity-90",
+        featured ? "bg-amber text-ink" : "bg-teal text-cream",
+      ]}
+    >View the {kit.name} →</span>
+  </a>
+</div>

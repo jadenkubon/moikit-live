@@ -1,0 +1,444 @@
+---
+import Base from "../layouts/Base.astro";
+import KitCard from "../components/KitCard.astro";
+import {
+  kitBySlug,
+  itemCount,
+  itemsTotal,
+  eur,
+  ROOM_META,
+  COMPARISON_ROWS,
+  FAQS,
+} from "../data/kits";
+
+const basic = kitBySlug("basic");
+const basicRooms = Object.keys(ROOM_META)
+  .filter((rk) => (basic.rooms[rk] ?? []).length > 0)
+  .map((rk) => ({ label: ROOM_META[rk].label, items: basic.rooms[rk] }));
+
+const steps = [
+  {
+    num: "STEP 01",
+    title: "Pick your kit",
+    body: "Basic, Premium or Platinum — or a custom mix. Every item and price is listed, so you know exactly what you're getting.",
+  },
+  {
+    num: "STEP 02",
+    title: "Tell us where and when",
+    body: "Your Lappeenranta address and move-in date. One delivery fee, no parcels to chase.",
+  },
+  {
+    num: "STEP 03",
+    title: "Move in, it's waiting",
+    body: "We deliver it all in one drop, ready and waiting — so your first evening is about settling in, not an errand.",
+  },
+];
+
+const values = [
+  {
+    icon: "🗒",
+    chip: "bg-amber/15",
+    title: "Skip the checklist",
+    body: "We researched exactly what an empty apartment needs. You don't have to walk three stores with a 40-item list.",
+  },
+  {
+    icon: "🔑",
+    chip: "bg-rust/15",
+    title: "Made for Finnish rentals",
+    body: "Right sizes, right basics — mattress, duvet and cookware chosen to fit a bare Nordic apartment. Nothing turns up wrong or missing.",
+  },
+  {
+    icon: "📦",
+    chip: "bg-teal/15",
+    title: "One order, ready",
+    body: "One delivery, no hauling, no returns. Set up and waiting so your first night already feels like home.",
+  },
+];
+
+const audience = [
+  "LUT University students",
+  "Exchange & international arrivals",
+  "New renters",
+  "Anyone landing with a suitcase",
+];
+
+const tierMeta = [
+  { key: "basic", name: "Basic Kit" },
+  { key: "premium", name: "Premium Kit" },
+  { key: "platinum", name: "Platinum Kit" },
+] as const;
+const priceRow = COMPARISON_ROWS.find((r) => r.label === "Price")!;
+const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
+---
+
+<Base
+  title="MoiKit — Your home essentials, sorted"
+  description="Move into an empty apartment in Lappeenranta and have a functional home the day you arrive. Three itemized kits, one delivery, ready when you land."
+>
+  <!-- HERO -->
+  <section class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-10 px-7 pt-[70px] pb-10 lg:grid-cols-[1.05fr_.95fr]">
+    <div>
+      <h1 class="font-display text-5xl font-bold leading-[1.02] tracking-[-.025em] md:text-[64px]">
+        Your new home,<br />ready instantly.
+      </h1>
+      <p class="mt-[22px] max-w-[480px] text-[19px] leading-relaxed text-body">
+        Finnish rentals come bare — no bed, no dishes, no towels. Order one MoiKit and walk into a
+        furnished, functional home the day you arrive. One order, sorted.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3.5">
+        <a
+          href="#kits"
+          class="rounded-full bg-amber px-7 py-4 font-display text-base font-semibold text-ink no-underline shadow-[0_14px_30px_-14px_rgba(232,154,44,.8)] transition-transform hover:-translate-y-0.5"
+        >See the kits</a>
+        <a
+          href="#how"
+          class="rounded-full border-[1.5px] border-teal px-[26px] py-4 font-display text-base font-semibold text-teal no-underline transition-colors hover:bg-teal hover:text-cream"
+        >How it works</a>
+      </div>
+      <div class="mt-9 flex flex-wrap gap-[26px] font-mono text-[12.5px] text-muted">
+        <span>✦ One flat delivery fee</span>
+        <span>✦ Transparent pricing</span>
+        <span>✦ Ready when you land</span>
+      </div>
+    </div>
+
+    <div class="relative h-[400px] md:h-[470px]">
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div
+          id="box-frame"
+          class="relative aspect-square w-full max-w-[440px] overflow-hidden rounded-[20px] bg-white shadow-[0_34px_60px_-26px_rgba(217,138,30,.55)]"
+        >
+          <video autoplay muted playsinline preload="auto" class="absolute inset-0 h-full w-full object-cover">
+            <source src="/uploads/moikitbox-animation.webm" type="video/webm" />
+            <source src="/uploads/moikitbox-animation.mp4" type="video/mp4" />
+          </video>
+          <img
+            src="/uploads/moikit-after-box.png"
+            alt="MoiKit box packed with home essentials"
+            class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500"
+          />
+        </div>
+      </div>
+      <div class="chip absolute top-[120px] left-1.5 animate-float">✓ Sleep sorted</div>
+      <div class="chip absolute top-[66px] right-0 animate-float [animation-delay:.6s] [animation-duration:6.2s]">✓ Kitchen stocked</div>
+      <div class="chip absolute right-[22px] bottom-[120px] animate-float [animation-delay:.3s] [animation-duration:5.6s]">→ Ready day one</div>
+    </div>
+  </section>
+
+  <!-- SLEEP KITS -->
+  <section id="kits" class="mx-auto max-w-[1180px] scroll-mt-24 px-7 pt-16 pb-6">
+    <div class="mb-[34px] flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <div class="eyebrow">Sleep kits</div>
+        <h2 class="section-title">Good, better, best — no guessing.</h2>
+      </div>
+      <p class="max-w-[340px] text-[15.5px] leading-relaxed text-body">
+        Every tier is a complete sleep setup — mattress, sheet, pillow, bedding and duvet. Comfort
+        steps up as you go.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3">
+      <KitCard kit={kitBySlug("basic")} />
+      <KitCard kit={kitBySlug("premium")} featured />
+      <KitCard kit={kitBySlug("platinum")} />
+    </div>
+
+    <!-- compare toggle -->
+    <div class="mt-7 flex justify-center">
+      <button
+        id="compare-toggle"
+        type="button"
+        class="inline-flex cursor-pointer items-center gap-2.5 rounded-full border-[1.5px] border-teal bg-transparent px-6 py-[13px] font-display text-[15px] font-semibold text-teal transition-colors hover:bg-teal hover:text-cream"
+      >
+        <span data-label>Compare the tiers</span>
+        <span data-caret class="font-mono text-lg leading-none transition-transform">⌄</span>
+      </button>
+    </div>
+
+    <!-- tier compare -->
+    <div id="compare-panel" class="hidden">
+      <div class="mt-[26px] flex flex-wrap items-baseline gap-3.5">
+        <span class="font-mono text-xs uppercase tracking-[.16em] text-muted">Compare the tiers</span>
+        <span class="text-[13.5px] text-muted-2">Hover or tap a tier to see what's inside</span>
+      </div>
+      <div class="mt-3.5 grid grid-cols-1 items-start gap-5 md:grid-cols-[236px_1fr]">
+        <div class="flex flex-col gap-2.5">
+          {tierMeta.map((t) => (
+            <button
+              type="button"
+              data-tier={t.key}
+              class="tier-tab flex cursor-pointer items-center justify-between gap-3 rounded-[14px] border border-sand bg-white px-[18px] py-4 text-left text-ink transition-all duration-150 data-[on]:border-teal data-[on]:bg-teal data-[on]:text-cream data-[on]:shadow-[0_16px_30px_-20px_rgba(31,58,61,.7)]"
+            >
+              <span class="font-display text-[17px] font-bold">{t.name}</span>
+              <span class="font-mono text-sm">{priceRow[t.key]}</span>
+            </button>
+          ))}
+        </div>
+        <div class="rounded-[18px] border border-sand bg-white px-7 pt-1.5 pb-[18px] shadow-[0_18px_40px_-30px_rgba(22,33,31,.4)]">
+          <div class="flex items-baseline justify-between gap-4 pt-5 pb-3">
+            <span id="tier-name" class="font-display text-[22px] font-bold">Premium Kit</span>
+            <span id="tier-price" class="font-display text-[22px] font-bold">{priceRow.premium}</span>
+          </div>
+          {specs.map((r) => (
+            <div class="flex items-baseline justify-between gap-5 border-t border-[#F0E8D8] py-3">
+              <span class="shrink-0 font-mono text-[11.5px] uppercase tracking-[.1em] text-muted-2">{r.label}</span>
+              <span class="tier-val text-right text-[15px] text-ink" data-basic={r.basic} data-premium={r.premium} data-platinum={r.platinum}>{r.premium}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM KITS -->
+  <section id="rooms" class="mx-auto max-w-[1180px] scroll-mt-24 px-7 pt-11 pb-6">
+    <div class="mb-[34px] flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <div class="eyebrow">Room kits</div>
+        <h2 class="section-title">Kitchen, bathroom, cleaning — one kit each.</h2>
+      </div>
+      <p class="max-w-[340px] text-[15.5px] leading-relaxed text-body">
+        Standalone kits, no tiers. Appliance add-ons attach to the Kitchen Kit, laundry add-ons to
+        the Cleaning Kit.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3">
+      <KitCard kit={kitBySlug("kitchen")} />
+      <KitCard kit={kitBySlug("bathroom")} />
+      <KitCard kit={kitBySlug("cleaning")} />
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="mt-[60px] scroll-mt-24 bg-teal text-cream">
+    <div class="mx-auto max-w-[1180px] px-7 py-[76px]">
+      <div class="font-mono text-xs uppercase tracking-[.2em] text-amber">How it works</div>
+      <h2 class="mt-3 mb-[46px] max-w-[640px] font-display text-3xl font-bold tracking-[-.02em] md:text-[40px]">
+        Three steps between you and a sorted home.
+      </h2>
+      <div class="grid grid-cols-1 gap-[26px] md:grid-cols-3">
+        {steps.map((s) => (
+          <div class="border-t-2 border-cream/20 pt-[22px]">
+            <div class="font-display text-[15px] font-bold tracking-[.05em] text-amber">{s.num}</div>
+            <h3 class="mt-3.5 font-display text-[23px] font-bold">{s.title}</h3>
+            <p class="mt-2.5 text-[15px] leading-relaxed text-cream/70">{s.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY MOIKIT -->
+  <section class="mx-auto max-w-[1180px] px-7 pt-[76px] pb-5">
+    <div class="eyebrow">Why MoiKit</div>
+    <h2 class="mt-3 mb-[46px] max-w-[640px] font-display text-3xl font-bold tracking-[-.02em] md:text-[40px]">
+      Built to take the whole errand off your plate.
+    </h2>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {values.map((v) => (
+        <div class="rounded-[18px] border border-sand bg-white px-[26px] py-[30px]">
+          <div class:list={["flex h-[46px] w-[46px] items-center justify-center rounded-xl text-[22px]", v.chip]}>
+            {v.icon}
+          </div>
+          <h3 class="mt-5 font-display text-[21px] font-bold">{v.title}</h3>
+          <p class="mt-2.5 text-[15px] leading-relaxed text-body">{v.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- WHAT'S INSIDE -->
+  <section class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-14 px-7 py-16 lg:grid-cols-[1fr_.82fr]">
+    <div>
+      <div class="eyebrow">What's inside, transparently</div>
+      <h2 class="section-title">See exactly what's in every kit.</h2>
+      <p class="mt-5 text-[17px] leading-relaxed text-body">
+        Every kit is fully itemized — we list each item and its price, so you always know exactly
+        what you're getting and what you're paying for, plus a delivery fee. And every kit is
+        modular: drop anything you don't need and the price drops with it. Here's the Basic Kit,
+        item by item.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3.5">
+        <a
+          href="/kits/basic/"
+          class="rounded-full bg-teal px-6 py-3.5 font-display text-[15px] font-semibold text-cream no-underline transition-opacity hover:opacity-90"
+        >Customize the kits</a>
+        <span class="font-mono text-[13px] text-muted">Basic Kit · every item listed</span>
+      </div>
+    </div>
+    <div class="flex justify-center">
+      <div class="w-full max-w-[400px] rounded-[18px] border border-sand bg-white px-[26px] pt-2 pb-[22px] shadow-[0_22px_50px_-30px_rgba(22,33,31,.4)]">
+        <div class="flex items-center justify-between border-b border-sand pt-5 pb-1">
+          <span class="font-display text-[17px] font-bold">Basic Kit</span>
+          <span class="font-mono text-xs text-muted">{itemCount(basic)} items</span>
+        </div>
+        {basicRooms.map((room) => (
+          <div class="pt-4">
+            <div class="mb-[9px] font-display text-[11px] font-bold uppercase tracking-[.14em] text-rust">
+              {room.label}
+            </div>
+            {room.items.map((line) => (
+              <div class="flex items-end gap-2 py-[3px] text-[13.5px]">
+                <span class="shrink text-body-2">{line.item}</span>
+                <span class="min-w-[10px] flex-1 -translate-y-1 border-b border-dotted border-[#cbbfa8]"></span>
+                <span class="shrink-0 font-mono text-[12.5px]">{eur(line.eur)}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+        <div class="mt-[18px] flex items-baseline justify-between border-t-2 border-ink pt-3.5">
+          <span class="font-display text-[15px] font-bold">Items total</span>
+          <span class="font-display text-2xl font-bold">{eur(itemsTotal(basic))}</span>
+        </div>
+        <div class="mt-2 text-right font-mono text-[11px] text-muted">+ delivery fee · fully itemized</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILT FOR LAPPEENRANTA -->
+  <section class="bg-rust text-cream">
+    <div class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-11 px-7 py-[70px] lg:grid-cols-2">
+      <div>
+        <div class="font-mono text-xs uppercase tracking-[.2em] text-cream/75">
+          Built for Lappeenranta arrivals
+        </div>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-[-.02em] md:text-[38px]">
+          New in town, new apartment, 40-item shopping list?
+        </h2>
+        <p class="mt-[18px] max-w-[460px] text-[17px] leading-relaxed text-cream/85">
+          We're students and newcomers too. MoiKit exists for the people landing here with a
+          suitcase — so your first days are about settling in, not running a checklist across three
+          stores in a city you don't know yet.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        {audience.map((a) => (
+          <span class="rounded-full border border-cream/25 bg-cream/15 px-[18px] py-[11px] text-[14.5px] font-medium">
+            {a}
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="mx-auto max-w-[820px] scroll-mt-24 px-7 pt-5 pb-[76px]">
+    <div class="mb-9 text-center">
+      <div class="eyebrow">Good to know</div>
+      <h2 class="mt-3 font-display text-3xl font-bold tracking-[-.02em] md:text-4xl">
+        Questions, answered.
+      </h2>
+    </div>
+    <div class="flex flex-col gap-3">
+      {FAQS.map((f, i) => (
+        <details class="faq group overflow-hidden rounded-[14px] border border-sand bg-white" open={i === 0}>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-display text-[17px] font-semibold text-ink transition-colors hover:bg-amber/5 [&::-webkit-details-marker]:hidden">
+            <span>{f.q}</span>
+            <span class="shrink-0 font-mono text-[22px] text-amber transition-transform group-open:rotate-45">+</span>
+          </summary>
+          <div class="px-6 pb-5 text-[15px] leading-relaxed text-body">{f.a}</div>
+        </details>
+      ))}
+    </div>
+    <div class="mt-7 rounded-[22px] bg-teal p-10 text-center">
+      <h3 class="font-display text-[28px] font-bold tracking-[-.01em] text-cream">
+        Still have a question?
+      </h3>
+      <p class="mx-auto mt-3 max-w-[420px] text-base text-cream/80">
+        We answer DMs fast and love helping newcomers settle in.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <a
+          href="https://instagram.com/moi.kit_fi"
+          class="rounded-full bg-amber px-6 py-3.5 font-display text-[15px] font-semibold text-ink no-underline"
+        >DM @moi.kit_fi</a>
+        <a
+          href="#kits"
+          class="rounded-full border-[1.5px] border-cream/40 px-6 py-[13px] font-display text-[15px] font-semibold text-cream no-underline transition-colors hover:bg-cream/10"
+        >See the kits</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="mx-auto mb-[76px] max-w-[1180px] px-7">
+    <div class="relative overflow-hidden rounded-[26px] bg-teal px-11 py-16 text-center">
+      <div class="absolute -top-10 -right-[30px] h-[200px] w-[200px] rounded-full bg-amber/15"></div>
+      <h2 class="relative font-display text-3xl font-bold tracking-[-.02em] text-cream md:text-[44px]">
+        Moving soon? Let's get your place sorted.
+      </h2>
+      <p class="relative mx-auto mt-[18px] max-w-[520px] text-lg text-cream/80">
+        Tell us the address and the date. We'll have your home waiting when you walk in.
+      </p>
+      <a
+        href="#kits"
+        class="relative mt-[30px] inline-block rounded-full bg-amber px-[34px] py-[17px] font-display text-[17px] font-semibold text-ink no-underline transition-transform hover:-translate-y-0.5"
+      >Browse the kits</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  @reference "../styles/global.css";
+  .chip {
+    @apply rounded-full border border-sand bg-white px-[15px] py-[9px] font-mono text-xs shadow-[0_14px_28px_-16px_rgba(22,33,31,.5)];
+  }
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-[.2em] text-rust;
+  }
+  .section-title {
+    @apply mt-3 font-display text-3xl font-bold tracking-[-.02em] md:text-[40px];
+  }
+</style>
+
+<script>
+  // Hero video → still image when finished
+  const frame = document.getElementById("box-frame");
+  const video = frame?.querySelector("video");
+  const img = frame?.querySelector("img");
+  if (video && img) {
+    video.muted = true;
+    const tryPlay = () => video.play().catch(() => {});
+    tryPlay();
+    video.addEventListener("canplay", tryPlay, { once: true });
+    video.addEventListener("ended", () => img.classList.replace("opacity-0", "opacity-100"));
+  }
+
+  // Compare panel toggle
+  const toggle = document.getElementById("compare-toggle");
+  const panel = document.getElementById("compare-panel");
+  if (toggle && panel) {
+    const label = toggle.querySelector("[data-label]")!;
+    const caret = toggle.querySelector("[data-caret]") as HTMLElement;
+    toggle.addEventListener("click", () => {
+      const open = panel.classList.toggle("hidden") === false;
+      label.textContent = open ? "Hide the tier comparison" : "Compare the tiers";
+      caret.style.transform = open ? "rotate(180deg)" : "";
+    });
+  }
+
+  // Tier tabs
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tier-tab")];
+  const nameEl = document.getElementById("tier-name");
+  const priceEl = document.getElementById("tier-price");
+  const vals = [...document.querySelectorAll<HTMLElement>(".tier-val")];
+  function setTier(key: string) {
+    tabs.forEach((t) => {
+      if (t.dataset.tier === key) t.setAttribute("data-on", "");
+      else t.removeAttribute("data-on");
+    });
+    const active = tabs.find((t) => t.dataset.tier === key);
+    if (active && nameEl && priceEl) {
+      nameEl.textContent = active.querySelector("span")!.textContent;
+      priceEl.textContent = active.querySelectorAll("span")[1].textContent;
+    }
+    vals.forEach((v) => (v.textContent = v.dataset[key] ?? ""));
+  }
+  tabs.forEach((t) => {
+    const set = () => setTier(t.dataset.tier!);
+    t.addEventListener("mouseenter", set);
+    t.addEventListener("focus", set);
+    t.addEventListener("click", set);
+  });
+  setTier("premium");
+</script>

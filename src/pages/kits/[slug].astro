@@ -1,0 +1,302 @@
+---
+import Base from "../../layouts/Base.astro";
+import {
+  KITS,
+  ROOM_META,
+  COMPARISON_ROWS,
+  eur,
+  itemCount,
+  kitHref,
+  type Kit,
+} from "../../data/kits";
+
+export function getStaticPaths() {
+  return KITS.map((kit) => ({ params: { slug: kit.slug }, props: { kit } }));
+}
+
+const { kit } = Astro.props as { kit: Kit };
+
+let sectionNum = 0;
+const roomSections = Object.keys(kit.rooms)
+  .filter((rk) => (kit.rooms[rk] ?? []).length > 0)
+  .map((rk) => ({
+    key: rk,
+    num: rk === "addons" ? "+" : String(++sectionNum).padStart(2, "0"),
+    label: ROOM_META[rk]?.label ?? rk,
+    items: kit.rooms[rk],
+  }));
+
+const cols = ["basic", "premium", "platinum"] as const;
+const colLabel = { basic: "Basic", premium: "Premium", platinum: "Platinum" };
+
+// Client payload for the builder script
+const clientKit = { slug: kit.slug, rooms: kit.rooms };
+---
+
+<Base title={`${kit.name} — MoiKit`} description={kit.tagline}>
+  <!-- HERO -->
+  <section class="mx-auto max-w-[1180px] px-7 pt-11 pb-2">
+    <a href="/#kits" class="font-mono text-[12.5px] tracking-[.08em] text-muted no-underline">← All kits</a>
+    <div class="mt-5 max-w-[720px]">
+      {kit.badge && (
+        <span class="inline-block rounded-full bg-amber px-2.5 py-[5px] font-display text-[10px] font-bold uppercase tracking-[.16em] text-ink">
+          {kit.badge}
+        </span>
+      )}
+      <h1 class="mt-4 font-display text-4xl font-bold leading-[1.02] tracking-[-.025em] md:text-[56px]">
+        {kit.name}
+      </h1>
+      <p class="mt-[18px] text-lg leading-relaxed text-body">{kit.tagline}</p>
+      <div class="mt-[22px] flex flex-wrap gap-[22px] font-mono text-[13px] text-muted">
+        <span>✦ {itemCount(kit)} items, itemized</span>
+        <span>✦ One flat delivery fee</span>
+        <span>✦ Pay with Paytrail</span>
+      </div>
+      <div class="mt-7 flex flex-wrap gap-3.5">
+        <a
+          href="#builder"
+          class="rounded-full bg-amber px-7 py-4 font-display text-base font-semibold text-ink no-underline shadow-[0_14px_30px_-14px_rgba(232,154,44,.8)] transition-transform hover:-translate-y-0.5"
+        >Customize this kit</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILDER -->
+  <section id="builder" class="mx-auto max-w-[1180px] scroll-mt-24 px-7 py-[52px]">
+    <div class="font-mono text-xs uppercase tracking-[.2em] text-rust">Build your kit</div>
+    <h2 class="mt-3 font-display text-3xl font-bold tracking-[-.02em] md:text-[34px]">
+      Keep what you need. Drop what you don't.
+    </h2>
+    <p class="mt-3.5 max-w-[560px] text-[16.5px] leading-relaxed text-body">
+      Every item is listed with its price. Use − and + to drop anything you don't need or add more
+      — two pillows, extra towels, whatever fits your place. Your total updates instantly, plus a
+      delivery fee.
+    </p>
+
+    <div class="mt-[30px] grid grid-cols-1 items-start gap-[26px] lg:grid-cols-[1.4fr_.6fr]">
+      <!-- item list -->
+      <div id="builder-list" class="rounded-[18px] border border-sand bg-white px-[26px] pt-1.5 pb-[22px]">
+        {roomSections.map((room) => (
+          <div class="pt-[22px]" data-room={room.key}>
+            <div class="mb-1 flex items-center justify-between">
+              <div class="flex items-baseline gap-2 font-display text-[13px] font-bold uppercase tracking-[.14em]">
+                <span class="text-rust">{room.num}</span>
+                <span>{room.label}</span>
+              </div>
+              <span class="room-count font-mono text-[11px] text-muted-2"></span>
+            </div>
+            {room.items.map((r, i) => (
+              <div
+                class="b-item flex items-center gap-3.5 border-t border-sand-soft px-1 py-[13px] transition-opacity"
+                data-key={`${room.key}-${i}`}
+                data-eur={r.eur}
+                data-addon={r.addon ? "1" : "0"}
+              >
+                <div class="min-w-0 flex-1">
+                  <div class="b-name text-[14.5px] leading-snug text-body-2">{r.item}</div>
+                  <div class="mt-0.5 font-mono text-[11.5px] text-muted-2">{eur(r.eur)} each</div>
+                </div>
+                <div class="flex shrink-0 items-center gap-[9px]">
+                  <button
+                    type="button"
+                    data-act="dec"
+                    aria-label="Remove one"
+                    class="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-lg border border-[#d8ccb6] bg-cream font-mono text-base leading-none text-ink transition-colors hover:bg-[#EEE1C7]"
+                  >−</button>
+                  <span class="b-q min-w-4 text-center font-mono text-sm font-bold text-ink"></span>
+                  <button
+                    type="button"
+                    data-act="inc"
+                    aria-label="Add one"
+                    class="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-lg border border-[#d8ccb6] bg-cream font-mono text-base leading-none text-ink transition-colors hover:bg-[#EEE1C7]"
+                  >+</button>
+                </div>
+                <div class="b-line w-[66px] shrink-0 text-right font-mono text-[13.5px] font-bold text-ink"></div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <!-- sticky summary -->
+      <div class="rounded-[18px] bg-teal p-6 text-cream shadow-[0_24px_50px_-28px_rgba(31,58,61,.7)] lg:sticky lg:top-[106px]">
+        <div class="font-mono text-[11px] uppercase tracking-[.2em] text-amber">Your kit</div>
+        <div class="mt-2 font-display text-[22px] font-bold">{kit.name}</div>
+        <div id="sum-meta" class="font-mono text-[12.5px] text-cream/60"></div>
+
+        <div class="mt-5 mb-4 h-px bg-cream/15"></div>
+        <div class="flex items-baseline justify-between">
+          <span class="font-display text-base font-semibold">Kit total</span>
+          <span id="sum-total" class="font-display text-[32px] font-bold"></span>
+        </div>
+        <div class="mt-2 font-mono text-[11.5px] text-cream/60">+ delivery fee — added when we confirm</div>
+
+        <button
+          type="button"
+          class="mt-5 block w-full cursor-pointer rounded-full bg-amber px-4 py-[15px] text-center font-display text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
+        >Pay with Paytrail</button>
+        <div class="my-3.5 flex items-center gap-3">
+          <div class="h-px flex-1 bg-cream/15"></div>
+          <span class="font-mono text-[10.5px] uppercase tracking-[.14em] text-cream/50">or</span>
+          <div class="h-px flex-1 bg-cream/15"></div>
+        </div>
+        <button
+          type="button"
+          class="block w-full cursor-pointer rounded-full border border-cream/35 bg-transparent px-4 py-3.5 text-center font-display text-base font-semibold text-cream transition-colors hover:bg-cream/10"
+        >Pay with cash</button>
+        <p class="mt-[9px] text-center font-mono text-[11px] leading-relaxed text-cream/60">
+          Pay a <span id="sum-deposit" class="text-amber"></span> deposit online now (10%), the rest
+          in cash on delivery.
+        </p>
+        <button
+          type="button"
+          id="builder-reset"
+          class="mt-2.5 hidden w-full cursor-pointer bg-transparent p-1 text-[13px] text-cream/60 underline"
+        >Reset to the full kit</button>
+        <p class="mt-4 text-center font-mono text-[10.5px] leading-normal text-cream/45">
+          Fully itemized · Kiitos!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON (sleep tiers only) -->
+  {kit.tier && (
+    <section class="mx-auto max-w-[1180px] px-7 pt-5 pb-14">
+      <div class="font-mono text-xs uppercase tracking-[.2em] text-rust">Compare &amp; trade up</div>
+      <h2 class="mt-3 mb-7 font-display text-3xl font-bold tracking-[-.02em] md:text-[34px]">
+        See how the tiers stack up.
+      </h2>
+      <div class="overflow-hidden rounded-[18px] border border-sand bg-white">
+        <div class="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div class="hidden px-[22px] py-4 font-mono text-[11px] uppercase tracking-[.16em] text-muted md:block">
+            Feature
+          </div>
+          {cols.map((c) => (
+            <a
+              href={kitHref(c)}
+              class:list={[
+                "px-3.5 py-4 text-center font-display text-[15px] font-bold text-ink no-underline",
+                c === kit.slug && "bg-amber",
+              ]}
+            >{colLabel[c]}</a>
+          ))}
+        </div>
+        {COMPARISON_ROWS.map((row) => (
+          <div class="grid grid-cols-1 items-center border-t border-sand-soft md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+            <div class="px-[22px] pt-3 pb-1 text-sm font-semibold text-body md:py-[13px] md:font-normal">{row.label}</div>
+            {cols.map((c) => (
+              <div
+                class:list={[
+                  "px-[22px] pb-2 text-left font-mono text-sm text-body-2 md:px-3.5 md:py-[13px] md:text-center",
+                  c === kit.slug && "bg-amber/15 font-bold text-ink",
+                ]}
+              >{row[c]}</div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- CTA -->
+  <section class="mx-auto mb-[76px] max-w-[1180px] px-7">
+    <div class="rounded-3xl bg-rust px-11 py-[52px] text-center">
+      <h2 class="font-display text-3xl font-bold tracking-[-.02em] text-cream md:text-4xl">
+        Ready for the {kit.name}?
+      </h2>
+      <p class="mx-auto mt-3.5 max-w-[460px] text-[17px] text-cream/85">
+        Tell us your address and move-in date. We'll confirm your exact items and have it waiting.
+      </p>
+      <button
+        type="button"
+        class="mt-[26px] inline-block cursor-pointer rounded-full bg-cream px-[30px] py-4 font-display text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
+      >Pay with Paytrail</button>
+    </div>
+  </section>
+</Base>
+
+<script is:inline define:vars={{ clientKit }}>
+  const eur = (n) => "€" + n.toFixed(2);
+  const storageKey = "moikit-cfg-" + clientKit.slug;
+  let qty = {};
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (raw) qty = JSON.parse(raw) || {};
+  } catch {}
+
+  const persist = () => {
+    try { localStorage.setItem(storageKey, JSON.stringify(qty)); } catch {}
+  };
+
+  const rows = [...document.querySelectorAll(".b-item")];
+  const defFor = (row) => (row.dataset.addon === "1" ? 0 : 1);
+  const qFor = (row) => {
+    const key = row.dataset.key;
+    return key in qty ? qty[key] : defFor(row);
+  };
+
+  function render() {
+    let includedTotal = 0, includedCount = 0, totalCount = 0, unitCount = 0;
+    const roomInc = {};
+
+    rows.forEach((row) => {
+      const q = qFor(row);
+      const price = Number(row.dataset.eur);
+      const addon = row.dataset.addon === "1";
+      const roomKey = row.closest("[data-room]").dataset.room;
+      roomInc[roomKey] ??= { inc: 0, total: 0 };
+      roomInc[roomKey].total++;
+      if (!addon || q > 0) totalCount++;
+      includedTotal += q * price;
+      unitCount += q;
+      if (q > 0) { includedCount++; roomInc[roomKey].inc++; }
+
+      const off = !(q > 0 || addon);
+      row.classList.toggle("opacity-45", off);
+      row.querySelector(".b-name").classList.toggle("line-through", off);
+      row.querySelector(".b-q").textContent = q;
+      const line = row.querySelector(".b-line");
+      line.textContent = eur(q * price);
+      line.classList.toggle("text-muted-2", q === 0);
+      line.classList.toggle("font-bold", q > 0);
+      const dec = row.querySelector('[data-act="dec"]');
+      dec.classList.toggle("opacity-30", q === 0);
+      dec.classList.toggle("cursor-default", q === 0);
+    });
+
+    document.querySelectorAll("[data-room]").forEach((sec) => {
+      const rc = roomInc[sec.dataset.room];
+      sec.querySelector(".room-count").textContent = rc ? `${rc.inc}/${rc.total}` : "";
+    });
+
+    document.getElementById("sum-meta").textContent =
+      `${includedCount} of ${totalCount} items · ${unitCount} pieces`;
+    document.getElementById("sum-total").textContent = eur(includedTotal);
+    document.getElementById("sum-deposit").textContent = eur(Math.round(includedTotal * 0.1));
+
+    const changed = rows.some((row) => qFor(row) !== defFor(row));
+    document.getElementById("builder-reset").classList.toggle("hidden", !changed);
+  }
+
+  rows.forEach((row) => {
+    row.querySelectorAll("[data-act]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const cur = qFor(row);
+        let next = cur + (btn.dataset.act === "inc" ? 1 : -1);
+        next = Math.max(0, Math.min(9, next));
+        qty[row.dataset.key] = next;
+        persist();
+        render();
+      });
+    });
+  });
+
+  document.getElementById("builder-reset").addEventListener("click", () => {
+    qty = {};
+    persist();
+    render();
+  });
+
+  render();
+</script>
