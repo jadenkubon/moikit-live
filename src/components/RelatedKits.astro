@@ -1,0 +1,86 @@
+---
+import {
+  relatedKits,
+  relatedLabel,
+  itemImg,
+  kitHref,
+  eur,
+  itemCount,
+  type Kit,
+} from "../data/kits";
+
+interface Props {
+  kit: Kit;
+}
+
+const { kit } = Astro.props;
+
+// Which kits show up is derived from the kit being viewed, never hardcoded:
+// a sleep tier cross-sells the room kits, a room kit cross-sells the sleep tiers.
+const related = relatedKits(kit);
+const label = relatedLabel(kit);
+
+// A few packshots as a visual preview — core items only, no add-ons.
+// Picks are spread across the kit rather than taken off the top: the first four
+// kitchen items are all white crockery, which previews badly.
+const PREVIEW_COUNT = 4;
+const previewOf = (k: Kit) => {
+  const pool = Object.values(k.rooms)
+    .flat()
+    .filter((r) => !r.addon && r.img);
+  const n = Math.min(PREVIEW_COUNT, pool.length);
+  if (n < 2) return pool.slice(0, n);
+  return Array.from({ length: n }, (_, i) => pool[Math.round((i * (pool.length - 1)) / (n - 1))]);
+};
+---
+
+<section class="mx-auto max-w-[1180px] px-7 pt-4 pb-[52px]">
+  <div class="border-t border-sand pt-[38px]">
+    <div class="font-mono text-xs uppercase tracking-[.2em] text-rust">{label.eyebrow}</div>
+    <h2 class="mt-2.5 mb-6 font-display text-[26px] font-bold tracking-[-.02em]">{label.title}</h2>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {related.map((k) => (
+        <a
+          href={kitHref(k.slug)}
+          class="group flex flex-col rounded-[18px] border border-sand bg-white px-5 py-[18px] no-underline transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:border-[#d8ccb6] hover:shadow-[0_18px_36px_-24px_rgba(22,33,31,.45)]"
+        >
+          <div class="flex items-baseline justify-between gap-3">
+            <span class="font-display text-[17px] font-bold text-ink">{k.name}</span>
+            <span class="shrink-0 font-display text-[17px] font-bold text-ink">{eur(k.priceEur)}</span>
+          </div>
+
+          <div class="mt-1.5 flex flex-wrap items-center gap-2 font-mono text-[11px] text-muted">
+            <span>{itemCount(k)} items, itemized</span>
+            {k.badge && (
+              <span class="rounded-full bg-amber/25 px-2 py-[3px] font-display text-[9.5px] font-bold uppercase tracking-[.12em] text-ink">
+                {k.badge}
+              </span>
+            )}
+          </div>
+
+          <div class="mt-3.5 flex items-center gap-1.5">
+            {previewOf(k).map((r) => (
+              <span class="flex h-[38px] w-[38px] items-center justify-center overflow-hidden rounded-lg border border-sand-soft bg-white">
+                {/* Decorative, and deliberately not zoomable — the whole card is
+                    already a link, and a button inside an anchor is invalid. */}
+                <img
+                  src={itemImg(r)?.thumb}
+                  alt=""
+                  width="38"
+                  height="38"
+                  loading="lazy"
+                  decoding="async"
+                  class="h-full w-full object-contain p-[3px]"
+                />
+              </span>
+            ))}
+            <span class="ml-auto font-mono text-[15px] leading-none text-muted transition-transform group-hover:translate-x-0.5">
+              →
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

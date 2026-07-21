@@ -1,11 +1,14 @@
 ---
 import Base from "../../layouts/Base.astro";
+import RelatedKits from "../../components/RelatedKits.astro";
+import Lightbox from "../../components/Lightbox.astro";
 import {
   KITS,
   ROOM_META,
   COMPARISON_ROWS,
   eur,
   itemCount,
+  itemImg,
   kitHref,
   type Kit,
 } from "../../data/kits";
@@ -85,18 +88,43 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
               </div>
               <span class="room-count font-mono text-[11px] text-muted-2"></span>
             </div>
-            {room.items.map((r, i) => (
+            {room.items.map((r, i) => {
+              const im = itemImg(r);
+              return (
               <div
-                class="b-item flex items-center gap-3.5 border-t border-sand-soft px-1 py-[13px] transition-opacity"
+                class="b-item flex flex-wrap items-center gap-x-3.5 gap-y-3 border-t border-sand-soft px-1 py-3.5 transition-opacity sm:flex-nowrap"
                 data-key={`${room.key}-${i}`}
                 data-eur={r.eur}
                 data-addon={r.addon ? "1" : "0"}
               >
-                <div class="min-w-0 flex-1">
+                {im && (
+                  <button
+                    type="button"
+                    data-lightbox
+                    data-full={im.full}
+                    data-w={im.w}
+                    data-h={im.h}
+                    data-caption={r.item}
+                    data-price={`${eur(r.eur)} each`}
+                    aria-label={`View ${r.item} larger`}
+                    class="group/thumb flex h-11 w-11 shrink-0 cursor-zoom-in items-center justify-center overflow-hidden rounded-[10px] border border-sand-soft bg-white transition-colors hover:border-[#c9bda6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber sm:h-[52px] sm:w-[52px]"
+                  >
+                    <img
+                      src={im.thumb}
+                      alt=""
+                      width="52"
+                      height="52"
+                      loading="lazy"
+                      decoding="async"
+                      class="h-full w-full object-contain p-1 transition-transform duration-200 group-hover/thumb:scale-105"
+                    />
+                  </button>
+                )}
+                <div class="min-w-[150px] flex-1 sm:min-w-0">
                   <div class="b-name text-[14.5px] leading-snug text-body-2">{r.item}</div>
                   <div class="mt-0.5 font-mono text-[11.5px] text-muted-2">{eur(r.eur)} each</div>
                 </div>
-                <div class="flex shrink-0 items-center gap-[9px]">
+                <div class="ml-auto flex shrink-0 items-center gap-[9px]">
                   <button
                     type="button"
                     data-act="dec"
@@ -113,7 +141,8 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
                 </div>
                 <div class="b-line w-[66px] shrink-0 text-right font-mono text-[13.5px] font-bold text-ink"></div>
               </div>
-            ))}
+              );
+            })}
           </div>
         ))}
       </div>
@@ -198,6 +227,11 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
       </div>
     </section>
   )}
+
+  <!-- CROSS-SELL — sleep kits show room kits, room kits show sleep kits -->
+  <RelatedKits kit={kit} />
+
+  <Lightbox />
 
   <!-- CTA -->
   <section class="mx-auto mb-[76px] max-w-[1180px] px-7">

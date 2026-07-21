@@ -1,0 +1,96 @@
+---
+// Rendered once per page. Every [data-lightbox] button on the page drives it,
+// so adding a zoomable thumbnail anywhere costs no extra markup here.
+//
+// Built on native <dialog>.showModal() — focus trapping, Esc-to-close, focus
+// restore and background inerting all come from the platform.
+---
+
+{/* m-auto is load-bearing: Tailwind preflight zeroes the UA's `margin: auto`
+    on <dialog>, which otherwise pins the modal to the top-left corner. */}
+<dialog
+  id="lightbox"
+  class="m-auto max-h-[92vh] max-w-[92vw] overflow-visible rounded-[18px] border-0 bg-cream p-0 shadow-[0_40px_90px_-30px_rgba(22,33,31,.75)] backdrop:bg-ink/80"
+>
+  <button
+    type="button"
+    data-close
+    aria-label="Close"
+    class="absolute -top-3.5 -right-3.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-sand bg-cream font-mono text-lg leading-none text-ink shadow-[0_8px_20px_-8px_rgba(22,33,31,.6)] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+  >×</button>
+
+  <figure class="m-0 flex flex-col">
+    <div class="flex min-h-[220px] items-center justify-center rounded-t-[18px] bg-white p-4">
+      <img
+        data-lb-img
+        src=""
+        alt=""
+        class="max-h-[74vh] w-auto max-w-full object-contain opacity-0 transition-opacity duration-200"
+      />
+    </div>
+    <figcaption class="flex items-baseline justify-between gap-5 px-[22px] py-4">
+      <span data-lb-cap class="font-display text-[15px] font-semibold text-ink"></span>
+      <span data-lb-price class="shrink-0 font-mono text-[12.5px] text-muted"></span>
+    </figcaption>
+  </figure>
+</dialog>
+
+<script>
+  const dlg = document.getElementById("lightbox") as HTMLDialogElement | null;
+  const img = dlg?.querySelector<HTMLImageElement>("[data-lb-img]");
+  const cap = dlg?.querySelector<HTMLElement>("[data-lb-cap]");
+  const price = dlg?.querySelector<HTMLElement>("[data-lb-price]");
+
+  if (dlg && img && cap && price) {
+    // Warming the full image on intent means the dialog usually opens against
+    // an already-cached file. Nothing is fetched for people who never gesture.
+    // The decoded images are held, not discarded — an orphaned `new Image()`
+    // can be collected before the click lands, costing a second fetch.
+    const warmed = new Map<string, HTMLImageElement>();
+    const warm = (url?: string) => {
+      if (!url || warmed.has(url)) return;
+      const pre = new Image();
+      pre.src = url;
+      warmed.set(url, pre);
+    };
+
+    const show = (btn: HTMLElement) => {
+      const { full, w, h, caption, price: p } = btn.dataset;
+      if (!full) return;
+      img.classList.add("opacity-0");
+      img.src = full;
+      if (w) img.width = Number(w);
+      if (h) img.height = Number(h);
+      cap.textContent = caption ?? "";
+      price.textContent = p ?? "";
+      dlg.showModal();
+    };
+
+    img.addEventListener("load", () => img.classList.remove("opacity-0"));
+
+    document.querySelectorAll<HTMLElement>("[data-lightbox]").forEach((btn) => {
+      for (const ev of ["mouseenter", "focus", "touchstart"]) {
+        btn.addEventListener(ev, () => warm(btn.dataset.full), { once: true, passive: true });
+      }
+      btn.addEventListener("click", () => show(btn));
+    });
+
+    dlg.querySelector("[data-close]")?.addEventListener("click", () => dlg.close());
+
+    // A modal <dialog>'s backdrop is part of its own box, so a backdrop click
+    // still targets the dialog. Compare against the rendered box instead.
+    dlg.addEventListener("click", (e) => {
+      const r = dlg.getBoundingClientRect();
+      const outside =
+        e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      if (outside) dlg.close();
+    });
+
+    // Drop the decoded image so a long session doesn't retain every full-size
+    // photo the visitor happened to open.
+    dlg.addEventListener("close", () => {
+      img.src = "";
+      img.classList.add("opacity-0");
+    });
+  }
+</script>

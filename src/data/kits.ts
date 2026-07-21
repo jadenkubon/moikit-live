@@ -1,12 +1,16 @@
 // MoiKit — single source of truth for kit data.
 // Sell prices only — buy prices and margins are internal and never shown.
 
+import { ITEM_IMAGES, type ItemImage } from "./itemImages";
+
 export const SHIPPING_EUR = 20;
 
 export interface KitItem {
   item: string;
   eur: number;
   addon?: boolean;
+  /** Key into ITEM_IMAGES. Stable across re-encodes; the hashed filenames are generated. */
+  img?: string;
 }
 
 export interface Kit {
@@ -38,12 +42,12 @@ export const KITS: Kit[] = [
     ],
     rooms: {
       bedroom: [
-        { item: "Mattress (80×200)", eur: 75 },
-        { item: "Fitted sheet — white (coloured options +€5)", eur: 10 },
-        { item: "Pillow", eur: 10 },
-        { item: "Bedding set: duvet cover + pillowcase — 4 designs", eur: 25 },
-        { item: "Light duvet", eur: 20 },
-        { item: "10-pack dark plastic hangers", eur: 5 },
+        { item: "Mattress (80×200)", eur: 75, img: "agotnes-mattress" },
+        { item: "Fitted sheet — white (coloured options +€5)", eur: 10, img: "baerglim-sheet" },
+        { item: "Pillow", eur: 10, img: "sandgrasmal-pillow" },
+        { item: "Bedding set: duvet cover + pillowcase — 4 designs", eur: 25, img: "brunkrissla-bedding" },
+        { item: "Light duvet", eur: 20, img: "sandgrasmal-duvet" },
+        { item: "10-pack dark plastic hangers", eur: 5, img: "spruttig-hangers" },
       ],
     },
   },
@@ -63,13 +67,13 @@ export const KITS: Kit[] = [
     ],
     rooms: {
       bedroom: [
-        { item: "Upgraded mattress (80×200)", eur: 200 },
-        { item: "Fitted sheet — white (coloured options +€5)", eur: 10 },
-        { item: "High pillow (50×60 cm)", eur: 30 },
-        { item: "Bedding set: duvet cover + pillowcase — 4 designs", eur: 30 },
-        { item: "Warm duvet", eur: 30 },
-        { item: "Light duvet", eur: 20 },
-        { item: "8-pack wooden hangers", eur: 10 },
+        { item: "Upgraded mattress (80×200)", eur: 200, img: "vesteroy-mattress" },
+        { item: "Fitted sheet — white (coloured options +€5)", eur: 10, img: "baerglim-sheet" },
+        { item: "High pillow (50×60 cm)", eur: 30, img: "gaffelklocka-pillow" },
+        { item: "Bedding set: duvet cover + pillowcase — 4 designs", eur: 30, img: "solfibbla-bedding" },
+        { item: "Warm duvet", eur: 30, img: "safferot-duvet-warm" },
+        { item: "Light duvet", eur: 20, img: "sandgrasmal-duvet" },
+        { item: "8-pack wooden hangers", eur: 10, img: "bumerang-hangers" },
       ],
     },
   },
@@ -89,13 +93,13 @@ export const KITS: Kit[] = [
     ],
     rooms: {
       bedroom: [
-        { item: "Premium hybrid mattress (80×200)", eur: 450 },
-        { item: "Fitted sheet — white (coloured options +€5)", eur: 10 },
-        { item: "Ergonomic pillow (33×35 cm)", eur: 40 },
-        { item: "Bedding set: duvet cover + pillowcase — 4 designs", eur: 40 },
-        { item: "Warm duvet", eur: 30 },
-        { item: "Light duvet", eur: 20 },
-        { item: "2× 5-pack bamboo hangers", eur: 20 },
+        { item: "Premium hybrid mattress (80×200)", eur: 450, img: "anneland-mattress" },
+        { item: "Fitted sheet — white (coloured options +€5)", eur: 10, img: "baerglim-sheet" },
+        { item: "Ergonomic pillow (33×35 cm)", eur: 40, img: "rosenskarm-pillow" },
+        { item: "Bedding set: duvet cover + pillowcase — 4 designs", eur: 40, img: "ektandvinge-bedding" },
+        { item: "Warm duvet", eur: 30, img: "safferot-duvet-warm" },
+        { item: "Light duvet", eur: 20, img: "sandgrasmal-duvet" },
+        { item: "2× 5-pack bamboo hangers", eur: 20, img: "hosvans-hangers" },
       ],
     },
   },
@@ -115,25 +119,25 @@ export const KITS: Kit[] = [
     ],
     rooms: {
       kitchen: [
-        { item: "Dish set — 4 large plates (26 cm)", eur: 20 },
-        { item: "4 small dinner plates (21 cm)", eur: 16 },
-        { item: "4 bowls (white, 20 cm)", eur: 16 },
-        { item: "Water glasses (6 × 27 cl)", eur: 15 },
-        { item: "3 mugs (320 ml)", eur: 8 },
-        { item: "Cutlery set, 16 pieces", eur: 25 },
-        { item: "Pot with lid", eur: 15 },
-        { item: "Frying pan", eur: 15 },
-        { item: "Spatula", eur: 6 },
-        { item: "Wooden spoon", eur: 6 },
-        { item: "Knife set, 3 pieces", eur: 20 },
-        { item: "Food storage containers (5-pack)", eur: 15 },
-        { item: "Kitchen towels (4-pack)", eur: 6 },
+        { item: "Dish set — 4 large plates (26 cm)", eur: 20, img: "oftast-plate-large" },
+        { item: "4 small dinner plates (21 cm)", eur: 16, img: "oftast-plate-small" },
+        { item: "4 bowls (white, 20 cm)", eur: 16, img: "oftast-bowl" },
+        { item: "Water glasses (6 × 27 cl)", eur: 15, img: "pokal-glass" },
+        { item: "3 mugs (320 ml)", eur: 8, img: "tt-mug" },
+        { item: "Cutlery set, 16 pieces", eur: 25, img: "mopsig-cutlery" },
+        { item: "Pot with lid", eur: 15, img: "annons-pot" },
+        { item: "Frying pan", eur: 15, img: "tagghaj-pan" },
+        { item: "Spatula", eur: 6, img: "knorrhane-spatula" },
+        { item: "Wooden spoon", eur: 6, img: "rort-spoon" },
+        { item: "Knife set, 3 pieces", eur: 20, img: "andlig-knives" },
+        { item: "Food storage containers (5-pack)", eur: 15, img: "havstobis-containers" },
+        { item: "Kitchen towels (4-pack)", eur: 6, img: "rinnig-towels" },
       ],
       addons: [
-        { item: "Coffee maker", eur: 35, addon: true },
-        { item: "Microwave", eur: 100, addon: true },
-        { item: "Electric kettle (1.3 l)", eur: 35, addon: true },
-        { item: "Toaster", eur: 30, addon: true },
+        { item: "Coffee maker", eur: 35, addon: true, img: "tt-coffeemaker" },
+        { item: "Microwave", eur: 100, addon: true, img: "tillreda-microwave" },
+        { item: "Electric kettle (1.3 l)", eur: 35, addon: true, img: "tt-kettle" },
+        { item: "Toaster", eur: 30, addon: true, img: "tt-toaster" },
       ],
     },
   },
@@ -148,13 +152,13 @@ export const KITS: Kit[] = [
     highlights: ["2 bath + 2 hand towels", "Toilet paper & soaps", "Shampoo + conditioner"],
     rooms: {
       bathroom: [
-        { item: "2 bath towels (100×150 cm)", eur: 30 },
-        { item: "2 hand towels (30×50 cm)", eur: 5 },
-        { item: "Toilet paper (4 rolls)", eur: 10 },
-        { item: "Hand soap", eur: 5 },
-        { item: "Soap bar", eur: 5 },
-        { item: "Shampoo (250 ml)", eur: 7 },
-        { item: "Conditioner (200 ml)", eur: 7 },
+        { item: "2 bath towels (100×150 cm)", eur: 30, img: "vagsjon-bath-towel" },
+        { item: "2 hand towels (30×50 cm)", eur: 5, img: "vagsjon-hand-towel" },
+        { item: "Toilet paper (4 rolls)", eur: 10, img: "tt-toiletpaper" },
+        { item: "Hand soap", eur: 5, img: "tt-handsoap" },
+        { item: "Soap bar", eur: 5, img: "tt-soapbar" },
+        { item: "Shampoo (250 ml)", eur: 7, img: "tt-shampoo" },
+        { item: "Conditioner (200 ml)", eur: 7, img: "tt-conditioner" },
       ],
     },
   },
@@ -174,19 +178,19 @@ export const KITS: Kit[] = [
     ],
     rooms: {
       cleaning: [
-        { item: "Universal spray", eur: 7 },
-        { item: "Window cleaner spray", eur: 6 },
-        { item: "Toilet bowl cleaner", eur: 6 },
-        { item: "Toilet brush", eur: 5 },
-        { item: "Dish detergent", eur: 5 },
-        { item: "Sponges (2-pack)", eur: 5 },
-        { item: "Finnish dish brush", eur: 5 },
-        { item: "Garbage bags (40 l)", eur: 5 },
-        { item: "Compost bags (75 l)", eur: 8 },
+        { item: "Universal spray", eur: 7, img: "tt-universal-spray" },
+        { item: "Window cleaner spray", eur: 6, img: "tt-window-spray" },
+        { item: "Toilet bowl cleaner", eur: 6, img: "tt-toilet-cleaner" },
+        { item: "Toilet brush", eur: 5, img: "bolmen-brush" },
+        { item: "Dish detergent", eur: 5, img: "tt-dish-detergent" },
+        { item: "Sponges (2-pack)", eur: 5, img: "tt-sponges" },
+        { item: "Finnish dish brush", eur: 5, img: "tt-dish-brush" },
+        { item: "Garbage bags (40 l)", eur: 5, img: "tt-garbage-bags" },
+        { item: "Compost bags (75 l)", eur: 8, img: "tt-compost-bags" },
       ],
       addons: [
-        { item: "Laundry basket", eur: 15, addon: true },
-        { item: "Laundry detergent", eur: 10, addon: true },
+        { item: "Laundry basket", eur: 15, addon: true, img: "klunka-basket" },
+        { item: "Laundry detergent", eur: 10, addon: true, img: "tt-laundry-detergent" },
       ],
     },
   },
@@ -235,6 +239,15 @@ export const FAQS = [
 
 export const kitBySlug = (slug: string) => KITS.find((k) => k.slug === slug) ?? KITS[0];
 export const kitHref = (slug: string) => `/kits/${slug}/`;
+export const itemImg = (r: KitItem): ItemImage | null => (r.img ? ITEM_IMAGES[r.img] ?? null : null);
+
+// Cross-sell runs across the two families: a sleep tier suggests the room kits,
+// a room kit suggests the sleep tiers. Never recommends a kit against itself.
+export const relatedKits = (kit: Kit) => KITS.filter((k) => k.tier !== kit.tier);
+export const relatedLabel = (kit: Kit) =>
+  kit.tier
+    ? { eyebrow: "Complete the place", title: "Add a room kit." }
+    : { eyebrow: "Still need a bed?", title: "Pick a sleep kit." };
 export const allItems = (kit: Kit) => Object.values(kit.rooms).flat().filter((r) => !r.addon);
 export const itemsTotal = (kit: Kit) => allItems(kit).reduce((s, r) => s + r.eur, 0);
 export const itemCount = (kit: Kit) => allItems(kit).length;

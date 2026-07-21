@@ -110,11 +110,12 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
         >
           <video autoplay muted playsinline preload="auto" class="absolute inset-0 h-full w-full object-cover">
             <source src="/uploads/moikitbox-animation.webm" type="video/webm" />
-            <source src="/uploads/moikitbox-animation.mp4" type="video/mp4" />
           </video>
           <img
-            src="/uploads/moikit-after-box.png"
+            src="/uploads/moikit-after-box.webp"
             alt="MoiKit box packed with home essentials"
+            width="1000"
+            height="1000"
             class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500"
           />
         </div>
@@ -401,7 +402,12 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
     const tryPlay = () => video.play().catch(() => {});
     tryPlay();
     video.addEventListener("canplay", tryPlay, { once: true });
-    video.addEventListener("ended", () => img.classList.replace("opacity-0", "opacity-100"));
+
+    const reveal = () => img.classList.replace("opacity-0", "opacity-100");
+    video.addEventListener("ended", reveal);
+    // webm is now the only source, so a browser that can't decode it has to
+    // land on the packed-box still rather than an empty frame.
+    video.addEventListener("error", reveal);
   }
 
   // Compare panel toggle

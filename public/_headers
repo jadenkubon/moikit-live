@@ -1,0 +1,17 @@
+# Netlify / Cloudflare Pages header rules.
+# On Vercel use vercel.json `headers` instead — this file is ignored there.
+
+# Product imagery is content-hashed by scripts/build-images.mjs, so a given URL
+# can never change contents. Safe to cache for a year; re-encoding an image
+# produces a new filename rather than a stale hit.
+/img/items/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Astro fingerprints its own build output too.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Logo, hero stills and video. These filenames are NOT hashed, so keep the TTL
+# short enough that replacing an asset actually reaches returning visitors.
+/uploads/*
+  Cache-Control: public, max-age=604800
