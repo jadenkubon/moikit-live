@@ -171,19 +171,11 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
 
         <button
           type="button"
+          data-pay
           class="mt-5 block w-full cursor-pointer rounded-full bg-amber px-4 py-[15px] text-center font-display text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
-        >Pay with Paytrail</button>
-        <div class="my-3.5 flex items-center gap-3">
-          <div class="h-px flex-1 bg-cream/15"></div>
-          <span class="font-mono text-[10.5px] uppercase tracking-[.14em] text-cream/50">or</span>
-          <div class="h-px flex-1 bg-cream/15"></div>
-        </div>
-        <button
-          type="button"
-          class="block w-full cursor-pointer rounded-full border border-cream/35 bg-transparent px-4 py-3.5 text-center font-display text-base font-semibold text-cream transition-colors hover:bg-cream/10"
-        >Pay with cash</button>
-        <p class="mt-[9px] text-center font-mono text-[11px] leading-relaxed text-cream/60">
-          Pay a <span id="sum-deposit" class="text-amber"></span> deposit online now (10%), the rest
+        >Pay with Stripe</button>
+        <p class="mt-3 text-center font-mono text-[11px] leading-relaxed text-cream/60">
+          Pay a <span id="sum-deposit" class="text-amber"></span> deposit online now (50%), the rest
           in cash on delivery.
         </p>
         <button
@@ -251,8 +243,9 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
       </p>
       <button
         type="button"
+        data-pay
         class="mt-[26px] inline-block cursor-pointer rounded-full bg-cream px-[30px] py-4 font-display text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
-      >Pay with Paytrail</button>
+      >Pay with Stripe</button>
     </div>
   </section>
 </Base>
@@ -321,7 +314,7 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
     document.getElementById("sum-meta").textContent =
       `${includedCount} of ${totalCount} items · ${unitCount} pieces`;
     document.getElementById("sum-total").textContent = eur(includedTotal);
-    document.getElementById("sum-deposit").textContent = eur(Math.round(includedTotal * 0.1));
+    document.getElementById("sum-deposit").textContent = eur(Math.round(includedTotal * 0.5));
 
     const changed = rows.some((row) => qFor(row) !== defFor(row));
     document.getElementById("builder-reset").classList.toggle("hidden", !changed);
@@ -359,6 +352,34 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
     persist();
     render();
   });
+
+  // Pay with Stripe → snapshot the current builder cart and start checkout.
+  async function startCheckout(btn) {
+    const lines = rows
+      .map((row) => ({ key: row.dataset.key, quantity: qFor(row) }))
+      .filter((l) => l.quantity > 0);
+    if (lines.length === 0) { alert("Add at least one item to your kit first."); return; }
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Redirecting…";
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ tier: clientKit.slug, lines }),
+      });
+      const data = await res.json();
+      if (data && data.url) { window.location.href = data.url; return; }
+      alert((data && data.error) || "Could not start checkout. Try again.");
+    } catch {
+      alert("Network error — please try again.");
+    }
+    btn.disabled = false;
+    btn.textContent = label;
+  }
+  document.querySelectorAll("[data-pay]").forEach((btn) =>
+    btn.addEventListener("click", () => startCheckout(btn))
+  );
 
   render();
 </script>

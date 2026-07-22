@@ -188,7 +188,7 @@ export const FAQS = [
   },
   {
     q: "How do I pay?",
-    a: "Checkout is handled by Paytrail — Finland's standard payment service. Pay by card, MobilePay or your own online bank.",
+    a: "You pay a 50% deposit online through Stripe — by card or MobilePay — and the rest in cash when we deliver. Secure checkout, no account needed.",
   },
   {
     q: "What if something arrives damaged?",
