@@ -93,9 +93,17 @@ const cachePath = (id) => path.join(CACHE, id + ".bin");
 
 async function ensureCached(id, getUrl, page) {
   if (!refetch && fs.existsSync(cachePath(id))) return fs.readFileSync(cachePath(id));
-  const url = await getUrl(page);
-  const buf = await fetchBuf(url);
-  if (buf.length < 2000) throw new Error(`suspiciously small (${buf.length}b)`);
+  // getUrl may return one URL or a list of candidates in preference order — the
+  // first that clears the floor wins, so a display variant that's been squeezed
+  // below 2 KB (e.g. a simple black-on-white packshot) falls back to the original.
+  const urls = [await getUrl(page)].flat().filter(Boolean);
+  let buf, small;
+  for (const url of urls) {
+    buf = await fetchBuf(url);
+    if (buf.length >= 2000) { small = null; break; }
+    small = buf.length;
+  }
+  if (small != null) throw new Error(`suspiciously small (${small}b)`);
   fs.mkdirSync(CACHE, { recursive: true });
   fs.writeFileSync(cachePath(id), buf);
   return buf;
@@ -144,13 +152,16 @@ async function main() {
           raw.set(id, await ensureCached(id, async () => {
             await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
             await page.waitForSelector('meta[property="og:image"]', { state: "attached", timeout: 25000 });
-            const src = await page.evaluate(() => {
-              const big = [...document.querySelectorAll("img")].map((i) => i.src).find((s) => s.includes("tuotesivu_"));
-              return big || document.querySelector('meta[property="og:image"]')?.content || null;
+            const cands = await page.evaluate(() => {
+              const tuotesivu = [...document.querySelectorAll("img")].map((i) => i.src).find((s) => s.includes("tuotesivu_"));
+              const og = document.querySelector('meta[property="og:image"]')?.content;
+              // Display variant first (usually right-sized); original og as the
+              // higher-res fallback when the display image is too compressed.
+              return [tuotesivu, og].filter(Boolean);
             });
-            if (!src) throw new Error("no image");
-            if (src.includes("category_images")) throw new Error("delisted — page falls back to a category placeholder");
-            return src;
+            if (!cands.length) throw new Error("no image");
+            if (cands.every((s) => s.includes("category_images"))) throw new Error("delisted — page falls back to a category placeholder");
+            return cands.filter((s) => !s.includes("category_images"));
           }, page));
           process.stdout.write(".");
         } catch (e) { fail.push(`${id}: ${e.message}`); process.stdout.write("!"); }

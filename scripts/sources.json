@@ -7,7 +7,6 @@
     "brunkrissla-bedding": "https://www.ikea.com/fi/fi/p/brunkrissla-pussilakana-ja-tyynyliina-musta-30564583/",
     "sandgrasmal-duvet": "https://www.ikea.com/fi/fi/p/sandgraesmal-peitto-viileae-00594869/",
     "spruttig-hangers": "https://www.ikea.com/fi/fi/p/spruttig-henkari-musta-20317079/",
-    "vesteroy-mattress": "https://www.ikea.com/fi/fi/p/vesteroey-pussijousitettu-patja-kiinteae-vaaleansininen-80450602/",
     "gaffelklocka-pillow": "https://www.ikea.com/fi/fi/p/gaffelklocka-tyyny-korkea-30615568/",
     "solfibbla-bedding": "https://www.ikea.com/fi/fi/p/solfibbla-pussilakana-ja-tyynyliina-harmaa-valkoinen-raita-80610926/",
     "safferot-duvet-warm": "https://www.ikea.com/fi/fi/p/saefferot-peitto-laemmin-60565717/",
@@ -23,7 +22,6 @@
     "mopsig-cutlery": "https://www.ikea.com/fi/fi/p/mopsig-aterimet-16-osaa-00343003/",
     "annons-pot": "https://www.ikea.com/fi/fi/p/annons-kannellinen-kattila-lasi-ruostumaton-teraes-80298474/",
     "tagghaj-pan": "https://www.ikea.com/fi/fi/p/tagghaj-paistinpannu-tarttumaton-pinnoite-musta-40581153/",
-    "knorrhane-spatula": "https://www.ikea.com/fi/fi/p/knorrhane-paistinlasta-vaalea-beige-antrasiitti-70597483/",
     "rort-spoon": "https://www.ikea.com/fi/fi/p/roert-lusikka-pyoekki-10278460/",
     "andlig-knives": "https://www.ikea.com/fi/fi/p/aendlig-veitsisetti-3-osaa-vaaleanharmaa-valkoinen-70257624/",
     "havstobis-containers": "https://www.ikea.com/fi/fi/p/havstobis-kannell-ruoan-saeilytysastia-5-kpl-laepikuultava-monivaerinen-30559275/",
@@ -36,6 +34,7 @@
   },
   "tavaratalo": {
     "tt-mug": "https://www.tavaratalomainio.fi/koti-ja-asuminen/muki-sparkle-320-ml/p/8711252495408/",
+    "maku-spatula": "https://www.tavaratalomainio.fi/koti-ja-asuminen/maku-lasta-levea-musta-teras/p/6410413011762/",
     "tt-kettle": "https://www.tavaratalomainio.fi/koti-ja-asuminen/vedenkeitin-1-3-l-prego/p/6430037750908/",
     "tt-toaster": "https://www.tavaratalomainio.fi/koti-ja-asuminen/leivanpaahdin-700w-musta/p/5412810334346/",
     "tt-toiletpaper": "https://www.tavaratalomainio.fi/kauneus-ja-hygienia/serla-wc-hella-32-rl-valk/p/6414301079452/",
@@ -54,7 +53,8 @@
     "tt-laundry-detergent": "https://www.tavaratalomainio.fi/koti-ja-asuminen/bio-luvil-pyykinpesumeste-classic-920-ml/p/8710447328590/"
   },
   "directImage": {
-    "_comment": "Products whose page is delisted — image URL captured directly. tt-coffeemaker: the workbook's 900 W model (EAN 6430037753572) now 302s to the category page; this is a different live model (0,6 L 650 W) standing in until the workbook row is revisited.",
-    "tt-coffeemaker": "https://www.tavaratalomainio.fi/storage/product_images/4/tuotesivu_kahvinkeitin06l650w_6430037757204_fa3d03a090b6_1.webp"
+    "_comment": "Image URLs captured directly (delisted pages, or non-IKEA/Tavaratalo retailers that render og:image server-side). tt-coffeemaker: the workbook's 900 W model (EAN 6430037753572) 302s to a category page; a live 0,6 L 650 W model stands in. falninga-mattress: JYSK FALNINGA 80×200 foam mattress — the confirmed Platinum mattress (jysk.fi/.../vaahtomuovipatja-80x200-cm-falninga-kova), CDN image is stable.",
+    "tt-coffeemaker": "https://www.tavaratalomainio.fi/storage/product_images/4/tuotesivu_kahvinkeitin06l650w_6430037757204_fa3d03a090b6_1.webp",
+    "falninga-mattress": "https://cdn1.jysk.com/getimage/wd3.large/254444"
   }
 }

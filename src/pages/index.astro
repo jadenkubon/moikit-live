@@ -76,8 +76,13 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
   description="Move into an empty apartment in Lappeenranta and have a functional home the day you arrive. Three itemized kits, one delivery, ready when you land."
 >
   <!-- HERO -->
-  <section class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-10 px-7 pt-[70px] pb-10 lg:grid-cols-[1.05fr_.95fr]">
+  <section class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-10 px-7 pt-[40px] pb-10 lg:grid-cols-[1.05fr_.95fr]">
     <div>
+      <div class="pt-2 pb-5 flex flex-wrap gap-[26px] font-mono text-[12.5px] text-muted">
+        <span>✦ One flat delivery fee</span>
+        <span>✦ Transparent pricing</span>
+        <span>✦ Ready when you land</span>
+      </div>
       <h1 class="font-display text-5xl font-bold leading-[1.02] tracking-[-.025em] md:text-[64px]">
         Your new home,<br />ready instantly.
       </h1>
@@ -94,11 +99,6 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
           href="#how"
           class="rounded-full border-[1.5px] border-teal px-[26px] py-4 font-display text-base font-semibold text-teal no-underline transition-colors hover:bg-teal hover:text-cream"
         >How it works</a>
-      </div>
-      <div class="mt-9 flex flex-wrap gap-[26px] font-mono text-[12.5px] text-muted">
-        <span>✦ One flat delivery fee</span>
-        <span>✦ Transparent pricing</span>
-        <span>✦ Ready when you land</span>
       </div>
     </div>
 
@@ -126,16 +126,16 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
     </div>
   </section>
 
-  <!-- SLEEP KITS -->
+  <!-- THE KITS -->
   <section id="kits" class="mx-auto max-w-[1180px] scroll-mt-24 px-7 pt-16 pb-6">
     <div class="mb-[34px] flex flex-wrap items-end justify-between gap-6">
       <div>
-        <div class="eyebrow">Sleep kits</div>
+        <div class="eyebrow">The kits</div>
         <h2 class="section-title">Good, better, best — no guessing.</h2>
       </div>
       <p class="max-w-[340px] text-[15.5px] leading-relaxed text-body">
-        Every tier is a complete sleep setup — mattress, sheet, pillow, bedding and duvet. Comfort
-        steps up as you go.
+        Every kit covers all three rooms — bedroom, kitchen and bathroom. Comfort and place
+        settings step up as you go, and you can drop any room or item you don't need.
       </p>
     </div>
     <div class="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3">
@@ -188,25 +188,6 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
           ))}
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ROOM KITS -->
-  <section id="rooms" class="mx-auto max-w-[1180px] scroll-mt-24 px-7 pt-11 pb-6">
-    <div class="mb-[34px] flex flex-wrap items-end justify-between gap-6">
-      <div>
-        <div class="eyebrow">Room kits</div>
-        <h2 class="section-title">Kitchen, bathroom, cleaning — one kit each.</h2>
-      </div>
-      <p class="max-w-[340px] text-[15.5px] leading-relaxed text-body">
-        Standalone kits, no tiers. Appliance add-ons attach to the Kitchen Kit, laundry add-ons to
-        the Cleaning Kit.
-      </p>
-    </div>
-    <div class="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3">
-      <KitCard kit={kitBySlug("kitchen")} />
-      <KitCard kit={kitBySlug("bathroom")} />
-      <KitCard kit={kitBySlug("cleaning")} />
     </div>
   </section>
 

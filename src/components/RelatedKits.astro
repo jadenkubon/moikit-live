@@ -16,7 +16,7 @@ interface Props {
 const { kit } = Astro.props;
 
 // Which kits show up is derived from the kit being viewed, never hardcoded:
-// a sleep tier cross-sells the room kits, a room kit cross-sells the sleep tiers.
+// each bundle tier cross-sells the other two.
 const related = relatedKits(kit);
 const label = relatedLabel(kit);
 
@@ -39,7 +39,7 @@ const previewOf = (k: Kit) => {
     <div class="font-mono text-xs uppercase tracking-[.2em] text-rust">{label.eyebrow}</div>
     <h2 class="mt-2.5 mb-6 font-display text-[26px] font-bold tracking-[-.02em]">{label.title}</h2>
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       {related.map((k) => (
         <a
           href={kitHref(k.slug)}
