@@ -84,9 +84,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // tuned for the transaction pooler + short-lived Worker invocations.
   const sql = postgres(connString, { prepare: false, ssl: "require", fetch_types: false, max: 1 });
   try {
-    await sql.begin(async (tx) => {
-      // Idempotent on Stripe retries via the unique `stamp`.
-      const inserted = await tx`
+    // ONE round-trip. Cloudflare caps outbound subrequests per invocation, so a
+    // per-item INSERT loop blows the limit. Single CTE: insert the order, then
+    // expand the items from a JSON param and insert them all at once. Idempotent
+    // on `stamp` — a duplicate leaves new_order empty, so zero items are written.
+    const itemsJson = JSON.stringify(
+      lines.map((l) => ({ sku: l.sku, name: l.name, section: l.section, unit: l.unit, qty: l.quantity }))
+    );
+    await sql`
+      with new_order as (
         insert into orders (
           stamp, tier, payment_status,
           stripe_payment_intent_id, stripe_checkout_session_id,
@@ -102,18 +108,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
         )
         on conflict (stamp) do nothing
         returning id
-      `;
-      if (inserted.length === 0) return; // already processed
-      const orderId = inserted[0].id;
-      for (const l of lines) {
-        await tx`
-          insert into order_items
-            (order_id, sku, item_name, section, unit_price_cents, quantity, line_total_cents)
-          values
-            (${orderId}, ${l.sku}, ${l.name}, ${l.section}, ${l.unit}, ${l.quantity}, ${l.unit * l.quantity})
-        `;
-      }
-    });
+      )
+      insert into order_items (order_id, sku, item_name, section, unit_price_cents, quantity, line_total_cents)
+      select no.id, x.sku, x.name, x.section, x.unit, x.qty, x.unit * x.qty
+      from new_order no
+      cross join jsonb_to_recordset(${itemsJson}::jsonb)
+        as x(sku text, name text, section text, unit int, qty int)
+    `;
   } catch (err) {
     console.error("webhook db write failed", err);
     // TEMP: surface the real error in the response so we can diagnose from Stripe's delivery log.
