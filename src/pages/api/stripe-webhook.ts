@@ -94,9 +94,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // per-item INSERT loop blows the limit. Single CTE: insert the order, then
     // expand the items from a JSON param and insert them all at once. Idempotent
     // on `stamp` — a duplicate leaves new_order empty, so zero items are written.
-    const itemsJson = JSON.stringify(
-      lines.map((l) => ({ sku: l.sku, name: l.name, section: l.section, unit: l.unit, qty: l.quantity }))
-    );
+    // Item lines expand from parallel typed arrays via unnest. postgres.js binds
+    // JS arrays as native Postgres arrays, which avoids the JSON-parameter binding
+    // ambiguity that made jsonb_to_recordset reject the bound value.
+    const skus = lines.map((l) => l.sku);
+    const names = lines.map((l) => l.name);
+    const sections = lines.map((l) => l.section);
+    const units = lines.map((l) => l.unit);
+    const qtys = lines.map((l) => l.quantity);
     await sql`
       with new_order as (
         insert into orders (
@@ -118,8 +123,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       insert into order_items (order_id, sku, item_name, section, unit_price_cents, quantity, line_total_cents)
       select no.id, x.sku, x.name, x.section, x.unit, x.qty, x.unit * x.qty
       from new_order no
-      cross join jsonb_to_recordset(${itemsJson}::jsonb)
-        as x(sku text, name text, section text, unit int, qty int)
+      cross join unnest(
+        ${skus}::text[], ${names}::text[], ${sections}::text[], ${units}::int[], ${qtys}::int[]
+      ) as x(sku, name, section, unit, qty)
     `;
   } catch (err) {
     console.error("webhook db write failed", err);
