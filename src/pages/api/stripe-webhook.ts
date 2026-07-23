@@ -80,7 +80,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const ship = (session as any).shipping_details ?? null;
   const addr = ship?.address ?? cust?.address ?? null;
 
-  const sql = postgres(connString, { prepare: false });
+  // Supabase pooler requires TLS; postgres.js defaults ssl off. fetch_types/max
+  // tuned for the transaction pooler + short-lived Worker invocations.
+  const sql = postgres(connString, { prepare: false, ssl: "require", fetch_types: false, max: 1 });
   try {
     await sql.begin(async (tx) => {
       // Idempotent on Stripe retries via the unique `stamp`.
@@ -114,7 +116,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   } catch (err) {
     console.error("webhook db write failed", err);
-    return new Response("db error", { status: 500 }); // 5xx → Stripe retries
+    // TEMP: surface the real error in the response so we can diagnose from Stripe's delivery log.
+    return new Response("db error: " + ((err as any)?.message ?? String(err)), { status: 500 });
   } finally {
     await sql.end();
   }
