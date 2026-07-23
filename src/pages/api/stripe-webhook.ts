@@ -21,13 +21,10 @@ export const prerender = false;
 //                             or a DATABASE_URL secret, using moikit_writer creds
 // -----------------------------------------------------------------------------
 
-function dbUrl(env: any): string | null {
-  return env.HYPERDRIVE?.connectionString ?? env.DATABASE_URL ?? null;
-}
-
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = (locals as any).runtime?.env ?? {};
-  const connString = dbUrl(env);
+  const usingHyperdrive = !!env.HYPERDRIVE?.connectionString;
+  const connString = usingHyperdrive ? env.HYPERDRIVE.connectionString : (env.DATABASE_URL ?? null);
   if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET || !connString) {
     return new Response("not configured", { status: 503 });
   }
@@ -80,9 +77,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const ship = (session as any).shipping_details ?? null;
   const addr = ship?.address ?? cust?.address ?? null;
 
-  // Supabase pooler requires TLS; postgres.js defaults ssl off. fetch_types/max
-  // tuned for the transaction pooler + short-lived Worker invocations.
-  const sql = postgres(connString, { prepare: false, ssl: "require", fetch_types: false, max: 1 });
+  // Through Hyperdrive the Worker talks to a local endpoint (Hyperdrive owns the
+  // origin TLS) — forcing client SSL there would break it. Only require SSL on a
+  // direct Supabase connection.
+  const sql = postgres(connString, {
+    prepare: false,
+    fetch_types: false,
+    max: 1,
+    ...(usingHyperdrive ? {} : { ssl: "require" as const }),
+  });
   try {
     // ONE round-trip. Cloudflare caps outbound subrequests per invocation, so a
     // per-item INSERT loop blows the limit. Single CTE: insert the order, then
