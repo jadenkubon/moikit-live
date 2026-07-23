@@ -118,7 +118,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
         shipping_cents: String(shippingCents),
         deposit_cents: String(depositCents),
       },
-      success_url: `${origin}/?checkout=success`,
+      // {CHECKOUT_SESSION_ID} is substituted by Stripe on redirect; the success
+      // page reads the session back to show what was paid and what's still due.
+      success_url: `${origin}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/kits/${tier}/?checkout=cancelled`,
     });
 

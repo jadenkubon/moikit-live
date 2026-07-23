@@ -39,6 +39,22 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
 ---
 
 <Base title={`${kit.name} — MoiKit`} description={kit.tagline}>
+  <!-- CHECKOUT CANCELLED — revealed by the script below on ?checkout=cancelled.
+       This page is prerendered, so the state has to be read client-side. -->
+  <div id="checkout-cancelled" hidden class="mx-auto max-w-[1180px] px-7 pt-7">
+    <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-rust/30 bg-rust/10 px-6 py-4">
+      <p class="text-[15px] leading-relaxed text-body-2">
+        <strong class="font-display font-semibold">Checkout cancelled.</strong> Nothing was charged
+        and your kit is exactly as you left it — pick up where you stopped whenever you're ready.
+      </p>
+      <a
+        href="#builder"
+        class="shrink-0 rounded-full bg-amber px-5 py-2.5 font-display text-[14.5px] font-semibold text-ink no-underline"
+        >Back to the builder</a
+      >
+    </div>
+  </div>
+
   <!-- HERO -->
   <section class="mx-auto max-w-[1180px] px-7 pt-11 pb-2">
     <a href="/#kits" class="font-mono text-[12.5px] tracking-[.08em] text-muted no-underline">← All kits</a>
@@ -380,6 +396,15 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
   document.querySelectorAll("[data-pay]").forEach((btn) =>
     btn.addEventListener("click", () => startCheckout(btn))
   );
+
+  // Returning from a cancelled Stripe session: show the banner, then strip the
+  // param so a reload or a shared link doesn't keep claiming a cancellation.
+  if (new URLSearchParams(location.search).get("checkout") === "cancelled") {
+    const banner = document.getElementById("checkout-cancelled");
+    banner.hidden = false;
+    banner.scrollIntoView({ block: "nearest" });
+    history.replaceState(null, "", location.pathname + location.hash);
+  }
 
   render();
 </script>

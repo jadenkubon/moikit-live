@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import Stripe from "stripe";
 import postgres from "postgres";
 import { kitBySlug } from "../../data/kits";
+import { notifyNewOrder } from "../../lib/notify";
 
 export const prerender = false;
 
@@ -86,6 +87,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     max: 1,
     ...(usingHyperdrive ? {} : { ssl: "require" as const }),
   });
+  let isNewOrder = false;
   try {
     // ONE round-trip. Cloudflare caps outbound subrequests per invocation, so a
     // per-item INSERT loop blows the limit. Single CTE: insert the order, then
@@ -99,7 +101,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const itemsArr = lines.map((l) => ({
       sku: l.sku, name: l.name, section: l.section, unit: l.unit, qty: l.quantity,
     }));
-    await sql`
+    const wrote = await sql`
       with new_order as (
         insert into orders (
           stamp, tier, payment_status,
@@ -116,19 +118,44 @@ export const POST: APIRoute = async ({ request, locals }) => {
         )
         on conflict (stamp) do nothing
         returning id
+      ), new_items as (
+        insert into order_items (order_id, sku, item_name, section, unit_price_cents, quantity, line_total_cents)
+        select no.id, x.sku, x.name, x.section, x.unit, x.qty, x.unit * x.qty
+        from new_order no
+        cross join jsonb_to_recordset(${sql.json(itemsArr)})
+          as x(sku text, name text, section text, unit int, qty int)
       )
-      insert into order_items (order_id, sku, item_name, section, unit_price_cents, quantity, line_total_cents)
-      select no.id, x.sku, x.name, x.section, x.unit, x.qty, x.unit * x.qty
-      from new_order no
-      cross join jsonb_to_recordset(${sql.json(itemsArr)})
-        as x(sku text, name text, section text, unit int, qty int)
+      select id from new_order
     `;
+    // Empty means `on conflict do nothing` fired: Stripe redelivered an event we
+    // already stored. The row is intact — just don't email the customer twice.
+    isNewOrder = wrote.length > 0;
   } catch (err) {
     // Log server-side for Worker tails; never leak internals to Stripe's delivery log.
     console.error("webhook db write failed", err);
     return new Response("db error", { status: 500 });
   } finally {
     await sql.end();
+  }
+
+  // Notify only on a genuinely new order, and only after the row is committed —
+  // a failure in here is logged, never surfaced, so Stripe still sees 200.
+  if (isNewOrder) {
+    await notifyNewOrder(env, {
+      ref: stamp.slice(0, 8).toUpperCase(),
+      tier,
+      kitName: kit.name,
+      lines: lines.map((l) => ({ name: l.name, quantity: l.quantity, unit: l.unit })),
+      subtotalCents: Number(md.items_subtotal_cents ?? 0) || 0,
+      shippingCents,
+      depositCents: amountCharged,
+      customerName: ship?.name ?? cust?.name ?? null,
+      customerEmail: cust?.email ?? null,
+      customerPhone: cust?.phone ?? null,
+      addressLine: addr?.line1 ?? null,
+      addressPostal: addr?.postal_code ?? null,
+      addressCity: addr?.city ?? null,
+    });
   }
 
   return new Response("ok", { status: 200 });
