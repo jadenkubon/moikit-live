@@ -94,11 +94,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // per-item INSERT loop blows the limit. Single CTE: insert the order, then
     // expand the items from a JSON param and insert them all at once. Idempotent
     // on `stamp` — a duplicate leaves new_order empty, so zero items are written.
-    // Item lines expand from a single json parameter. postgres.js's sql.json()
-    // serializes the array itself and binds it as a typed `json` value, so it
-    // sidesteps the driver's unreliable array/JSON-string encoding under
-    // prepare:false + fetch_types:false (which broke both the earlier
-    // jsonb_to_recordset and unnest attempts).
+    // Item lines expand from a single jsonb parameter. postgres.js's sql.json()
+    // serializes the array itself and binds it as a typed jsonb value (OID 3802),
+    // sidestepping the driver's unreliable array/JSON-string encoding under
+    // prepare:false + fetch_types:false (which broke the earlier ::jsonb-cast and
+    // unnest attempts). The function must be jsonb_to_recordset to match that type.
     const itemsArr = lines.map((l) => ({
       sku: l.sku, name: l.name, section: l.section, unit: l.unit, qty: l.quantity,
     }));
@@ -123,7 +123,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       insert into order_items (order_id, sku, item_name, section, unit_price_cents, quantity, line_total_cents)
       select no.id, x.sku, x.name, x.section, x.unit, x.qty, x.unit * x.qty
       from new_order no
-      cross join json_to_recordset(${sql.json(itemsArr)})
+      cross join jsonb_to_recordset(${sql.json(itemsArr)})
         as x(sku text, name text, section text, unit int, qty int)
     `;
   } catch (err) {
