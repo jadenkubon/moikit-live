@@ -86,7 +86,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     max: 1,
     ...(usingHyperdrive ? {} : { ssl: "require" as const }),
   });
+  let dbRole = "?";
   try {
+    const [who] = await sql`select current_user::text as u, session_user::text as s`;
+    dbRole = who.u + "/" + who.s;
     // ONE round-trip. Cloudflare caps outbound subrequests per invocation, so a
     // per-item INSERT loop blows the limit. Single CTE: insert the order, then
     // expand the items from a JSON param and insert them all at once. Idempotent
@@ -121,7 +124,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   } catch (err) {
     console.error("webhook db write failed", err);
     // TEMP: surface the real error in the response so we can diagnose from Stripe's delivery log.
-    return new Response("db error: " + ((err as any)?.message ?? String(err)), { status: 500 });
+    return new Response(`db error (role=${dbRole}): ` + ((err as any)?.message ?? String(err)), { status: 500 });
   } finally {
     await sql.end();
   }
