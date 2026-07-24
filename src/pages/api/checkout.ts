@@ -105,7 +105,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
             unit_amount: depositCents,
             tax_behavior: "inclusive",
             product_data: {
-              name: `${kit.name} — 50% deposit`,
+              // REF is in the line-item name so it lands on the customer's Stripe
+              // receipt — their only durable copy of the order reference once the
+              // success page is closed. Support can then match REF ↔ order.
+              name: `${kit.name} — 50% deposit · Ref ${ref}`,
               description: `50% deposit today (items + €${SHIPPING_EUR} delivery); the remaining 50% is paid in cash on delivery.`,
             },
           },
