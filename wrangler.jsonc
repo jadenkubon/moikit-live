@@ -14,14 +14,6 @@
     "binding": "ASSETS",
     "directory": "dist"
   },
-  // Owner "new order" alerts go out through Cloudflare Email Routing (free, no
-  // external service). No destination restriction here means it can send to any
-  // address verified in the account's Email Routing — the code targets OWNER_EMAIL,
-  // which must be a verified destination. The sender must be on the moikit.fi
-  // domain with Email Routing enabled.
-  "send_email": [
-    { "name": "OWNER_EMAILER" }
-  ],
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
