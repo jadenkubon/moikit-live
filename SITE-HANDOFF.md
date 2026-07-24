@@ -93,13 +93,16 @@ and cash balance, degrading to a plain thank-you if the lookup fails. The kit pa
 reveals a cancelled banner on `?checkout=cancelled` and strips the param.
 
 ### 4. Notifications / email — CODE DONE, NEEDS CONFIG
-`src/lib/notify.ts` sends an owner "new order" alert (delivery address + pack list
-+ balance to collect) and a customer confirmation, via Resend's HTTP API, called
-from the webhook only when the insert actually created a row (so a Stripe
-redelivery doesn't re-send). It is a no-op until these are set on the Worker:
-`RESEND_API_KEY`, `ORDER_FROM` (verified sender, e.g. `MoiKit <orders@moikit.fi>`),
-`OWNER_EMAIL`. Failures are logged, never surfaced — a bounced email must not turn
-a paid order into a 500 and trigger endless Stripe redelivery.
+`src/lib/notify.ts` sends two emails on a genuinely new order, split by channel:
+- **Owner "new order" alert** → Cloudflare Email Routing (`send_email` binding
+  `OWNER_EMAILER`). Free. Needs Email Routing enabled on moikit.fi + owner address
+  verified as a destination, and the held commit adding the binding pushed.
+- **Customer confirmation** → Resend (branded, itemized, shows cash balance —
+  Stripe's own receipt can't, since the session is one "deposit" line item).
+Both fire independently and never throw — a bounced email must not turn a paid
+order into a 500 and trigger endless Stripe redelivery. Worker secrets needed:
+`RESEND_API_KEY`, `ORDER_FROM` (e.g. `MoiKit <orders@moikit.fi>`, verified in BOTH
+Resend and Email Routing), `OWNER_EMAIL`.
 
 ### 5. Repo cleanup
 - **Delete `moikit-astro`** (Claude created it by mistake; owner approved deletion).

@@ -60,16 +60,20 @@ migration) → `e79c537` (jsonb_to_recordset) → `c174a8b` (removed temp diagno
    each kit's items sum exactly to its listed price). Still worth **one real test
    purchase** through Stripe on a non-basic tier to confirm the deposit charged and
    the emails sent.
-2b. **Order emails** — `src/lib/notify.ts` (Resend) is wired into the webhook but
-   dormant until `RESEND_API_KEY` / `ORDER_FROM` / `OWNER_EMAIL` are set as Worker
-   secrets and the sending domain is verified in Resend. The webhook now only
-   notifies when the insert created a row, so redelivered events don't re-email.
-3. **Confirm deposit math with the owner** — currently 50% of *items only* is
-   charged via Stripe (basic €240 → €120); shipping €30 + remaining 50% are cash on
-   delivery. Verify this is the intended split.
-4. **Delete the test order** — one row (`id 3`, "Playwright Test",
-   `pwtest@moikit.fi`) sits in the DB from verification. Harmless; remove before
-   go-live: `delete from orders where stamp = '34771de5-cc6a-44f4-90fe-e2b1904ee317';`
+2b. **Order emails** — SPLIT by channel in `src/lib/notify.ts`: the OWNER "new
+   order" alert goes via **Cloudflare Email Routing** (the `send_email` binding
+   `OWNER_EMAILER`, free), the CUSTOMER confirmation via **Resend** (itemized,
+   shows cash balance). Both fire independently and never throw. Dormant until:
+   (a) Email Routing enabled on moikit.fi + owner address verified as a Cloudflare
+   destination, (b) the held commit adding the `OWNER_EMAILER` binding is pushed,
+   (c) Worker secrets `RESEND_API_KEY` / `ORDER_FROM` / `OWNER_EMAIL` are set and
+   the sender domain verified in Resend. The webhook only notifies when the insert
+   created a row, so redelivered events don't re-email.
+3. ~~**Confirm deposit math**~~ — DECIDED: **Option B**. Deposit = 50% of items +
+   delivery, so "50% deposit" is literally half and the balance is the other half
+   in cash (basic: €135 online, €135 on delivery). Implemented in `checkout.ts`.
+4. ~~**Delete the test order**~~ — DONE. Order `id 3` ("Playwright Test") deleted;
+   its 17 line items cascaded. DB is now 0 orders / 0 items, ready for real tests.
 5. **Admin read app** — not built. Reads orders via `moikit_admin` (SELECT+UPDATE,
    behind OAuth). RLS policies for it are already in place from migration 0003.
 6. **Go-live switches** — swap Stripe test keys → live (`sk_live`/`pk_live`), point
