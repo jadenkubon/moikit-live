@@ -89,6 +89,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   });
   const origin = new URL(request.url).origin;
   const stamp = crypto.randomUUID(); // non-PII; the webhook writes the order under this
+  const ref = stamp.slice(0, 8).toUpperCase(); // human-quotable order reference
 
   // Compact cart for the webhook (well under Stripe's 500-char metadata limit).
   const cart = resolved.map((r) => `${r.key}:${r.quantity}`).join(",");
@@ -112,6 +113,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
       ],
       shipping_address_collection: { allowed_countries: ["FI"] },
       phone_number_collection: { enabled: true },
+      // Stamp the PaymentIntent itself with our order REF, so the charge is
+      // labelled in the Stripe dashboard (and on any Stripe receipt) with an
+      // identifier support can search — closing the Stripe↔order loop from the
+      // Stripe side. The webhook still writes the pi_/cs_ ids onto the order row.
+      payment_intent_data: {
+        description: `MoiKit order ${ref} — ${kit.name} (50% deposit)`,
+        metadata: { ref, stamp, tier, kit: kit.name },
+      },
       metadata: {
         tier,
         stamp,
