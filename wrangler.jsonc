@@ -15,6 +15,15 @@
     "directory": "dist"
   },
   "hyperdrive": [
-    { "binding": "HYPERDRIVE", "id": "566e67c30a944a638d0f2693f464eab2" }
+    {
+      "binding": "HYPERDRIVE",
+      "id": "566e67c30a944a638d0f2693f464eab2",
+      // Dev-only: wrangler/astro dev refuse to boot without a local Postgres
+      // string to emulate Hyperdrive. Ignored by the deployed Worker (which uses
+      // the real Hyperdrive `id`). Nothing local actually writes here — the
+      // webhook is exercised via Stripe against production — so a placeholder is
+      // enough to unblock `npm run dev`.
+      "localConnectionString": "postgres://dev:dev@localhost:5432/moikit_dev"
+    }
   ]
 }

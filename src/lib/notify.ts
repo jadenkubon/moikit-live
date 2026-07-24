@@ -135,6 +135,9 @@ export async function notifyNewOrder(env: any, o: NotifyOrder): Promise<void> {
       send(apiKey, {
         from,
         to: o.customerEmail,
+        // The body says "just reply to this email"; `from` is a send-only Resend
+        // identity, so point replies at a mailbox a human actually reads.
+        ...(owner ? { reply_to: owner } : {}),
         subject: `Your MoiKit order is confirmed (${o.ref})`,
         html: `<div style="max-width:560px;font:15px/1.5 -apple-system,Segoe UI,sans-serif;color:#16211F">
           <h2 style="font-size:19px;margin:0 0 4px">Kiitos${o.customerName ? ", " + esc(o.customerName.split(" ")[0]) : ""} — your kit is booked.</h2>
