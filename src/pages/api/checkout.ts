@@ -80,7 +80,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const shippingCents = SHIPPING_EUR * 100;
-  const depositCents = Math.round(subtotalCents * 0.5); // 50% deposit; balance is cash on delivery
+  // 50% deposit of the FULL order (items + delivery), so "50% deposit" is
+  // literally half of what the customer pays; the other half is cash on delivery.
+  const depositCents = Math.round((subtotalCents + shippingCents) * 0.5);
 
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     httpClient: Stripe.createFetchHttpClient(),
@@ -103,7 +105,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
             tax_behavior: "inclusive",
             product_data: {
               name: `${kit.name} — 50% deposit`,
-              description: `Deposit today; the balance (incl. €${SHIPPING_EUR} delivery) is paid in cash on delivery.`,
+              description: `50% deposit today (items + €${SHIPPING_EUR} delivery); the remaining 50% is paid in cash on delivery.`,
             },
           },
         },
