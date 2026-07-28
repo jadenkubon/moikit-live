@@ -34,7 +34,7 @@ export const KITS: Kit[] = [
   {
     slug: "basic",
     name: "Basic Kit",
-    priceEur: 240,
+    priceEur: 245,
     badge: null,
     tagline: "A complete one-person setup — bed, a place setting and the bathroom basics.",
     blurb: "Everything one person needs on night one: mattress and bedding, a single place setting with pan and cutlery, plus towel, soap and toilet paper.",
@@ -64,7 +64,7 @@ export const KITS: Kit[] = [
         { item: "Spatula", eur: 10, img: "maku-spatula" },
       ],
       bathroom: [
-        { item: "Bath towel", eur: 10, img: "vagsjon-bath-towel" },
+        { item: "Bath towel", eur: 15, img: "vagsjon-bath-towel" },
         { item: "Soap bar", eur: 5, img: "tt-soapbar" },
         { item: "Toilet paper (4 rolls)", eur: 10, img: "tt-toiletpaper" },
       ],
@@ -114,7 +114,7 @@ export const KITS: Kit[] = [
   {
     slug: "platinum",
     name: "Platinum Kit",
-    priceEur: 475,
+    priceEur: 480,
     badge: "Most complete",
     tagline: "The full household — four place settings, both duvets and a spare of everything.",
     blurb: "A high-quality mattress with ergonomic pillow, warm and light duvets with a spare sheet, four full place settings, and a doubled-up bathroom.",
@@ -142,7 +142,7 @@ export const KITS: Kit[] = [
         { item: "4 mugs", eur: 20, img: "tt-mug" },
         { item: "Cutlery set, 24 pieces", eur: 20, img: "mopsig-cutlery" },
         { item: "Frying pan", eur: 15, img: "tagghaj-pan" },
-        { item: "Spatula", eur: 5, img: "maku-spatula" },
+        { item: "Spatula", eur: 10, img: "maku-spatula" },
         { item: "Kitchen towels (4-pack)", eur: 10, img: "rinnig-towels" },
       ],
       bathroom: [
@@ -162,7 +162,7 @@ export const ROOM_META: Record<string, { label: string }> = {
 };
 
 export const COMPARISON_ROWS = [
-  { label: "Price", basic: "€240.00", premium: "€310.00", platinum: "€475.00" },
+  { label: "Price", basic: "€245.00", premium: "€310.00", platinum: "€480.00" },
   { label: "Mattress (80×200)", basic: "Foam", premium: "Medium", platinum: "High quality" },
   { label: "Pillow", basic: "Standard", premium: "High (50×60)", platinum: "Ergonomic" },
   { label: "Duvets", basic: "Light", premium: "Warm", platinum: "Warm + Light" },
