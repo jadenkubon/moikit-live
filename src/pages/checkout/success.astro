@@ -1,0 +1,197 @@
+---
+import Base from "../../layouts/Base.astro";
+import Stripe from "stripe";
+import { kitBySlug, eur } from "../../data/kits";
+
+// Server-rendered on the Worker: it reads the real Stripe session.
+export const prerender = false;
+
+// -----------------------------------------------------------------------------
+// /checkout/success?session_id=cs_...  — the page a customer lands on after
+// paying. Reads the session back from Stripe (never from the DB: the storefront
+// holds no order credential) and confirms what was paid and what is still owed
+// in cash on delivery. Every lookup can fail — no session id, an expired id, a
+// misconfigured key — so the page always degrades to a plain thank-you rather
+// than an error: the money is already taken and the webhook owns the record.
+// -----------------------------------------------------------------------------
+
+const sessionId = Astro.url.searchParams.get("session_id") ?? "";
+const env = (Astro.locals as any).runtime?.env ?? {};
+
+interface Line {
+  name: string;
+  quantity: number;
+  unit: number;
+}
+
+let paid = false;
+let name: string | null = null;
+let email: string | null = null;
+let city: string | null = null;
+let kitName: string | null = null;
+let lines: Line[] = [];
+let subtotalCents = 0;
+let shippingCents = 0;
+let depositCents = 0;
+let ref: string | null = null;
+
+if (sessionId.startsWith("cs_") && env.STRIPE_SECRET_KEY) {
+  try {
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      httpClient: Stripe.createFetchHttpClient(),
+    });
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.payment_status === "paid") {
+      paid = true;
+      const md = session.metadata ?? {};
+      const cust = session.customer_details;
+      name = cust?.name ?? null;
+      email = cust?.email ?? null;
+      city = (session as any).shipping_details?.address?.city ?? cust?.address?.city ?? null;
+
+      subtotalCents = Number(md.items_subtotal_cents ?? 0) || 0;
+      shippingCents = Number(md.shipping_cents ?? 0) || 0;
+      depositCents = session.amount_total ?? (Number(md.deposit_cents ?? 0) || 0);
+      // Short human-quotable reference; the full stamp keys the row in the DB.
+      ref = String(md.stamp ?? "").slice(0, 8).toUpperCase() || null;
+
+      // Same resolution the webhook does: cart keys → authoritative kits.ts rows.
+      const tier = String(md.tier ?? "");
+      if (tier) {
+        const kit = kitBySlug(tier);
+        kitName = kit.name;
+        lines = String(md.cart ?? "")
+          .split(",")
+          .map((pair) => {
+            const [key, qStr] = pair.split(":");
+            const dash = key.lastIndexOf("-");
+            const item = kit.rooms[key.slice(0, dash)]?.[Number(key.slice(dash + 1))];
+            const quantity = Number(qStr);
+            if (!item || !(quantity > 0)) return null;
+            return { name: item.item, quantity, unit: item.eur };
+          })
+          .filter(Boolean) as Line[];
+      }
+    }
+  } catch (err) {
+    console.error("success page: could not read checkout session", err);
+  }
+}
+
+const totalCents = subtotalCents + shippingCents;
+const balanceCents = Math.max(0, totalCents - depositCents);
+const c = (cents: number) => eur(cents / 100);
+---
+
+<Base
+  title="Order confirmed — MoiKit"
+  description="Your MoiKit deposit is paid. We'll be in touch to confirm your delivery."
+>
+  <section class="mx-auto max-w-[760px] px-7 pt-12 pb-20">
+    <div class="flex items-center gap-4">
+      <span
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal font-display text-xl text-cream"
+        aria-hidden="true">✓</span
+      >
+      <div>
+        <p class="font-mono text-[12.5px] tracking-[.08em] text-muted">
+          {paid ? "PAYMENT RECEIVED" : "THANK YOU"}
+        </p>
+        <h1 class="mt-1 font-display text-4xl font-bold leading-[1.05] tracking-[-.025em] md:text-[46px]">
+          {paid ? "Your kit is booked." : "Your order is in."}
+        </h1>
+      </div>
+    </div>
+
+    <p class="mt-6 max-w-[560px] text-[19px] leading-relaxed text-body">
+      {
+        paid
+          ? "Thanks — your deposit is paid. We'll email you to confirm the delivery date for your address in Lappeenranta."
+          : "Thanks — we've got your order. We'll email you to confirm the delivery date. If anything looks wrong, just reply to that email."
+      }
+    </p>
+
+    {
+      paid && (
+        <div class="mt-9 rounded-[20px] border border-sand bg-white/70 p-7">
+          <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-sand pb-4">
+            <h2 class="font-display text-xl font-semibold">{kitName ?? "Your order"}</h2>
+            {ref && (
+              <span class="font-mono text-[12.5px] text-muted">REF {ref}</span>
+            )}
+          </div>
+
+          {lines.length > 0 && (
+            <ul class="mt-4 space-y-1.5 border-b border-sand pb-4">
+              {lines.map((l) => (
+                <li class="flex justify-between gap-4 text-[15px] text-body">
+                  <span>
+                    {l.name}
+                    {l.quantity > 1 && <span class="text-muted"> × {l.quantity}</span>}
+                  </span>
+                  <span class="shrink-0 font-mono text-[13.5px] text-muted">
+                    {eur(l.unit * l.quantity)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <dl class="mt-4 space-y-2 text-[15px]">
+            <div class="flex justify-between gap-4">
+              <dt class="text-body">Items</dt>
+              <dd class="font-mono text-[13.5px] text-body">{c(subtotalCents)}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-body">Delivery (with LOAS)</dt>
+              <dd class="font-mono text-[13.5px] text-body">{c(shippingCents)}</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-t border-sand pt-2 font-semibold">
+              <dt>Total</dt>
+              <dd class="font-mono text-[13.5px]">{c(totalCents)}</dd>
+            </div>
+            <div class="flex justify-between gap-4 text-teal">
+              <dt>Deposit paid today</dt>
+              <dd class="font-mono text-[13.5px]">− {c(depositCents)}</dd>
+            </div>
+            <div
+              class="mt-3 flex justify-between gap-4 rounded-2xl bg-amber/15 px-4 py-3 font-display text-base font-semibold"
+            >
+              <dt>Balance — cash on delivery</dt>
+              <dd class="font-mono text-[15px]">{c(balanceCents)}</dd>
+            </div>
+          </dl>
+
+          {(name || email || city) && (
+            <p class="mt-5 font-mono text-[12.5px] leading-relaxed text-muted">
+              {[name, city].filter(Boolean).join(" · ")}
+              {email && <><br />Confirmation sent to {email}</>}
+            </p>
+          )}
+        </div>
+      )
+    }
+
+    <div class="mt-9 rounded-[20px] border border-sand bg-sand-soft/60 p-7">
+      <h2 class="font-display text-lg font-semibold">What happens next</h2>
+      <ol class="mt-4 space-y-3 text-[15px] leading-relaxed text-body">
+        <li><span class="font-mono text-[12.5px] text-muted">01 —</span> We email you to confirm your address and move-in date.</li>
+        <li><span class="font-mono text-[12.5px] text-muted">02 —</span> We deliver everything in one drop, in cooperation with LOAS.</li>
+        <li><span class="font-mono text-[12.5px] text-muted">03 —</span> You pay the remaining balance in cash when it arrives.</li>
+      </ol>
+    </div>
+
+    <div class="mt-9 flex flex-wrap gap-3.5">
+      <a
+        href="/"
+        class="rounded-full bg-amber px-7 py-4 font-display text-base font-semibold text-ink no-underline shadow-[0_14px_30px_-14px_rgba(232,154,44,.8)] transition-transform hover:-translate-y-0.5"
+        >Back to MoiKit</a
+      >
+      <a
+        href="mailto:moi@moikit.fi"
+        class="rounded-full border-[1.5px] border-teal px-[26px] py-4 font-display text-base font-semibold text-teal no-underline transition-colors hover:bg-teal hover:text-cream"
+        >Question about my order</a
+      >
+    </div>
+  </section>
+</Base>

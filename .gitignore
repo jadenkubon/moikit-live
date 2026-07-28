@@ -5,3 +5,10 @@ dist/
 
 # generated image pipeline cache
 .image-cache/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
