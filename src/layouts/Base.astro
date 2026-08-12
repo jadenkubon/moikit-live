@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import ComingSoonBanner from "../components/ComingSoonBanner.astro";
+import ComingSoonModal from "../components/ComingSoonModal.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
@@ -28,9 +28,9 @@ const { title, description } = Astro.props;
     />
   </head>
   <body>
-    <ComingSoonBanner />
     <Header />
     <slot />
     <Footer />
+    <ComingSoonModal />
   </body>
 </html>

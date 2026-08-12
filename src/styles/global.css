@@ -30,15 +30,11 @@
   }
 }
 
-:root {
-  /* Height of the sticky coming-soon banner; the header sticks below it. */
-  --banner-h: 44px;
-}
-
-@media (max-width: 640px) {
-  :root {
-    --banner-h: 68px;
-  }
+/* While the coming-soon modal is present, the page behind it cannot scroll.
+   CSS-only so the lock holds even if the modal's script never runs. */
+html:has(.coming-soon-modal),
+body:has(.coming-soon-modal) {
+  overflow: hidden;
 }
 
 html {

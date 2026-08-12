@@ -1,0 +1,58 @@
+---
+const formUrl = "https://tally.so/r/WOBxka";
+---
+
+<div
+  class="coming-soon-modal fixed inset-0 z-100 flex items-center justify-center overflow-y-auto bg-ink/80 p-4 backdrop-blur-md"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="coming-soon-title"
+>
+  <div
+    class="my-auto w-full max-w-[520px] rounded-[26px] border border-sand bg-cream px-6 py-10 text-center shadow-[0_30px_80px_-30px_rgba(22,33,31,.6)] sm:px-10"
+  >
+    <span
+      class="mx-auto block h-[56px] w-[56px] bg-[url('/uploads/moikit-logo-192.webp')] bg-[length:150%] bg-[position:center_24%] bg-no-repeat"
+    ></span>
+
+    <p class="mt-5 font-mono text-[11.5px] uppercase tracking-[.2em] text-rust">
+      MoiKit &mdash; Lappeenranta
+    </p>
+
+    <h1
+      id="coming-soon-title"
+      class="mt-3 font-display text-[clamp(34px,7vw,46px)] font-bold leading-[1.05] tracking-[-.025em] text-ink"
+    >
+      Coming soon
+    </h1>
+
+    <p class="mx-auto mt-4 max-w-[42ch] text-[15.5px] leading-[1.55] text-body">
+      We&rsquo;re putting the finishing touches on our kits. Leave your details and
+      we&rsquo;ll let you know the moment MoiKit opens for orders.
+    </p>
+
+    <a
+      href={formUrl}
+      target="_blank"
+      rel="noopener"
+      class="mt-7 inline-block rounded-full bg-amber px-7 py-4 font-display text-[16px] font-semibold text-ink no-underline shadow-[0_14px_30px_-14px_rgba(232,154,44,.8)] transition-transform hover:-translate-y-0.5"
+    >
+      Shop now
+    </a>
+
+    <p class="mt-5 font-mono text-[11.5px] uppercase tracking-[.16em] text-muted">
+      One delivery &ensp;◆&ensp; Ready when you arrive
+    </p>
+  </div>
+</div>
+
+<script>
+  // Keep focus and assistive tech inside the dialog: everything else is inert.
+  const modal = document.querySelector(".coming-soon-modal");
+  if (modal) {
+    for (const el of Array.from(document.body.children)) {
+      if (el !== modal && !(el instanceof HTMLScriptElement)) el.setAttribute("inert", "");
+    }
+    (modal.querySelector("a") as HTMLAnchorElement | null)?.focus();
+  }
+</script>
