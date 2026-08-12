@@ -30,6 +30,17 @@
   }
 }
 
+:root {
+  /* Height of the sticky coming-soon banner; the header sticks below it. */
+  --banner-h: 44px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --banner-h: 68px;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
