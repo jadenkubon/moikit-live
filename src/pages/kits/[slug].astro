@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import RelatedKits from "../../components/RelatedKits.astro";
 import Lightbox from "../../components/Lightbox.astro";
+import { LEGAL_LINKS } from "../../lib/legal";
 import {
   KITS,
   ROOM_META,
@@ -185,10 +186,43 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
         </div>
         <div class="mt-2 font-mono text-[11.5px] text-cream/60">+ {eur(SHIPPING_EUR)} delivery — in cooperation with LOAS</div>
 
+        <!-- TERMS ACCEPTANCE — required before checkout can start.
+             Wording is deliberately "read and accept", not "I consent to my data
+             being stored": the name/address/phone on an order are processed to
+             perform the sale (GDPR Art. 6(1)(b)) and kept for six years for
+             accounting (Art. 6(1)(c)). Neither is withdrawable, so calling it
+             consent would promise a control that does not exist. What is
+             recorded is the consumer-law fact that the terms were shown and
+             agreed to. Never pre-ticked, never restored from localStorage —
+             acceptance has to be a fresh act each time an order is placed. -->
+        <label
+          for="accept-terms"
+          class="mt-5 flex cursor-pointer items-start gap-2.5 rounded-xl border border-cream/15 px-3 py-2.5 transition-colors has-[:checked]:border-amber/40"
+        >
+          <input
+            type="checkbox"
+            id="accept-terms"
+            class="mt-[3px] h-[15px] w-[15px] shrink-0 cursor-pointer accent-amber"
+          />
+          <span class="text-[12.5px] leading-relaxed text-cream/75">
+            I have read and accept the
+            <a href={LEGAL_LINKS.terms} class="text-amber underline underline-offset-2">Terms of Sale</a>
+            and the
+            <a href={LEGAL_LINKS.privacy} class="text-amber underline underline-offset-2">Privacy Notice</a>,
+            including how my delivery details are stored and used to fulfil this order.
+          </span>
+        </label>
+        <p
+          id="accept-error"
+          hidden
+          role="alert"
+          class="mt-2 text-center font-mono text-[11px] leading-relaxed text-amber"
+        >Please tick the box above before paying.</p>
+
         <button
           type="button"
           data-pay
-          class="mt-5 block w-full cursor-pointer rounded-full bg-amber px-4 py-[15px] text-center font-display text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
+          class="mt-3 block w-full cursor-pointer rounded-full bg-amber px-4 py-[15px] text-center font-display text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
         >Pay with Stripe</button>
         <p class="mt-3 text-center font-mono text-[11px] leading-relaxed text-cream/60">
           Pay a <span id="sum-deposit" class="text-amber"></span> deposit online now (50%), the rest
@@ -369,12 +403,33 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
     render();
   });
 
+  // Terms acceptance gate. The server refuses a checkout without it too — this
+  // is only so the customer finds out here rather than after a round-trip.
+  const acceptBox = document.getElementById("accept-terms");
+  const acceptError = document.getElementById("accept-error");
+  acceptBox.checked = false; // never inherit a tick from bfcache or a reload
+  acceptBox.addEventListener("change", () => {
+    if (acceptBox.checked) acceptError.hidden = true;
+  });
+
+  /** True if the box is ticked; otherwise surfaces the error and focuses it. */
+  function ensureAccepted() {
+    if (acceptBox.checked) return true;
+    acceptError.hidden = false;
+    // The bottom CTA sits a long way from the checkbox — bring it into view or
+    // the click looks like it simply did nothing.
+    acceptBox.scrollIntoView({ block: "center", behavior: "smooth" });
+    acceptBox.focus({ preventScroll: true });
+    return false;
+  }
+
   // Pay with Stripe → snapshot the current builder cart and start checkout.
   async function startCheckout(btn) {
     const lines = rows
       .map((row) => ({ key: row.dataset.key, quantity: qFor(row) }))
       .filter((l) => l.quantity > 0);
     if (lines.length === 0) { alert("Add at least one item to your kit first."); return; }
+    if (!ensureAccepted()) return;
     const label = btn.textContent;
     btn.disabled = true;
     btn.textContent = "Redirecting…";
@@ -382,7 +437,7 @@ const clientKit = { slug: kit.slug, rooms: kit.rooms };
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ tier: clientKit.slug, lines }),
+        body: JSON.stringify({ tier: clientKit.slug, lines, accepted: true }),
       });
       const data = await res.json();
       if (data && data.url) { window.location.href = data.url; return; }

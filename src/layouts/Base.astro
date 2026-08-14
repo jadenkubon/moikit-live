@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
-import ComingSoonModal from "../components/ComingSoonModal.astro";
+// Coming-soon gate: re-enable by importing ComingSoonModal and rendering it as
+// the last child of <body>. Off while we test the live checkout.
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
@@ -31,6 +32,5 @@ const { title, description } = Astro.props;
     <Header />
     <slot />
     <Footer />
-    <ComingSoonModal />
   </body>
 </html>

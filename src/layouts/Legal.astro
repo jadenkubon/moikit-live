@@ -1,0 +1,75 @@
+---
+// -----------------------------------------------------------------------------
+// Shared chrome for the three legal pages (/legal/*). Keeps the heading block,
+// version stamp, draft banner and cross-links identical across all of them, so
+// the only thing each page has to supply is its actual text.
+//
+// The prose styles live in src/styles/global.css under `.legal` — scoped styles
+// declared here would never reach <slot>ed content. See the note there.
+// -----------------------------------------------------------------------------
+import Base from "./Base.astro";
+import DraftNotice from "../components/DraftNotice.astro";
+import { LEGAL_VERSION, LEGAL_LINKS } from "../lib/legal";
+
+interface Props {
+  /** Short label above the title, e.g. "Privacy". */
+  eyebrow: string;
+  /** H1. */
+  heading: string;
+  /** One-line summary under the H1, also used as the meta description. */
+  intro: string;
+  /** <title> text, without the " — MoiKit" suffix. */
+  title: string;
+}
+
+const { eyebrow, heading, intro, title } = Astro.props;
+
+const nav = [
+  { href: LEGAL_LINKS.terms, label: "Terms of Sale" },
+  { href: LEGAL_LINKS.withdrawal, label: "Right of Withdrawal" },
+  { href: LEGAL_LINKS.privacy, label: "Privacy Notice" },
+];
+// Trailing slashes vary between `astro dev` and the built output, so normalise
+// both sides before comparing — otherwise a page links to itself.
+const slug = (p: string) => p.replace(/\/+$/, "");
+const here = slug(Astro.url.pathname);
+---
+
+<Base title={`${title} — MoiKit`} description={intro}>
+  <section class="mx-auto max-w-[820px] px-7 pt-11 pb-[76px]">
+    <a href="/" class="font-mono text-[12.5px] tracking-[.08em] text-muted no-underline">← Back to MoiKit</a>
+
+    <div class="mt-6 font-mono text-xs uppercase tracking-[.2em] text-rust">{eyebrow}</div>
+    <h1 class="mt-3 font-display text-4xl font-bold leading-[1.05] tracking-[-.025em] md:text-[46px]">
+      {heading}
+    </h1>
+    <p class="mt-[18px] max-w-[600px] text-[17px] leading-relaxed text-body">{intro}</p>
+    <p class="mt-4 font-mono text-[12px] tracking-[.04em] text-muted-2">
+      Version {LEGAL_VERSION} · MoiKit Oy, Lappeenranta, Finland
+    </p>
+
+    <DraftNotice />
+
+    <div class="legal mt-10">
+      <slot />
+    </div>
+
+    <nav class="mt-14 border-t border-sand pt-7">
+      <div class="font-mono text-[11px] uppercase tracking-[.2em] text-muted">The other documents</div>
+      <div class="mt-3.5 flex flex-wrap gap-3">
+        {nav
+          .filter((n) => slug(n.href) !== here)
+          .map((n) => (
+            <a
+              href={n.href}
+              class="rounded-full border-[1.5px] border-teal px-5 py-2.5 font-display text-[14.5px] font-semibold text-teal no-underline transition-colors hover:bg-teal hover:text-cream"
+            >{n.label}</a>
+          ))}
+        <a
+          href="mailto:moi@moikit.fi"
+          class="rounded-full bg-amber px-5 py-2.5 font-display text-[14.5px] font-semibold text-ink no-underline"
+        >moi@moikit.fi</a>
+      </div>
+    </nav>
+  </section>
+</Base>

@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import Stripe from "stripe";
 import { kitBySlug, SHIPPING_EUR } from "../../data/kits";
+import { LEGAL_VERSION } from "../../lib/legal";
 
 // Server-rendered on the Worker (not prerendered).
 export const prerender = false;
@@ -15,8 +16,12 @@ export const prerender = false;
 // payment succeeds. Prices come from kits.ts here, so a tampered client payload
 // can never change what is charged.
 //
-// Request:  { tier: "basic"|"premium"|"platinum", lines: [{ key, quantity }] }
-//   where `key` is the builder's data-key, "<section>-<index>" (e.g. "bedroom-0").
+// Request:  { tier, lines: [{ key, quantity }], accepted: true }
+//   where `key` is the builder's data-key, "<section>-<index>" (e.g. "bedroom-0")
+//   and `accepted` is the buyer ticking "I have read and accept the Terms of
+//   Sale and Privacy Notice". Enforced HERE as well as in the builder UI: a
+//   checkbox is a client-side nicety, and the acceptance we later write to the
+//   order row has to mean something, so a request without it is refused.
 // Env (Cloudflare secret): STRIPE_SECRET_KEY
 // -----------------------------------------------------------------------------
 
@@ -40,12 +45,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json({ error: "Checkout is not configured yet." }, 503);
   }
 
-  let payload: { tier?: string; lines?: CartLine[] };
+  let payload: { tier?: string; lines?: CartLine[]; accepted?: boolean };
   try {
     payload = await request.json();
   } catch {
     return json({ error: "Invalid request." }, 400);
   }
+
+  // Strictly `true` — not truthy. "false", 0 and "" must all fail closed.
+  if (payload.accepted !== true) {
+    return json(
+      { error: "Please accept the Terms of Sale and Privacy Notice before paying." },
+      400,
+    );
+  }
+  // Timestamped here, not in the webhook: this is the moment the buyer clicked,
+  // and the webhook may not fire for another minute or more.
+  const acceptedAt = new Date().toISOString();
 
   const tier = String(payload.tier ?? "").toLowerCase();
   if (!TIERS.has(tier)) {
@@ -128,6 +144,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
         tier,
         stamp,
         cart,
+        // Terms acceptance, packed into ONE short key so it costs the metadata
+        // budget almost nothing: "<version>@<ISO timestamp>". The webhook splits
+        // it on the first "@" into orders.terms_version / terms_accepted_at.
+        tos: `${LEGAL_VERSION}@${acceptedAt}`,
         items_subtotal_cents: String(subtotalCents),
         shipping_cents: String(shippingCents),
         deposit_cents: String(depositCents),

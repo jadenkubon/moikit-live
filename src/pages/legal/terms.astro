@@ -1,0 +1,280 @@
+---
+// =============================================================================
+// DRAFT PREPARED BY AN AI ASSISTANT — NOT LEGAL ADVICE.
+// These terms of sale must be reviewed and approved by a qualified Finnish
+// lawyer before MoiKit relies on them. Every <span class="todo"> marks a fact
+// only the business can supply (Y-tunnus, registered address, VAT number,
+// return-collection cost, delivery area). Drafted against the Finnish Consumer
+// Protection Act (kuluttajansuojalaki 38/1978), chapters 5 and 6, and the EU
+// Consumer Rights Directive 2011/83/EU as amended.
+// =============================================================================
+import Legal from "../../layouts/Legal.astro";
+import { LEGAL_LINKS } from "../../lib/legal";
+import { SHIPPING_EUR, eur } from "../../data/kits";
+---
+
+<Legal
+  title="Terms of Sale"
+  eyebrow="Terms · Myyntiehdot"
+  heading="How buying a kit works."
+  intro={`You pay half by card today and half in cash when the kit arrives at your door. These terms set out exactly what that means, what is included in the price, where we deliver, and what happens when something goes wrong.`}
+>
+  <section>
+    <span class="num">01 — Who you are buying from</span>
+    <h2>The seller</h2>
+    <ul>
+      <li><strong>MoiKit Oy</strong>, Lappeenranta, Finland</li>
+      <li>Business ID (Y-tunnus): <span class="todo">TODO: Y-tunnus</span></li>
+      <li>VAT number (ALV-numero): <span class="todo">TODO: FI-number, or state that MoiKit is not VAT-registered</span></li>
+      <li>Registered and complaints address: <span class="todo">TODO: street, postal code, Lappeenranta</span></li>
+      <li>Email: <a href="mailto:moi@moikit.fi">moi@moikit.fi</a> · Instagram: <a href="https://instagram.com/moi.kit_fi">@moi.kit_fi</a></li>
+    </ul>
+    <p>
+      These terms apply to every order placed at moikit.fi by a consumer. Where they conflict with
+      mandatory Finnish consumer law, that law wins and these terms are read accordingly — nothing
+      here removes a right you have under the Consumer Protection Act (kuluttajansuojalaki 38/1978).
+    </p>
+  </section>
+
+  <section>
+    <span class="num">02 — Prices</span>
+    <h2>What the numbers on the site mean</h2>
+    <ul>
+      <li>All prices are in <strong>euros (EUR)</strong> and are shown per item.</li>
+      <li>
+        Prices are <strong>gross: they include Finnish VAT at 25.5%</strong>, the standard rate in
+        force since 1 September 2024. There is no VAT to add at checkout.
+        <span class="todo">TODO: only true if MoiKit Oy is VAT-registered — if turnover is under the €20,000 threshold and no registration exists, this sentence must be replaced with "the seller is not liable for VAT (arvonlisäverolaki 3 §)"</span>
+      </li>
+      <li>
+        <strong>Delivery costs {eur(SHIPPING_EUR)}</strong> per order, flat, however many items you
+        take. It is added once, at checkout, and is shown before you pay.
+      </li>
+      <li>
+        The kit builder's running total is the price of the items you have kept. Your
+        <strong>order total is that figure plus the {eur(SHIPPING_EUR)} delivery fee</strong>, and
+        that total is confirmed on screen before you are asked for any money.
+      </li>
+      <li>
+        We may change catalogue prices at any time, but never after you have placed an order — the
+        prices that bind us are the ones displayed when you paid your deposit.
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="num">03 — Placing an order</span>
+    <h2>How the contract is formed</h2>
+    <ol>
+      <li>You build your kit, keeping or dropping items and adjusting quantities.</li>
+      <li>
+        You tick the box confirming you have read and accept these terms and the
+        <a href={LEGAL_LINKS.privacy}>Privacy Notice</a>. Checkout cannot start until you do.
+      </li>
+      <li>
+        You are taken to Stripe's secure payment page, where you enter your name, email, phone
+        number, delivery address and card details, and pay the deposit.
+      </li>
+      <li>
+        <strong>The contract is formed when your deposit payment succeeds.</strong> You then see a
+        confirmation page with your order reference and the exact balance due in cash.
+      </li>
+    </ol>
+    <p>
+      We check your order against our own catalogue before charging anything, so what you are billed
+      always matches the prices published on this site. If something in your order is unavailable we
+      will contact you and either agree a substitute with you or refund the affected part.
+    </p>
+    <p>
+      <strong>Keep your order reference.</strong> It appears on the confirmation page and on your
+      Stripe card receipt, and it is how we find your order if you contact us.
+      <span class="todo">TODO: automated order confirmation email is not operational yet — until it is, the confirmation page is the customer's only copy and this section should say so plainly</span>
+    </p>
+  </section>
+
+  <section>
+    <span class="num">04 — Paying</span>
+    <h2>50% deposit by card, 50% cash on delivery</h2>
+    <p>
+      MoiKit is paid in two parts, and both parts are stated to you before you commit:
+    </p>
+    <dl class="rows">
+      <div>
+        <dt>Part one — the deposit, paid online now</dt>
+        <dd>
+          <strong>50% of the full order total</strong> (your items plus the {eur(SHIPPING_EUR)}
+          delivery fee), charged to your card through Stripe at the moment you order. Rounded to the
+          nearest cent. Cards accepted are whatever Stripe offers you on its payment page.
+        </dd>
+      </div>
+      <div>
+        <dt>Part two — the balance, paid in cash on delivery</dt>
+        <dd>
+          <strong>The remaining 50%, in cash, to the person who delivers your kit</strong>, at the
+          moment of delivery. The exact euro amount is shown on your confirmation page. Please have
+          it ready: we cannot take cards, mobile payments or bank transfers at the door.
+          <span class="todo">TODO: confirm whether change can be given, and whether any alternative to cash will be accepted at the door</span>
+        </dd>
+      </div>
+    </dl>
+    <p>
+      You are entitled to a receipt for the cash payment, and we will give you one at the door.
+      Ownership of the goods passes to you once the full price has been paid; the risk of loss or
+      damage passes to you when the kit is handed over.
+    </p>
+    <p>
+      Card payments are processed by Stripe. MoiKit never sees or stores your card number — see the
+      <a href={LEGAL_LINKS.privacy}>Privacy Notice</a> for what Stripe receives.
+    </p>
+  </section>
+
+  <section>
+    <span class="num">05 — Delivery</span>
+    <h2>Where, when and how</h2>
+    <h3>Delivery area</h3>
+    <p>
+      We deliver in <strong>Lappeenranta, Finland</strong>, in cooperation with LOAS
+      (Lappeenrannan seudun opiskelija-asuntosäätiö), to student housing and other addresses in the
+      area. We do not deliver outside Finland.
+      <span class="todo">TODO: define the delivery area precisely — the checkout currently accepts any Finnish address, so either restrict it or state here what happens to an order from outside the area</span>
+    </p>
+    <p>
+      If you place an order for an address we cannot serve, we will contact you as soon as we notice,
+      and if we cannot agree an alternative we will cancel the order and refund your deposit in full.
+    </p>
+
+    <h3>Timing</h3>
+    <p>
+      Delivery is arranged with you individually — usually around your move-in date. After you order
+      we contact you to agree a date and a time window. Everything arrives in a
+      <strong>single drop</strong>; we do not part-ship.
+    </p>
+    <p>
+      Where no specific date has been agreed, we will deliver without undue delay and in any case
+      within <strong>30 days</strong> of the order, as required by the Consumer Protection Act. If we
+      are late, you may set us a reasonable additional deadline, and if we miss that too you may
+      cancel the order and get a full refund of everything you have paid.
+    </p>
+
+    <h3>If delivery fails</h3>
+    <p>
+      Delivery needs you, or someone you have authorised, to be there — to let us in, to receive the
+      goods and to pay the cash balance. If that does not happen:
+    </p>
+    <ul>
+      <li>
+        <strong>Nobody is there, or we cannot get access.</strong> We will contact you and arrange
+        one further delivery attempt at no extra cost. If a second attempt also fails, any further
+        attempt may be charged at our reasonable actual cost, which we will tell you in advance.
+      </li>
+      <li>
+        <strong>The cash balance is not available.</strong> We are not obliged to hand over the goods
+        before the balance is paid. We will agree another date with you.
+      </li>
+      <li>
+        <strong>Repeated failure.</strong> If, after reasonable attempts and a written reminder, the
+        kit still cannot be delivered, we may cancel the order. We will refund your deposit less our
+        reasonable, documented costs actually incurred (such as the delivery attempts). We will not
+        keep the deposit as a penalty, and we will show you the figures.
+        <span class="todo">TODO: have a lawyer check this cancellation and cost-deduction clause against KSL chapter 5 — an unfair standard term is void</span>
+      </li>
+      <li>
+        <strong>Wrong address.</strong> Tell us as soon as you can if your address or move-in date
+        changes; once the kit is loaded we may not be able to redirect it without cost.
+      </li>
+    </ul>
+    <p>
+      None of the above affects your 14-day right to withdraw — see the
+      <a href={LEGAL_LINKS.withdrawal}>Right of Withdrawal</a> page.
+    </p>
+  </section>
+
+  <section>
+    <span class="num">06 — If something is wrong</span>
+    <h2>Faults, damage and missing items</h2>
+    <p>
+      Check your kit when it arrives. If an item is missing, damaged, or not what was ordered, tell
+      us at <a href="mailto:moi@moikit.fi">moi@moikit.fi</a> with your order reference and a photo,
+      and we will sort it out.
+    </p>
+    <p>
+      Under the Consumer Protection Act we are liable for defects that existed at delivery. Goods
+      must match their description, be fit for their normal purpose and be of the durability a
+      consumer can reasonably expect. Where a defect appears within one year of delivery it is
+      presumed to have existed at delivery unless we can show otherwise. There is no fixed time
+      limit on your right to complain, but you must complain within a reasonable time of noticing
+      the defect — and two months is always reasonable.
+    </p>
+    <p>
+      For a defective item you may require repair or replacement; if that is impossible or
+      disproportionate, or we do not do it within a reasonable time, you may require a price
+      reduction or cancel that part of the purchase. We sell everyday household goods and do not
+      offer a separate commercial guarantee beyond your statutory rights.
+    </p>
+  </section>
+
+  <section>
+    <span class="num">07 — Cancelling</span>
+    <h2>Your 14-day right of withdrawal</h2>
+    <p>
+      As a distance-selling customer you have the right to withdraw from your order within
+      <strong>14 days of receiving the goods</strong>, without giving a reason. How to do it, what
+      happens to your deposit, and the limited cases where the right does not apply are all set out
+      on the <a href={LEGAL_LINKS.withdrawal}>Right of Withdrawal</a> page, which forms part of these
+      terms.
+    </p>
+    <p>
+      Before delivery you can simply ask us to cancel — email us and we will refund your deposit in
+      full.
+    </p>
+  </section>
+
+  <section>
+    <span class="num">08 — Other terms</span>
+    <h2>The remaining details</h2>
+    <h3>Circumstances beyond our control</h3>
+    <p>
+      We are not liable for delay or failure caused by events outside our reasonable control —
+      severe weather, a supplier's failure, strike, or similar. We will tell you as soon as we can
+      and agree a new date or cancel and refund what you have paid.
+    </p>
+
+    <h3>Age</h3>
+    <p>
+      You must be at least 18 to order, or have your guardian's consent.
+    </p>
+
+    <h3>Complaints and disputes</h3>
+    <p>
+      Please contact us first at <a href="mailto:moi@moikit.fi">moi@moikit.fi</a> — most problems are
+      solved in a message or two. If we cannot agree, you can get free help and a decision
+      recommendation from:
+    </p>
+    <ul>
+      <li>
+        <strong>Consumer Advisory Services</strong> (Kuluttajaneuvonta), run by the Finnish
+        Competition and Consumer Authority — <a href="https://www.kkv.fi/en/consumer-advice/">kkv.fi</a>
+      </li>
+      <li>
+        <strong>Consumer Disputes Board</strong> (Kuluttajariitalautakunta) —
+        <a href="https://www.kuluttajariita.fi/en/index.html">kuluttajariita.fi</a>. Contact Consumer
+        Advisory Services before filing.
+      </li>
+    </ul>
+    <p>
+      You may also bring a case in the district court of your own place of residence.
+    </p>
+
+    <h3>Governing law</h3>
+    <p>
+      Finnish law applies to these terms and to your purchase.
+    </p>
+
+    <h3>Changes</h3>
+    <p>
+      We may update these terms. The version that applies to your purchase is the one published when
+      you ordered — its version number is shown at the top of this page and is stored with your
+      order.
+    </p>
+  </section>
+</Legal>

@@ -1,0 +1,350 @@
+---
+// =============================================================================
+// DRAFT PREPARED BY AN AI ASSISTANT — NOT LEGAL ADVICE.
+// This privacy notice (tietosuojaseloste) must be reviewed and approved by a
+// qualified Finnish lawyer or data protection adviser before MoiKit relies on
+// it. Every <span class="todo"> below marks a fact only the business can supply
+// (Y-tunnus, registered address, VAT number, processor contracts). Written to
+// GDPR Articles 13 and 14; it reflects the code in this repository as of the
+// version stamp below and MUST be re-checked whenever the data flow changes.
+// =============================================================================
+import Legal from "../../layouts/Legal.astro";
+import { LEGAL_LINKS } from "../../lib/legal";
+---
+
+<Legal
+  title="Privacy Notice"
+  eyebrow="Privacy · Tietosuojaseloste"
+  heading="What we do with your details."
+  intro="We ask for a name, an address and a phone number because we have to carry a box of things to your door. This notice says exactly what we hold, who else sees it, how long we keep it, and what you can make us do about it."
+>
+  <section>
+    <span class="num">01 — Who is responsible</span>
+    <h2>The controller</h2>
+    <p>
+      The data controller (<em>rekisterinpitäjä</em>) for the processing described here is:
+    </p>
+    <ul>
+      <li><strong>MoiKit Oy</strong></li>
+      <li>Business ID (Y-tunnus): <span class="todo">TODO: Y-tunnus</span></li>
+      <li>Registered address: <span class="todo">TODO: street, postal code, Lappeenranta</span></li>
+      <li>Email: <a href="mailto:moi@moikit.fi">moi@moikit.fi</a></li>
+      <li>Instagram: <a href="https://instagram.com/moi.kit_fi">@moi.kit_fi</a></li>
+    </ul>
+    <p>
+      Email is the fastest way to reach us about anything in this notice. MoiKit is a small business
+      and has not appointed a Data Protection Officer; we are not required to, because we do not
+      carry out large-scale monitoring or process special categories of data. Privacy questions go
+      to the address above and are answered by the owner.
+    </p>
+  </section>
+
+  <section>
+    <span class="num">02 — What we hold</span>
+    <h2>The data, and why we have each piece</h2>
+    <p>
+      Almost everything below comes from you, at the moment you place an order. We do not buy data,
+      we do not enrich it from other sources, and we do not build profiles.
+    </p>
+
+    <dl class="rows">
+      <div>
+        <dt>Order and delivery details</dt>
+        <dd>
+          Your name, email address, phone number, street address, postal code and city. Collected by
+          Stripe's checkout form and passed to us.
+          <br /><strong>Purpose:</strong> to take the order, agree a delivery time, deliver the kit
+          to the right door and collect the cash balance.
+          <br /><strong>Legal basis:</strong> Article 6(1)(b) GDPR — necessary to perform the sales
+          contract you entered into, and to take steps at your request before it.
+        </dd>
+      </div>
+      <div>
+        <dt>The order itself</dt>
+        <dd>
+          Which kit you chose, every item and quantity, unit prices, the delivery fee, the VAT rate
+          applied, the deposit you paid, the balance due in cash, the currency, our internal order
+          reference, and the times the order was created and paid.
+          <br /><strong>Purpose:</strong> to know what to pack, what you owe, and what you were
+          charged if you later query it.
+          <br /><strong>Legal basis:</strong> Article 6(1)(b) — performance of the contract; and
+          Article 6(1)(c) — our statutory bookkeeping duty (see section 05).
+        </dd>
+      </div>
+      <div>
+        <dt>Payment references</dt>
+        <dd>
+          The identifiers Stripe gives your payment (a checkout session ID and a payment intent ID)
+          and the amount captured. <strong>We never receive or store your card number</strong> — the
+          card details are typed into Stripe's own page and never touch MoiKit's systems.
+          <br /><strong>Legal basis:</strong> Article 6(1)(b), and Article 6(1)(c) for accounting.
+        </dd>
+      </div>
+      <div>
+        <dt>Your acceptance of the terms</dt>
+        <dd>
+          When you tick the box at checkout we store the fact that you did, which version of the
+          Terms of Sale and this notice you accepted, and the timestamp.
+          <br /><strong>Purpose:</strong> so that if there is ever a dispute about what was agreed,
+          both of us can see the actual wording that applied.
+          <br /><strong>Legal basis:</strong> Article 6(1)(f) — our legitimate interest in being able
+          to evidence the contract terms. This record does not change your rights and cannot be used
+          for anything else.
+        </dd>
+      </div>
+      <div>
+        <dt>Messages you send us</dt>
+        <dd>
+          Emails and Instagram messages, and whatever you choose to put in them.
+          <br /><strong>Legal basis:</strong> Article 6(1)(b) if it concerns your order, otherwise
+          Article 6(1)(f) — our legitimate interest in answering people who contact us.
+        </dd>
+      </div>
+      <div>
+        <dt>Technical request data</dt>
+        <dd>
+          When you load moikit.fi our infrastructure provider processes the usual request metadata:
+          IP address, browser user-agent, the page requested, and the time. This is standard web
+          serving and security filtering, not analytics — we have not installed any analytics or
+          advertising tracking on this site.
+          <br /><strong>Legal basis:</strong> Article 6(1)(f) — legitimate interest in delivering the
+          site and protecting it from abuse.
+        </dd>
+      </div>
+      <div>
+        <dt>Your kit configuration, in your own browser</dt>
+        <dd>
+          The kit builder remembers which items you kept or dropped by saving them in your browser's
+          local storage (keys named <code>moikit-cfg-basic</code> and similar). This never leaves
+          your device until you actually place an order, we cannot read it, and clearing your
+          browser data deletes it. We set <strong>no advertising or analytics cookies</strong>, which
+          is why this site shows you no cookie banner.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section>
+    <span class="num">03 — A note on "consent"</span>
+    <h2>Why the checkbox is not a consent form</h2>
+    <p>
+      The box you tick at checkout says you have <em>read and accept</em> the Terms of Sale and this
+      notice. It is deliberately not phrased as "I consent to my data being stored", because that
+      would misdescribe what is happening. We cannot deliver a kit without your address, and Finnish
+      accounting law requires us to keep the sales record for six years. That processing rests on
+      Articles 6(1)(b) and 6(1)(c) GDPR, not on your consent — so it would be dishonest to imply you
+      could withdraw it and make the order data disappear.
+    </p>
+    <p>
+      Where we ever do rely on consent — for example if we later add a marketing newsletter — it
+      will be asked for separately, never bundled into the checkout, and you will be able to
+      withdraw it at any time as easily as you gave it. We currently run no marketing list.
+    </p>
+  </section>
+
+  <section>
+    <span class="num">04 — Who else sees it</span>
+    <h2>Recipients, processors and where the data physically sits</h2>
+    <p>
+      We do not sell your data and we do not share it with anyone who does not need it to get your
+      kit to you. The following parties are involved:
+    </p>
+
+    <dl class="rows">
+      <div>
+        <dt>Stripe — payment</dt>
+        <dd>
+          Stripe Payments Europe, Limited (Ireland), with its group companies including Stripe, Inc.
+          (United States). Stripe operates the checkout page, so it receives your <strong>name,
+          email, phone number, delivery address, card details and the amount</strong>. Stripe acts
+          partly under our instructions and partly as an <strong>independent controller</strong> in
+          its own right, because it has its own legal duties around payments, fraud prevention and
+          anti-money-laundering. Its own privacy policy governs that part:
+          <a href="https://stripe.com/privacy">stripe.com/privacy</a>. Transfers to the United States
+          are covered by the EU Standard Contractual Clauses and Stripe's certification under the
+          EU–U.S. Data Privacy Framework.
+        </dd>
+      </div>
+      <div>
+        <dt>Cloudflare — hosting and delivery of this website</dt>
+        <dd>
+          Cloudflare, Inc. and its EU entity host moikit.fi as a Cloudflare Worker and sit in front
+          of every request. Cloudflare therefore processes your <strong>IP address and request
+          metadata</strong>, and your order data passes through it in transit while the order is
+          being written. Cloudflare acts as our processor under its data processing addendum, with
+          Standard Contractual Clauses for any transfer outside the EEA.
+        </dd>
+      </div>
+      <div>
+        <dt>Supabase — the order database</dt>
+        <dd>
+          Your order record — <strong>name, email, phone, address, the itemised list, amounts and
+          payment references</strong> — is stored in a PostgreSQL database operated by Supabase, Inc.
+          The database instance is hosted <strong>inside the European Union, in Frankfurt, Germany
+          (eu-central-1)</strong>, so the data sits at rest in the EEA. Supabase is a US company, so
+          administrative or support access from outside the EEA is possible and is covered by
+          Standard Contractual Clauses in its data processing agreement.
+          <span class="todo">TODO: confirm the signed Supabase DPA is on file</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Delivery — LOAS and our delivery helpers</dt>
+        <dd>
+          We deliver in cooperation with LOAS (Lappeenrannan seudun opiskelija-asuntosäätiö) and
+          whoever physically carries the boxes. To do that they are told your
+          <strong>name, delivery address, phone number and the agreed delivery time</strong> — not
+          your payment details.
+          <span class="todo">TODO: confirm LOAS's exact role and put a written data-sharing arrangement in place</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Email providers</dt>
+        <dd>
+          Order confirmations and our internal "new order" alert are sent through Cloudflare Email
+          Routing and Resend (Resend, Inc.), which receive your <strong>name, email address, order
+          contents and delivery address</strong> in the body of those messages.
+          <span class="todo">TODO: automated order email is not operational yet — confirm before relying on this paragraph</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Our accountant and the authorities</dt>
+        <dd>
+          Sales records go to whoever keeps MoiKit's books, and to the Finnish Tax Administration or
+          another authority where the law requires it.
+          <span class="todo">TODO: name the accounting firm, or delete this row if the books are kept in-house</span>
+        </dd>
+      </div>
+    </dl>
+
+    <h3>Transfers outside the EEA</h3>
+    <p>
+      Your order data is stored in the EU. Some of the providers above are US-headquartered and may
+      access data from outside the EEA for support and operations. Those transfers rely on the
+      European Commission's Standard Contractual Clauses and, where the provider is certified, on
+      the EU–U.S. Data Privacy Framework. You can ask us for a copy of the safeguards that apply.
+    </p>
+  </section>
+
+  <section>
+    <span class="num">05 — How long</span>
+    <h2>Retention</h2>
+    <ul>
+      <li>
+        <strong>Order and payment records: six years from the end of the accounting year in which
+        the order was placed.</strong> This is not our choice — the Finnish Accounting Act
+        (kirjanpitolaki 1336/1997, chapter 2, section 10) requires it, and GDPR Article 17(3)(b)
+        means we cannot delete these records early even if you ask.
+      </li>
+      <li>
+        <strong>Contact details attached to an order:</strong> kept for the same period, then
+        anonymised in place — the sales figures remain in the books, the name, email, phone and
+        address are stripped out. (The order table carries an <code>anonymised_at</code> column for
+        exactly this.)
+        <span class="todo">TODO: the anonymisation routine still has to be built and scheduled</span>
+      </li>
+      <li>
+        <strong>Email and Instagram correspondence:</strong> kept while it is useful for support, and
+        in any case no longer than the order retention period above.
+      </li>
+      <li>
+        <strong>Technical request logs:</strong> retained for the short period our infrastructure
+        providers apply by default, typically days rather than months.
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="num">06 — Your rights</span>
+    <h2>What you can require of us</h2>
+    <p>
+      Under the GDPR you have the following rights. Exercise any of them by emailing
+      <a href="mailto:moi@moikit.fi">moi@moikit.fi</a>. We answer within one month, and we may ask
+      you a question or two to be sure we are talking to the right person before we send anything
+      out. It is free; we only charge if a request is manifestly unfounded or repetitive.
+    </p>
+    <ul>
+      <li>
+        <strong>Access</strong> (Art. 15) — a copy of the personal data we hold about you, and the
+        explanation of how we use it.
+      </li>
+      <li>
+        <strong>Rectification</strong> (Art. 16) — correction of anything wrong or incomplete. If
+        your address changed before delivery, tell us and we will fix it.
+      </li>
+      <li>
+        <strong>Erasure</strong> (Art. 17) — deletion of your data. In practice this applies to
+        anything outside our statutory bookkeeping duty: once an order is a bookkeeping record, we
+        must keep it for six years, and we will tell you plainly if that is why we cannot delete.
+      </li>
+      <li>
+        <strong>Restriction</strong> (Art. 18) — you can require us to stop using data while a
+        dispute about its accuracy or our legal basis is resolved.
+      </li>
+      <li>
+        <strong>Portability</strong> (Art. 20) — the data you gave us, in a machine-readable file,
+        for the processing based on contract or consent.
+      </li>
+      <li>
+        <strong>Objection</strong> (Art. 21) — you can object to processing we base on legitimate
+        interest, and we then stop unless we can show compelling grounds that override your
+        interests. If we ever do direct marketing, an objection to that is absolute.
+      </li>
+      <li>
+        <strong>Withdrawal of consent</strong> (Art. 7(3)) — where we ever rely on consent, you can
+        withdraw it at any time without affecting what was lawful beforehand.
+      </li>
+      <li>
+        <strong>No automated decision-making</strong> — we do not profile you and no decision about
+        you is made automatically within the meaning of Article 22.
+      </li>
+    </ul>
+
+    <h3>Complaining to the regulator</h3>
+    <p>
+      If you think we have handled your data unlawfully, please tell us first — it is usually the
+      fastest fix. You also have the right to lodge a complaint with the Finnish supervisory
+      authority, at no cost:
+    </p>
+    <ul>
+      <li><strong>Office of the Data Protection Ombudsman</strong> (Tietosuojavaltuutetun toimisto)</li>
+      <li>Postal: PL 800, 00531 Helsinki</li>
+      <li>Visiting: Lintulahdenkuja 4, 00530 Helsinki</li>
+      <li>Switchboard +358 29 566 6700 · Registry +358 29 566 6768</li>
+      <li>Email: tietosuoja(at)om.fi · <a href="https://tietosuoja.fi/en/home">tietosuoja.fi</a></li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="num">07 — Keeping it safe</span>
+    <h2>Security</h2>
+    <ul>
+      <li>The whole site is served over HTTPS; card details go straight to Stripe and never through us.</li>
+      <li>
+        The database is reached with least-privilege accounts. The component that writes an order
+        after payment can <strong>insert</strong> rows and nothing else — it cannot read back
+        customers' details. Reading orders requires a separate, restricted account.
+      </li>
+      <li>Row-level security is enabled on the order tables, and access is granted per role.</li>
+      <li>Secrets (payment keys, database credentials) are held in the hosting platform's secret store, not in the site's code.</li>
+      <li>
+        If a breach ever puts your rights at risk we will notify the Data Protection Ombudsman within
+        72 hours and tell you directly where the law requires it.
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="num">08 — Changes</span>
+    <h2>Updates to this notice</h2>
+    <p>
+      We version this document rather than silently editing it. The version stamp at the top of the
+      page tells you which wording is current, and the version you accepted when you ordered is
+      stored with your order. If we change anything that materially affects you, we will say so on
+      this page and, where the change requires it, contact you directly.
+    </p>
+    <p>
+      See also the <a href={LEGAL_LINKS.terms}>Terms of Sale</a> and the
+      <a href={LEGAL_LINKS.withdrawal}>Right of Withdrawal</a> policy.
+    </p>
+  </section>
+</Legal>

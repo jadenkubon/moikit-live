@@ -72,6 +72,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
     })
     .filter(Boolean) as { sku: string; name: string; section: string; unit: number; quantity: number }[];
 
+  // Terms acceptance, written in the same INSERT as the order it belongs to.
+  // Format is "<version>@<ISO timestamp>" (see /api/checkout). Split on the
+  // FIRST "@" only — the timestamp contains none, but a future version string
+  // might, and a mangled record is worse than a null one. Anything unparseable
+  // stays null rather than becoming a fabricated acceptance.
+  const tosRaw = String(md.tos ?? "");
+  const at = tosRaw.indexOf("@");
+  const termsVersion = at > 0 ? tosRaw.slice(0, at) : null;
+  const termsAcceptedAtRaw = at > 0 ? tosRaw.slice(at + 1) : "";
+  const termsAcceptedAt = Number.isFinite(Date.parse(termsAcceptedAtRaw))
+    ? termsAcceptedAtRaw
+    : null;
+
   const shippingCents = Number(md.shipping_cents ?? 0) || 0;
   const amountCharged = session.amount_total ?? Number(md.deposit_cents ?? 0);
   const cust = session.customer_details;
@@ -108,13 +121,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
           stripe_payment_intent_id, stripe_checkout_session_id,
           amount_charged_cents, shipping_cents, currency,
           customer_name, customer_email, customer_phone,
-          address_line, address_postal, address_city, paid_at
+          address_line, address_postal, address_city, paid_at,
+          terms_version, terms_accepted_at
         ) values (
           ${stamp}, ${tier}, 'ok',
           ${(session.payment_intent as string | null) ?? null}, ${session.id},
           ${amountCharged}, ${shippingCents}, ${(session.currency ?? "eur").toUpperCase()},
           ${ship?.name ?? cust?.name ?? null}, ${cust?.email ?? null}, ${cust?.phone ?? null},
-          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, now()
+          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, now(),
+          ${termsVersion}, ${termsAcceptedAt}
         )
         on conflict (stamp) do nothing
         returning id
