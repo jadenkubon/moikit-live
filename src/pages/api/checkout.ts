@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import Stripe from "stripe";
 import { kitBySlug, SHIPPING_EUR } from "../../data/kits";
 import { LEGAL_VERSION } from "../../lib/legal";
-import { SALES_ENABLED } from "../../lib/sales";
 
 // Server-rendered on the Worker (not prerendered).
 export const prerender = false;
@@ -41,12 +40,6 @@ interface CartLine {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Server-side kill switch — enforced before anything else, regardless of
-  // how the request arrives (UI, curl, replayed fetch). See src/lib/sales.ts.
-  if (!SALES_ENABLED) {
-    return json({ error: "MoiKit isn't taking orders yet." }, 503);
-  }
-
   const env = (locals as any).runtime?.env ?? {};
   if (!env.STRIPE_SECRET_KEY) {
     return json({ error: "Checkout is not configured yet." }, 503);
