@@ -45,12 +45,23 @@ export interface NotifyOrder {
   addressLine: string | null;
   addressPostal: string | null;
   addressCity: string | null;
+  deliveryDate: string | null; // requested delivery date, ISO "YYYY-MM-DD"
 }
 
 const eur = (cents: number) => "€" + (cents / 100).toFixed(2);
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+// Requested delivery date ISO "YYYY-MM-DD" → "Fri, 12 Sep 2026" (UTC), or null.
+function fmtDeliveryDate(iso: string | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso + "T00:00:00Z");
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-GB", {
+    weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
+  });
+}
 
 /** Split a "Name <addr@host>" or bare "addr@host" header into parts. */
 function parseAddress(header: string): { name: string; addr: string } | null {
@@ -78,13 +89,19 @@ function itemRows(o: NotifyOrder) {
 function moneyBlock(o: NotifyOrder) {
   const total = o.subtotalCents + o.shippingCents;
   const balance = Math.max(0, total - o.depositCents);
+  // Only show the deposit/cash-on-delivery split when a balance is actually
+  // owed. A paid-in-full order gets a single "paid in full" line instead.
+  const tail =
+    balance > 0
+      ? `<tr><td style="padding:4px 0;color:#1F3A3D">Deposit paid online</td><td style="padding:4px 0;text-align:right;color:#1F3A3D">− ${eur(o.depositCents)}</td></tr>
+      <tr><td style="padding:10px 12px;background:#FBEBD3;font-weight:700;border-radius:6px">Balance — cash on delivery</td><td style="padding:10px 12px;background:#FBEBD3;text-align:right;font-weight:700;border-radius:6px">${eur(balance)}</td></tr>`
+      : `<tr><td style="padding:10px 12px;background:#DDF0E4;font-weight:700;border-radius:6px">Paid in full — nothing due on delivery</td><td style="padding:10px 12px;background:#DDF0E4;text-align:right;font-weight:700;border-radius:6px">${eur(o.depositCents)}</td></tr>`;
   return `
     <table style="width:100%;border-collapse:collapse;font:15px/1.5 -apple-system,Segoe UI,sans-serif;margin-top:14px;border-top:1px solid #E4D8C4;padding-top:8px">
       <tr><td style="padding:4px 0;color:#4a534f">Items</td><td style="padding:4px 0;text-align:right;color:#4a534f">${eur(o.subtotalCents)}</td></tr>
       <tr><td style="padding:4px 0;color:#4a534f">Delivery</td><td style="padding:4px 0;text-align:right;color:#4a534f">${eur(o.shippingCents)}</td></tr>
       <tr><td style="padding:6px 0;font-weight:600;border-top:1px solid #E4D8C4">Total</td><td style="padding:6px 0;text-align:right;font-weight:600;border-top:1px solid #E4D8C4">${eur(total)}</td></tr>
-      <tr><td style="padding:4px 0;color:#1F3A3D">Deposit paid online</td><td style="padding:4px 0;text-align:right;color:#1F3A3D">− ${eur(o.depositCents)}</td></tr>
-      <tr><td style="padding:10px 12px;background:#FBEBD3;font-weight:700;border-radius:6px">Balance — cash on delivery</td><td style="padding:10px 12px;background:#FBEBD3;text-align:right;font-weight:700;border-radius:6px">${eur(balance)}</td></tr>
+      ${tail}
     </table>`;
 }
 
@@ -131,7 +148,8 @@ async function sendOwnerAlert(env: any, o: NotifyOrder): Promise<void> {
         <h2 style="font-size:19px;margin:0 0 4px">New order — ${esc(o.kitName)}</h2>
         <p style="margin:0 0 16px;color:#8a8175;font-size:13px">REF ${esc(o.ref)} · tier ${esc(o.tier)}</p>
         <h3 style="font-size:15px;margin:0 0 6px">Deliver to</h3>
-        <p style="margin:0 0 18px;color:#4a534f">${addressBlock(o)}</p>
+        <p style="margin:0 0 6px;color:#4a534f">${addressBlock(o)}</p>
+        ${fmtDeliveryDate(o.deliveryDate) ? `<p style="margin:0 0 18px;color:#B5623C;font-weight:600">Requested delivery: ${fmtDeliveryDate(o.deliveryDate)}</p>` : `<p style="margin:0 0 18px;color:#8a8175;font-size:13px">No delivery date requested</p>`}
         <h3 style="font-size:15px;margin:0 0 6px">Items to pack (${o.lines.length})</h3>
         <table style="width:100%;border-collapse:collapse">${itemRows(o)}</table>
         ${moneyBlock(o)}
@@ -161,21 +179,23 @@ async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void>
 
   const first = o.customerName ? esc(o.customerName.split(" ")[0]) : "";
   const balanceCents = o.subtotalCents + o.shippingCents - o.depositCents;
+  const delivery = fmtDeliveryDate(o.deliveryDate);
 
   const html = `<div style="max-width:560px;font:15px/1.5 -apple-system,Segoe UI,sans-serif;color:#16211F">
     <h2 style="font-size:19px;margin:0 0 4px">Kiitos${first ? ", " + first : ""} — your kit is booked.</h2>
-    <p style="margin:0 0 16px;color:#4a534f">Your deposit is paid. We'll be in touch to confirm the delivery date for your address in Lappeenranta.</p>
+    <p style="margin:0 0 16px;color:#4a534f">${balanceCents > 0 ? "Your deposit is paid." : "Your order is paid in full."}${delivery ? ` You've requested delivery on <strong style="color:#16211F">${delivery}</strong> — we'll confirm it and the drop-off time with you.` : " We'll be in touch to confirm your delivery date for your address in Lappeenranta."}</p>
     <p style="margin:0 0 16px;color:#8a8175;font-size:13px">Order reference <strong style="color:#16211F">${esc(o.ref)}</strong></p>
     <h3 style="font-size:15px;margin:0 0 6px">${esc(o.kitName)}</h3>
     <table style="width:100%;border-collapse:collapse">${itemRows(o)}</table>
     ${moneyBlock(o)}
     <h3 style="font-size:15px;margin:22px 0 6px">Deliver to</h3>
-    <p style="margin:0 0 18px;color:#4a534f">${addressBlock(o)}</p>
+    <p style="margin:0 0 6px;color:#4a534f">${addressBlock(o)}</p>
+    ${delivery ? `<p style="margin:0 0 18px;color:#8a8175;font-size:13px">Requested delivery date: <strong style="color:#16211F">${delivery}</strong></p>` : ""}
     <h3 style="font-size:15px;margin:22px 0 6px">What happens next</h3>
     <ol style="margin:0 0 18px;padding-left:18px;color:#4a534f">
       <li>We email you to confirm your address and move-in date.</li>
       <li>We deliver everything in one drop, in cooperation with LOAS.</li>
-      <li>You pay the remaining balance in cash when it arrives.</li>
+      ${balanceCents > 0 ? `<li>You pay the remaining balance (${eur(balanceCents)}) in cash when it arrives.</li>` : ""}
     </ol>
     <p style="margin:0;color:#8a8175;font-size:13px">Questions? Just reply to this email.</p>
   </div>`;
@@ -183,22 +203,25 @@ async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void>
   // Plain-text alternative — better deliverability and covers text-only clients.
   const text = [
     `Kiitos${o.customerName ? ", " + o.customerName.split(" ")[0] : ""} — your kit is booked.`,
-    `Your deposit is paid. We'll confirm your delivery date separately.`,
+    balanceCents > 0 ? `Your deposit is paid.` : `Your order is paid in full.`,
+    delivery ? `Requested delivery date: ${delivery} (we'll confirm it with you).` : `We'll confirm your delivery date separately.`,
     ``,
     `Order reference: ${o.ref}`,
     `Kit: ${o.kitName}`,
     ...o.lines.map((l) => `  ${l.quantity} x ${l.name} — ${eur(l.unit * l.quantity)}`),
     ``,
-    `Deposit paid today: ${eur(o.depositCents)}`,
-    `Balance due in cash on delivery: ${eur(balanceCents)}`,
+    ...(balanceCents > 0
+      ? [`Deposit paid today: ${eur(o.depositCents)}`, `Balance due in cash on delivery: ${eur(balanceCents)}`]
+      : [`Paid in full today: ${eur(o.depositCents)} — nothing due on delivery.`]),
     ``,
     `Deliver to:`,
     [o.customerName, o.addressLine, [o.addressPostal, o.addressCity].filter(Boolean).join(" ")]
       .filter((p) => p && String(p).trim())
       .join(", "),
     ``,
-    `What happens next: we confirm your address and move-in date, deliver everything`,
-    `in one drop (with LOAS), and you pay the remaining balance in cash on delivery.`,
+    balanceCents > 0
+      ? `What happens next: we confirm your address and move-in date, deliver everything in one drop, and you pay the remaining balance in cash on delivery.`
+      : `What happens next: we confirm your address and move-in date, then deliver everything in one drop.`,
     ``,
     `Questions? Just reply to this email.`,
   ].join("\n");

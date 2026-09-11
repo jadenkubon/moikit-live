@@ -91,6 +91,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const ship = (session as any).shipping_details ?? null;
   const addr = ship?.address ?? cust?.address ?? null;
 
+  // Requested delivery date from the Checkout custom field. The dropdown only
+  // offers valid dates (earliest tomorrow), so the value is a trusted ISO date.
+  const deliveryField = (session.custom_fields ?? []).find((f) => f.key === "delivery_date");
+  const deliveryDate = (deliveryField as any)?.dropdown?.value || null;
+
   // Through Hyperdrive the Worker talks to a local endpoint (Hyperdrive owns the
   // origin TLS) — forcing client SSL there would break it. Only require SSL on a
   // direct Supabase connection.
@@ -121,14 +126,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
           stripe_payment_intent_id, stripe_checkout_session_id,
           amount_charged_cents, shipping_cents, currency,
           customer_name, customer_email, customer_phone,
-          address_line, address_postal, address_city, paid_at,
+          address_line, address_postal, address_city, delivery_date, paid_at,
           terms_version, terms_accepted_at
         ) values (
           ${stamp}, ${tier}, 'ok',
           ${(session.payment_intent as string | null) ?? null}, ${session.id},
           ${amountCharged}, ${shippingCents}, ${(session.currency ?? "eur").toUpperCase()},
           ${ship?.name ?? cust?.name ?? null}, ${cust?.email ?? null}, ${cust?.phone ?? null},
-          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, now(),
+          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, ${deliveryDate}, now(),
           ${termsVersion}, ${termsAcceptedAt}
         )
         on conflict (stamp) do nothing
@@ -170,6 +175,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       addressLine: addr?.line1 ?? null,
       addressPostal: addr?.postal_code ?? null,
       addressCity: addr?.city ?? null,
+      deliveryDate,
     });
   }
 

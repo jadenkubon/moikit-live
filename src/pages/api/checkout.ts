@@ -40,6 +40,29 @@ interface CartLine {
   quantity: number;
 }
 
+// Requested delivery date choices for the Stripe custom field. Stripe Checkout
+// has no native date type, so we offer a dropdown — which lets us ENFORCE the
+// rule "earliest = the day after the order" by only listing valid dates. The
+// next 28 days starting TOMORROW (index 1, never same-day). Value is the ISO
+// date the webhook stores; label is what the buyer sees. Worker runs in UTC.
+function deliveryDateOptions(): { label: string; value: string }[] {
+  const opts: { label: string; value: string }[] = [];
+  const base = Date.now();
+  for (let i = 1; i <= 28; i++) {
+    const d = new Date(base + i * 86_400_000);
+    opts.push({
+      value: d.toISOString().slice(0, 10),
+      label: d.toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+    });
+  }
+  return opts;
+}
+
 export const POST: APIRoute = async ({ request, locals }) => {
   // Server-side kill switch — enforced before anything else, regardless of
   // how the request arrives (UI, curl, replayed fetch). See src/lib/sales.ts.
@@ -139,6 +162,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
       ],
       shipping_address_collection: { allowed_countries: ["FI"] },
       phone_number_collection: { enabled: true },
+      // Requested delivery date — dropdown enforces "earliest tomorrow". The
+      // webhook reads session.custom_fields[key=delivery_date].dropdown.value.
+      custom_fields: [
+        {
+          key: "delivery_date",
+          label: { type: "custom", custom: "Requested delivery date (earliest tomorrow)" },
+          type: "dropdown",
+          dropdown: { options: deliveryDateOptions() },
+        },
+      ],
       // Stamp the PaymentIntent itself with our order REF, so the charge is
       // labelled in the Stripe dashboard (and on any Stripe receipt) with an
       // identifier support can search — closing the Stripe↔order loop from the
