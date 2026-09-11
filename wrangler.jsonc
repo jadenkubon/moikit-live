@@ -14,6 +14,18 @@
     "binding": "ASSETS",
     "directory": "dist"
   },
+
+  // Owner "new order" alert email, sent from the Stripe webhook via Cloudflare
+  // Email Routing (see src/lib/notify.ts → sendOwnerAlert). The binding is
+  // restricted to the owner's VERIFIED Email Routing destination.
+  "send_email": [
+    { "name": "OWNER_EMAILER", "destination_address": "moikit.fi@proton.me" }
+  ],
+  "vars": {
+    "OWNER_EMAIL": "moikit.fi@proton.me",
+    "ORDER_FROM": "MoiKit <orders@moikit.fi>"
+  },
+
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
