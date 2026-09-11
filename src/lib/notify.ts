@@ -46,6 +46,7 @@ export interface NotifyOrder {
   addressPostal: string | null;
   addressCity: string | null;
   deliveryDate: string | null; // requested delivery date, ISO "YYYY-MM-DD"
+  deliveryWindow: string | null; // preferred time window, e.g. "10:00–11:00"
 }
 
 const eur = (cents: number) => "€" + (cents / 100).toFixed(2);
@@ -149,7 +150,7 @@ async function sendOwnerAlert(env: any, o: NotifyOrder): Promise<void> {
         <p style="margin:0 0 16px;color:#8a8175;font-size:13px">REF ${esc(o.ref)} · tier ${esc(o.tier)}</p>
         <h3 style="font-size:15px;margin:0 0 6px">Deliver to</h3>
         <p style="margin:0 0 6px;color:#4a534f">${addressBlock(o)}</p>
-        ${fmtDeliveryDate(o.deliveryDate) ? `<p style="margin:0 0 18px;color:#B5623C;font-weight:600">Requested delivery: ${fmtDeliveryDate(o.deliveryDate)}</p>` : `<p style="margin:0 0 18px;color:#8a8175;font-size:13px">No delivery date requested</p>`}
+        ${fmtDeliveryDate(o.deliveryDate) ? `<p style="margin:0 0 18px;color:#B5623C;font-weight:600">Requested delivery: ${fmtDeliveryDate(o.deliveryDate)}${o.deliveryWindow ? `, ${o.deliveryWindow}` : ""}</p>` : `<p style="margin:0 0 18px;color:#8a8175;font-size:13px">No delivery date/time requested</p>`}
         <h3 style="font-size:15px;margin:0 0 6px">Items to pack (${o.lines.length})</h3>
         <table style="width:100%;border-collapse:collapse">${itemRows(o)}</table>
         ${moneyBlock(o)}
@@ -179,7 +180,8 @@ async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void>
 
   const first = o.customerName ? esc(o.customerName.split(" ")[0]) : "";
   const balanceCents = o.subtotalCents + o.shippingCents - o.depositCents;
-  const delivery = fmtDeliveryDate(o.deliveryDate);
+  const deliveryD = fmtDeliveryDate(o.deliveryDate);
+  const delivery = deliveryD ? deliveryD + (o.deliveryWindow ? `, ${o.deliveryWindow}` : "") : null;
 
   const html = `<div style="max-width:560px;font:15px/1.5 -apple-system,Segoe UI,sans-serif;color:#16211F">
     <h2 style="font-size:19px;margin:0 0 4px">Kiitos${first ? ", " + first : ""} — your kit is booked.</h2>

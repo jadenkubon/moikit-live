@@ -100,6 +100,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     ? `${deliveryRaw.slice(0, 4)}-${deliveryRaw.slice(4, 6)}-${deliveryRaw.slice(6, 8)}`
     : null;
 
+  // Preferred delivery time window: value is the 2-digit start hour → "HH:00–HH:00".
+  const timeField = (session.custom_fields ?? []).find((f) => f.key === "delivery_time");
+  const th = parseInt((timeField as any)?.dropdown?.value ?? "", 10);
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+  const deliveryWindow =
+    Number.isInteger(th) && th >= 0 && th < 24 ? `${pad2(th)}:00–${pad2(th + 1)}:00` : null;
+
   // Through Hyperdrive the Worker talks to a local endpoint (Hyperdrive owns the
   // origin TLS) — forcing client SSL there would break it. Only require SSL on a
   // direct Supabase connection.
@@ -130,14 +137,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
           stripe_payment_intent_id, stripe_checkout_session_id,
           amount_charged_cents, shipping_cents, currency,
           customer_name, customer_email, customer_phone,
-          address_line, address_postal, address_city, delivery_date, paid_at,
+          address_line, address_postal, address_city, delivery_date, delivery_window, paid_at,
           terms_version, terms_accepted_at
         ) values (
           ${stamp}, ${tier}, 'ok',
           ${(session.payment_intent as string | null) ?? null}, ${session.id},
           ${amountCharged}, ${shippingCents}, ${(session.currency ?? "eur").toUpperCase()},
           ${ship?.name ?? cust?.name ?? null}, ${cust?.email ?? null}, ${cust?.phone ?? null},
-          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, ${deliveryDate}, now(),
+          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, ${deliveryDate}, ${deliveryWindow}, now(),
           ${termsVersion}, ${termsAcceptedAt}
         )
         on conflict (stamp) do nothing
@@ -180,6 +187,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       addressPostal: addr?.postal_code ?? null,
       addressCity: addr?.city ?? null,
       deliveryDate,
+      deliveryWindow,
     });
   }
 

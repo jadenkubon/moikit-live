@@ -65,6 +65,17 @@ function deliveryDateOptions(): { label: string; value: string }[] {
   return opts;
 }
 
+// Preferred delivery time windows, hourly, 09:00–20:00. Value is the 2-digit
+// start hour (alphanumeric, per Stripe); the webhook renders "HH:00–HH:00".
+function deliveryTimeOptions(): { label: string; value: string }[] {
+  const p = (n: number) => String(n).padStart(2, "0");
+  const opts: { label: string; value: string }[] = [];
+  for (let h = 9; h <= 19; h++) {
+    opts.push({ value: p(h), label: `${p(h)}:00 – ${p(h + 1)}:00` });
+  }
+  return opts;
+}
+
 export const POST: APIRoute = async ({ request, locals }) => {
   // Server-side kill switch — enforced before anything else, regardless of
   // how the request arrives (UI, curl, replayed fetch). See src/lib/sales.ts.
@@ -172,6 +183,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
           label: { type: "custom", custom: "Requested delivery date (earliest tomorrow)" },
           type: "dropdown",
           dropdown: { options: deliveryDateOptions() },
+        },
+        {
+          key: "delivery_time",
+          label: { type: "custom", custom: "Preferred delivery time" },
+          type: "dropdown",
+          dropdown: { options: deliveryTimeOptions() },
         },
       ],
       // Stamp the PaymentIntent itself with our order REF, so the charge is
