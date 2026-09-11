@@ -112,7 +112,16 @@ async function sendOwnerAlert(env: any, o: NotifyOrder): Promise<void> {
     msg.setSender({ name: sender.name || "MoiKit", addr: sender.addr });
     msg.setRecipient(owner);
     // A customer reply-to means the owner can answer the buyer straight from the alert.
-    if (o.customerEmail) msg.setHeader("Reply-To", o.customerEmail);
+    // mimetext parses address headers as Mailboxes and REJECTS a bare "a@b.com"
+    // (it wants the object/angle-bracket form), so pass { addr } — and guard it,
+    // because a malformed customer email must never sink the whole owner alert.
+    if (o.customerEmail && o.customerEmail.includes("@")) {
+      try {
+        msg.setHeader("Reply-To", { addr: o.customerEmail });
+      } catch {
+        /* unparseable address — send the alert without a Reply-To */
+      }
+    }
     msg.setSubject(
       `New MoiKit order ${o.ref} — ${o.kitName} (${eur(o.depositCents)} deposit paid)`,
     );
