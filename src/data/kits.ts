@@ -9,7 +9,7 @@
 
 import { ITEM_IMAGES, type ItemImage } from "./itemImages";
 
-export const SHIPPING_EUR = 30; // delivered in cooperation with LOAS
+export const SHIPPING_EUR = 30; // flat delivery fee
 
 export interface KitItem {
   item: string;
@@ -176,7 +176,7 @@ export const COMPARISON_ROWS = [
 export const FAQS = [
   {
     q: "Do I need to be home for the delivery?",
-    a: "No. Tell us the address and your move-in date and we deliver so your kit is waiting. Delivery is €30, handled in cooperation with LOAS. If you'd like it set up inside, mention it in your order notes.",
+    a: "No. Tell us the address and your move-in date and we deliver so your kit is waiting. Delivery is €30. If you'd like it set up inside, mention it in your order notes.",
   },
   {
     q: "Can I change what's in a kit or order a single room?",
@@ -184,7 +184,7 @@ export const FAQS = [
   },
   {
     q: "Where do you deliver?",
-    a: "Lappeenranta and the surrounding area, in cooperation with LOAS. We're based here, so most orders arrive quickly. Ask us if you're just outside the city.",
+    a: "Lappeenranta and the surrounding area. We're based here, so most orders arrive quickly. Ask us if you're just outside the city.",
   },
   {
     q: "How do I pay?",

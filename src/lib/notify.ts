@@ -196,7 +196,7 @@ async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void>
     <h3 style="font-size:15px;margin:22px 0 6px">What happens next</h3>
     <ol style="margin:0 0 18px;padding-left:18px;color:#4a534f">
       <li>We email you to confirm your address and move-in date.</li>
-      <li>We deliver everything in one drop, in cooperation with LOAS.</li>
+      <li>We deliver everything in one drop.</li>
       ${balanceCents > 0 ? `<li>You pay the remaining balance (${eur(balanceCents)}) in cash when it arrives.</li>` : ""}
     </ol>
     <p style="margin:0;color:#8a8175;font-size:13px">Questions? Just reply to this email.</p>
