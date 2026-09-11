@@ -51,7 +51,9 @@ function deliveryDateOptions(): { label: string; value: string }[] {
   for (let i = 1; i <= 28; i++) {
     const d = new Date(base + i * 86_400_000);
     opts.push({
-      value: d.toISOString().slice(0, 10),
+      // Stripe requires alphanumeric-only dropdown values, so no hyphens:
+      // "20260912". The webhook expands it back to an ISO date.
+      value: d.toISOString().slice(0, 10).replace(/-/g, ""),
       label: d.toLocaleDateString("en-GB", {
         weekday: "short",
         day: "numeric",

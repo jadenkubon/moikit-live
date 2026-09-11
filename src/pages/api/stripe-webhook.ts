@@ -94,7 +94,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // Requested delivery date from the Checkout custom field. The dropdown only
   // offers valid dates (earliest tomorrow), so the value is a trusted ISO date.
   const deliveryField = (session.custom_fields ?? []).find((f) => f.key === "delivery_date");
-  const deliveryDate = (deliveryField as any)?.dropdown?.value || null;
+  const deliveryRaw = (deliveryField as any)?.dropdown?.value || "";
+  // Stored as "YYYYMMDD" (Stripe values are alphanumeric-only) → expand to ISO.
+  const deliveryDate = /^\d{8}$/.test(deliveryRaw)
+    ? `${deliveryRaw.slice(0, 4)}-${deliveryRaw.slice(4, 6)}-${deliveryRaw.slice(6, 8)}`
+    : null;
 
   // Through Hyperdrive the Worker talks to a local endpoint (Hyperdrive owns the
   // origin TLS) — forcing client SSL there would break it. Only require SSL on a

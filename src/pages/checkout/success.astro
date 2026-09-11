@@ -57,7 +57,8 @@ if (sessionId.startsWith("cs_") && env.STRIPE_SECRET_KEY) {
       ref = String(md.stamp ?? "").slice(0, 8).toUpperCase() || null;
 
       const df = (session.custom_fields ?? []).find((f: any) => f.key === "delivery_date");
-      deliveryDate = (df as any)?.dropdown?.value || null;
+      const dv = (df as any)?.dropdown?.value || "";
+      deliveryDate = /^\d{8}$/.test(dv) ? `${dv.slice(0, 4)}-${dv.slice(4, 6)}-${dv.slice(6, 8)}` : null;
 
       // Same resolution the webhook does: cart keys → authoritative kits.ts rows.
       const tier = String(md.tier ?? "");
