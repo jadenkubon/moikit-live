@@ -19,7 +19,11 @@
   // Email Routing (see src/lib/notify.ts → sendOwnerAlert). The binding is
   // restricted to the owner's VERIFIED Email Routing destination.
   "send_email": [
-    { "name": "OWNER_EMAILER", "destination_address": "moikit.fi@proton.me" }
+    // Owner alert → restricted to the owner's verified Email Routing destination.
+    { "name": "OWNER_EMAILER", "destination_address": "moikit.fi@proton.me" },
+    // Customer confirmation → unrestricted; sends to any buyer via Cloudflare
+    // Email Sending (moikit.fi is onboarded, DKIM cf-bounce + DMARC in place).
+    { "name": "CUSTOMER_EMAILER" }
   ],
   "vars": {
     "OWNER_EMAIL": "moikit.fi@proton.me",

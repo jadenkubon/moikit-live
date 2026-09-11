@@ -145,21 +145,32 @@ async function sendOwnerAlert(env: any, o: NotifyOrder): Promise<void> {
   }
 }
 
-// --- customer confirmation: Resend -------------------------------------------
+// --- customer confirmation: Cloudflare Email Sending -------------------------
+// Sent via the UNRESTRICTED `CUSTOMER_EMAILER` send binding (moikit.fi is
+// onboarded to Email Sending: DKIM `cf-bounce`, DMARC in place), so it can reach
+// any buyer's inbox — unlike the owner alert, which is restricted to a verified
+// Email Routing destination. Uses the object send API (not raw MIME), so the
+// address headers are handled by Cloudflare, not mimetext.
 
 async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void> {
-  const apiKey = env?.RESEND_API_KEY;
-  const from = env?.ORDER_FROM;
+  const binding = env?.CUSTOMER_EMAILER;
+  const sender = env?.ORDER_FROM ? parseAddress(env.ORDER_FROM) : null;
   const owner = env?.OWNER_EMAIL;
-  if (!apiKey || !from || !o.customerEmail) return; // not configured / no address
+  // Needs the send binding, a valid sender identity, and a usable buyer address.
+  if (!binding || !sender || !o.customerEmail || !o.customerEmail.includes("@")) return;
+
+  const first = o.customerName ? esc(o.customerName.split(" ")[0]) : "";
+  const balanceCents = o.subtotalCents + o.shippingCents - o.depositCents;
 
   const html = `<div style="max-width:560px;font:15px/1.5 -apple-system,Segoe UI,sans-serif;color:#16211F">
-    <h2 style="font-size:19px;margin:0 0 4px">Kiitos${o.customerName ? ", " + esc(o.customerName.split(" ")[0]) : ""} — your kit is booked.</h2>
+    <h2 style="font-size:19px;margin:0 0 4px">Kiitos${first ? ", " + first : ""} — your kit is booked.</h2>
     <p style="margin:0 0 16px;color:#4a534f">Your deposit is paid. We'll be in touch to confirm the delivery date for your address in Lappeenranta.</p>
     <p style="margin:0 0 16px;color:#8a8175;font-size:13px">Order reference <strong style="color:#16211F">${esc(o.ref)}</strong></p>
     <h3 style="font-size:15px;margin:0 0 6px">${esc(o.kitName)}</h3>
     <table style="width:100%;border-collapse:collapse">${itemRows(o)}</table>
     ${moneyBlock(o)}
+    <h3 style="font-size:15px;margin:22px 0 6px">Deliver to</h3>
+    <p style="margin:0 0 18px;color:#4a534f">${addressBlock(o)}</p>
     <h3 style="font-size:15px;margin:22px 0 6px">What happens next</h3>
     <ol style="margin:0 0 18px;padding-left:18px;color:#4a534f">
       <li>We email you to confirm your address and move-in date.</li>
@@ -169,24 +180,41 @@ async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void>
     <p style="margin:0;color:#8a8175;font-size:13px">Questions? Just reply to this email.</p>
   </div>`;
 
+  // Plain-text alternative — better deliverability and covers text-only clients.
+  const text = [
+    `Kiitos${o.customerName ? ", " + o.customerName.split(" ")[0] : ""} — your kit is booked.`,
+    `Your deposit is paid. We'll confirm your delivery date separately.`,
+    ``,
+    `Order reference: ${o.ref}`,
+    `Kit: ${o.kitName}`,
+    ...o.lines.map((l) => `  ${l.quantity} x ${l.name} — ${eur(l.unit * l.quantity)}`),
+    ``,
+    `Deposit paid today: ${eur(o.depositCents)}`,
+    `Balance due in cash on delivery: ${eur(balanceCents)}`,
+    ``,
+    `Deliver to:`,
+    [o.customerName, o.addressLine, [o.addressPostal, o.addressCity].filter(Boolean).join(" ")]
+      .filter((p) => p && String(p).trim())
+      .join(", "),
+    ``,
+    `What happens next: we confirm your address and move-in date, deliver everything`,
+    `in one drop (with LOAS), and you pay the remaining balance in cash on delivery.`,
+    ``,
+    `Questions? Just reply to this email.`,
+  ].join("\n");
+
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
-      body: JSON.stringify({
-        from,
-        to: o.customerEmail,
-        // `from` is a send-only identity; point replies at a mailbox a human reads.
-        ...(owner ? { reply_to: owner } : {}),
-        subject: `Your MoiKit order is confirmed (${o.ref})`,
-        html,
-      }),
+    await binding.send({
+      to: o.customerEmail,
+      from: { email: sender.addr, name: sender.name || "MoiKit" },
+      // Replies go to a mailbox a human reads, not the send-only From identity.
+      ...(owner ? { replyTo: owner } : {}),
+      subject: `Your MoiKit order is confirmed (${o.ref})`,
+      html,
+      text,
     });
-    if (!res.ok) {
-      console.error("resend send failed", res.status, await res.text().catch(() => ""));
-    }
   } catch (err) {
-    console.error("customer email (resend) failed", err);
+    console.error("customer email (cloudflare) failed", err);
   }
 }
 
