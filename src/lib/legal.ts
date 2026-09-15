@@ -12,7 +12,7 @@
 // points at a version you have since overwritten proves nothing.
 // -----------------------------------------------------------------------------
 
-export const LEGAL_VERSION = "2026-08-14";
+export const LEGAL_VERSION = "2026-09-15";
 
 /** Canonical URLs, so the checkbox label, the footer and the pages agree. */
 export const LEGAL_LINKS = {

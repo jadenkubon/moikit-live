@@ -3,8 +3,9 @@
 // DRAFT PREPARED BY AN AI ASSISTANT — NOT LEGAL ADVICE.
 // This privacy notice (tietosuojaseloste) must be reviewed and approved by a
 // qualified Finnish lawyer or data protection adviser before MoiKit relies on
-// it. Every <span class="todo"> below marks a fact only the business can supply
-// (Y-tunnus, registered address, VAT number, processor contracts). Written to
+// it. Every <span class="todo">OWNER INPUT NEEDED</span> below marks a fact or a
+// decision only the business can supply (Y-tunnus, registered address, the
+// Supabase DPA, the accountant, the anonymisation routine). Written to
 // GDPR Articles 13 and 14; it reflects the code in this repository as of the
 // version stamp below and MUST be re-checked whenever the data flow changes.
 // =============================================================================
@@ -26,8 +27,8 @@ import { LEGAL_LINKS } from "../../lib/legal";
     </p>
     <ul>
       <li><strong>MoiKit Oy</strong></li>
-      <li>Business ID (Y-tunnus): <span class="todo">TODO: Y-tunnus</span></li>
-      <li>Registered address: <span class="todo">TODO: street, postal code, Lappeenranta</span></li>
+      <li>Business ID (Y-tunnus): <span class="todo">OWNER INPUT NEEDED: Y-tunnus (business ID)</span></li>
+      <li>Registered address: <span class="todo">OWNER INPUT NEEDED: registered street address, postal code and city</span></li>
       <li>Email: <a href="mailto:moi@moikit.fi">moi@moikit.fi</a></li>
       <li>Instagram: <a href="https://instagram.com/moi.kit_fi">@moi.kit_fi</a></li>
     </ul>
@@ -51,7 +52,8 @@ import { LEGAL_LINKS } from "../../lib/legal";
       <div>
         <dt>Order and delivery details</dt>
         <dd>
-          Your name, email address, phone number, street address, postal code and city. Collected by
+          Your name, email address, phone number, street address, postal code and city, plus the
+          delivery date and the hourly time window you pick on the payment page. Collected by
           Stripe's checkout form and passed to us.
           <br /><strong>Purpose:</strong> to take the order, agree a delivery time, deliver the kit
           to the right door and collect the cash balance.
@@ -78,6 +80,17 @@ import { LEGAL_LINKS } from "../../lib/legal";
           and the amount captured. <strong>We never receive or store your card number</strong> — the
           card details are typed into Stripe's own page and never touch MoiKit's systems.
           <br /><strong>Legal basis:</strong> Article 6(1)(b), and Article 6(1)(c) for accounting.
+        </dd>
+      </div>
+      <div>
+        <dt>Bank details — only if we owe you a cash refund</dt>
+        <dd>
+          A cash payment cannot be reversed, so if you paid the balance at the door and then cancel
+          or withdraw, we ask you for an IBAN in your own name and send the money back by transfer.
+          We ask for it only when a cash refund is actually due, and we use it for that refund and
+          the accounting entry for it — nothing else.
+          <br /><strong>Legal basis:</strong> Article 6(1)(b) — refunding you is part of the
+          contract; Article 6(1)(c) for the bookkeeping record of the payment.
         </dd>
       </div>
       <div>
@@ -178,13 +191,15 @@ import { LEGAL_LINKS } from "../../lib/legal";
       <div>
         <dt>Supabase — the order database</dt>
         <dd>
-          Your order record — <strong>name, email, phone, address, the itemised list, amounts and
-          payment references</strong> — is stored in a PostgreSQL database operated by Supabase, Inc.
-          The database instance is hosted <strong>inside the European Union, in Frankfurt, Germany
-          (eu-central-1)</strong>, so the data sits at rest in the EEA. Supabase is a US company, so
-          administrative or support access from outside the EEA is possible and is covered by
-          Standard Contractual Clauses in its data processing agreement.
-          <span class="todo">TODO: confirm the signed Supabase DPA is on file</span>
+          Your order record — <strong>name, email, phone, street address, postal code, city, the
+          requested delivery date and time window, the itemised list of what you bought, the
+          amounts, the payment references and your terms acceptance</strong> — is stored in a
+          PostgreSQL database operated by Supabase, Inc. The database instance is hosted
+          <strong>inside the European Union, in Frankfurt, Germany (eu-central-1)</strong>, so the
+          data sits at rest in the EEA. Supabase is a US company, so administrative or support
+          access from outside the EEA is possible, and that access has to be covered by a data
+          processing agreement incorporating the European Commission's Standard Contractual Clauses.
+          <span class="todo">OWNER INPUT NEEDED: confirm a signed Supabase data processing agreement is on file and keep a copy — this paragraph must not claim one exists until it does</span>
         </dd>
       </div>
       <div>
@@ -196,12 +211,16 @@ import { LEGAL_LINKS } from "../../lib/legal";
         </dd>
       </div>
       <div>
-        <dt>Email providers</dt>
+        <dt>Email</dt>
         <dd>
-          Order confirmations and our internal "new order" alert are sent through Cloudflare Email
-          Routing and Resend (Resend, Inc.), which receive your <strong>name, email address, order
-          contents and delivery address</strong> in the body of those messages.
-          <span class="todo">TODO: automated order email is not operational yet — confirm before relying on this paragraph</span>
+          Two emails go out automatically once your deposit clears, both sent from
+          <strong>orders@moikit.fi</strong> through <strong>Cloudflare Email Sending and Email
+          Routing</strong>: a confirmation to you, and a "new order" alert to us. Each contains your
+          <strong>name, email address, phone number, delivery address, requested delivery date and
+          time window, the itemised order and the amounts</strong>. Cloudflare processes those
+          messages as our provider, and our own alert lands in MoiKit's business mailbox, which is
+          currently a Proton Mail address. We use no separate marketing-email service, because we
+          send no marketing email.
         </dd>
       </div>
       <div>
@@ -209,7 +228,7 @@ import { LEGAL_LINKS } from "../../lib/legal";
         <dd>
           Sales records go to whoever keeps MoiKit's books, and to the Finnish Tax Administration or
           another authority where the law requires it.
-          <span class="todo">TODO: name the accounting firm, or delete this row if the books are kept in-house</span>
+          <span class="todo">OWNER INPUT NEEDED: name the accounting firm (tilitoimisto) that keeps MoiKit's books, or say here that the books are kept in-house and delete the reference to an external accountant</span>
         </dd>
       </div>
     </dl>
@@ -235,18 +254,21 @@ import { LEGAL_LINKS } from "../../lib/legal";
       </li>
       <li>
         <strong>Contact details attached to an order:</strong> kept for the same period, then
-        anonymised in place — the sales figures remain in the books, the name, email, phone and
-        address are stripped out. (The order table carries an <code>anonymised_at</code> column for
-        exactly this.)
-        <span class="todo">TODO: the anonymisation routine still has to be built and scheduled</span>
+        anonymised in place — the sales figures stay in the books while the name, email, phone,
+        address and delivery details are emptied out. The database is built for this: every one of
+        those columns is nullable, and an <code>anonymised_at</code> timestamp records when a row
+        was stripped. To be straight with you about how it works today, that stripping is done
+        <strong>by hand</strong>; there is no scheduled job that does it automatically yet.
+        <span class="todo">OWNER INPUT NEEDED: decide who runs the anonymisation and when, and have the automated routine built — until then the six-year strip-out depends on someone remembering to do it</span>
       </li>
       <li>
         <strong>Email and Instagram correspondence:</strong> kept while it is useful for support, and
         in any case no longer than the order retention period above.
       </li>
       <li>
-        <strong>Technical request logs:</strong> retained for the short period our infrastructure
-        providers apply by default, typically days rather than months.
+        <strong>Technical request logs:</strong> Cloudflare keeps request and error logs for the
+        platform's own short default retention — days, not months. We do not export them or keep a
+        separate copy of our own.
       </li>
     </ul>
   </section>

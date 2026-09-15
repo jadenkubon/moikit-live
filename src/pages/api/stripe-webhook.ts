@@ -163,7 +163,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
     isNewOrder = wrote.length > 0;
   } catch (err) {
     // Log server-side for Worker tails; never leak internals to Stripe's delivery log.
-    console.error("webhook db write failed", err);
+    // Log ONLY the driver's code + message. A postgres.js error can carry the
+    // failed query AND its bound parameters — which in this INSERT are the
+    // customer's name, email, phone and full address. Those must never reach
+    // the Worker log sink (observability is on), and the privacy notice says
+    // technical logs hold request metadata, not customer PII.
+    console.error(
+      "webhook db write failed",
+      (err as any)?.code ?? "",
+      (err as any)?.message ?? String(err),
+    );
     return new Response("db error", { status: 500 });
   } finally {
     await sql.end();

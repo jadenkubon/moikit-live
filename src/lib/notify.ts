@@ -6,9 +6,12 @@
 //   • OWNER "new order" alert → Cloudflare Email Routing via the `send_email`
 //     binding. Free, no external service; just needs Email Routing on moikit.fi
 //     and the owner address verified as a destination.
-//   • CUSTOMER confirmation → Resend, so it's a branded HTML email that itemizes
-//     the order and states the cash balance due (Stripe's own receipt can't —
-//     the session is a single "deposit" line item).
+//   • CUSTOMER confirmation → Cloudflare Email Sending via the UNRESTRICTED
+//     `CUSTOMER_EMAILER` binding, so it's a branded HTML email that itemizes the
+//     order and states the cash balance due (Stripe's own receipt can't — the
+//     session is a single "deposit" line item). Unrestricted because a buyer is
+//     never a verified Email Routing destination. (No third-party sender is
+//     used: an earlier Resend integration was removed entirely.)
 //
 // Deliberately UNFAILING: a bounced or misconfigured email must never turn a
 // paid order into a 500 for Stripe, which would trigger redelivery of an event
@@ -17,9 +20,9 @@
 // Env (Cloudflare, all optional — a missing piece just skips that email):
 //   OWNER_EMAILER    – `send_email` binding (wrangler.jsonc), for the owner alert
 //   OWNER_EMAIL      – verified destination the owner alert is sent to
+//   CUSTOMER_EMAILER – unrestricted `send_email` binding, for the buyer's copy
 //   ORDER_FROM       – From: header, e.g. "MoiKit <orders@moikit.fi>" (the sender
-//                      domain must be verified in BOTH Resend and Email Routing)
-//   RESEND_API_KEY   – Resend API key (secret), for the customer confirmation
+//                      domain must be onboarded to Cloudflare Email Sending)
 // -----------------------------------------------------------------------------
 
 import { EmailMessage } from "cloudflare:email";

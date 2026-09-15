@@ -60,7 +60,7 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
         proof of having given notice in time.
       </li>
       <li>
-        <strong>By post:</strong> MoiKit Oy, <span class="todo">TODO: postal address</span>
+        <strong>By post:</strong> MoiKit Oy, <span class="todo">OWNER INPUT NEEDED: postal address for withdrawal notices — a consumer must be given a physical address they can post a withdrawal to</span>
       </li>
       <li>
         You can also message <a href="https://instagram.com/moi.kit_fi">@moi.kit_fi</a> on Instagram,
@@ -72,7 +72,7 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       it. We will confirm receipt of your withdrawal notice to you in writing, without delay.
     </p>
     <p>
-      <span class="todo">TODO — COMPLIANCE GAP: since 19 June 2026, Article 11a of the EU Consumer Rights Directive requires a withdrawal button/function on the same online interface where the order was placed, available throughout the withdrawal period, with an on-screen acknowledgement and a confirmation on a durable medium. MoiKit does not have one. This must be built before the site can be considered compliant.</span>
+      <span class="todo">OWNER INPUT NEEDED — COMPLIANCE GAP, not a wording question: since 19 June 2026, Article 11a of the EU Consumer Rights Directive requires a withdrawal function (a button) on the same online interface where the order was placed, available for the whole withdrawal period, with an on-screen acknowledgement and a confirmation on a durable medium. moikit.fi has no such button — there is no page or route anywhere in the site that implements one, and the email route described above is an interim measure that does not satisfy Article 11a. This has to be built before launch.</span>
     </p>
 
     <h3>Model withdrawal form</h3>
@@ -81,7 +81,7 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       above:
     </p>
     <ul>
-      <li>To: MoiKit Oy, <span class="todo">TODO: postal address</span>, moi@moikit.fi</li>
+      <li>To: MoiKit Oy, <span class="todo">OWNER INPUT NEEDED: the same postal address as above — the statutory model form has to carry it</span>, moi@moikit.fi</li>
       <li>
         I/we (*) hereby give notice that I/we (*) withdraw from my/our (*) contract of sale of the
         following goods (*):
@@ -105,12 +105,10 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
     </p>
     <ul>
       <li>
-        <strong>Who pays.</strong> You bear the direct cost of returning the goods. Because a kit is
-        bulky and cannot normally be sent as ordinary post, we will collect it from your address in
-        Lappeenranta instead if you prefer, for an estimated
-        <span class="todo">TODO: state the collection fee in euros — legally required for goods that cannot be returned by post</span>.
-        Nothing stops you returning it yourself at your own cost.
-        <span class="todo">TODO: if MoiKit would rather bear the return cost, say so here — that is allowed and simpler</span>
+        <strong>Who pays.</strong> A kit is bulky — a mattress, bedding, and a crate of kitchen and
+        bathroom goods — so it cannot normally be sent back as ordinary post. For goods like that
+        the law requires us to tell you, <em>before</em> you order, what returning them will cost.
+        <span class="todo">OWNER INPUT NEEDED: the return-cost policy is a business decision, and this page cannot be accurate without it. Pick one: (a) MoiKit collects the kit from the buyer's address for a fee — that fee in euros must be printed here, because a bulky-goods return cost that is not disclosed before the order falls on the seller by law; or (b) MoiKit bears the return cost itself, which is simpler and needs one sentence. Until one of the two is chosen and written here, MoiKit cannot charge a buyer anything for the return.</span>
       </li>
       <li>
         <strong>Condition.</strong> You may unpack and inspect the items as you would in a shop. If
@@ -171,10 +169,12 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
     <ul>
       <li>
         <strong>Sealed goods that are not suitable for return for health-protection or hygiene
-        reasons, once they have been unsealed after delivery.</strong> In a kit this can cover items
-        such as pillows, duvets, mattress protectors and personal hygiene products. Unopened and
-        still sealed, they can always be returned.
-        <span class="todo">TODO: have a lawyer confirm exactly which catalogue items this covers, and label them in the kit builder so buyers know before they order</span>
+        reasons, once they have been unsealed after delivery.</strong> Two conditions both have to
+        be met: the item must actually reach you <em>sealed</em>, and unsealing it must be what
+        makes it unfit to return. In the MoiKit catalogue the realistic candidates are the
+        <strong>soap bar</strong> and the <strong>toilet paper</strong>, and arguably the
+        <strong>pillows and duvets</strong>. Everything still sealed can be returned regardless.
+        <span class="todo">OWNER INPUT NEEDED: confirm with a Finnish lawyer exactly which catalogue items this covers, then label those items in the kit builder. The exclusion only bites if the buyer was told BEFORE ordering that a given item loses the right of withdrawal once unsealed — an item delivered loose, or sealed but unlabelled, stays fully returnable.</span>
       </li>
       <li>
         <strong>Goods made to your specification or clearly personalised.</strong> We do not

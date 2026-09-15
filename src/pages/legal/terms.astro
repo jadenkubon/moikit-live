@@ -2,9 +2,10 @@
 // =============================================================================
 // DRAFT PREPARED BY AN AI ASSISTANT — NOT LEGAL ADVICE.
 // These terms of sale must be reviewed and approved by a qualified Finnish
-// lawyer before MoiKit relies on them. Every <span class="todo"> marks a fact
-// only the business can supply (Y-tunnus, registered address, VAT number,
-// return-collection cost, delivery area). Drafted against the Finnish Consumer
+// lawyer before MoiKit relies on them. Every <span class="todo">OWNER INPUT
+// NEEDED</span> marks a fact or a decision only the business can supply
+// (Y-tunnus, registered address, VAT registration, the cash-at-the-door policy,
+// the delivery area). Drafted against the Finnish Consumer
 // Protection Act (kuluttajansuojalaki 38/1978), chapters 5 and 6, and the EU
 // Consumer Rights Directive 2011/83/EU as amended.
 // =============================================================================
@@ -24,9 +25,9 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
     <h2>The seller</h2>
     <ul>
       <li><strong>MoiKit Oy</strong>, Lappeenranta, Finland</li>
-      <li>Business ID (Y-tunnus): <span class="todo">TODO: Y-tunnus</span></li>
-      <li>VAT number (ALV-numero): <span class="todo">TODO: FI-number, or state that MoiKit is not VAT-registered</span></li>
-      <li>Registered and complaints address: <span class="todo">TODO: street, postal code, Lappeenranta</span></li>
+      <li>Business ID (Y-tunnus): <span class="todo">OWNER INPUT NEEDED: Y-tunnus (business ID)</span></li>
+      <li>VAT number (ALV-numero): <span class="todo">OWNER INPUT NEEDED: the FI VAT number, or a statement that MoiKit Oy is not entered in the VAT register</span></li>
+      <li>Registered and complaints address: <span class="todo">OWNER INPUT NEEDED: registered street address, postal code and city — this is also the address a consumer complaint must be able to reach</span></li>
       <li>Email: <a href="mailto:moi@moikit.fi">moi@moikit.fi</a> · Instagram: <a href="https://instagram.com/moi.kit_fi">@moi.kit_fi</a></li>
     </ul>
     <p>
@@ -42,9 +43,11 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
     <ul>
       <li>All prices are in <strong>euros (EUR)</strong> and are shown per item.</li>
       <li>
-        Prices are <strong>gross: they include Finnish VAT at 25.5%</strong>, the standard rate in
-        force since 1 September 2024. There is no VAT to add at checkout.
-        <span class="todo">TODO: only true if MoiKit Oy is VAT-registered — if turnover is under the €20,000 threshold and no registration exists, this sentence must be replaced with "the seller is not liable for VAT (arvonlisäverolaki 3 §)"</span>
+        Prices are <strong>gross — the figure you see is the figure you pay</strong>. Nothing is
+        added at checkout beyond the delivery fee below. Our systems treat every price as
+        VAT-inclusive at the Finnish standard rate of 25.5%, and stamp that rate onto the order
+        record.
+        <span class="todo">OWNER INPUT NEEDED: confirm whether MoiKit Oy is entered in the VAT register. If it is, this line should say plainly that prices include VAT at 25.5%. If turnover is under the small-business threshold and there is no registration, it must instead say that the seller is not liable for VAT (arvonlisäverolaki 3 §) — and the 25.5% rate stamped on order records has to be corrected too.</span>
       </li>
       <li>
         <strong>Delivery costs {eur(SHIPPING_EUR)}</strong> per order, flat, however many items you
@@ -73,7 +76,8 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       </li>
       <li>
         You are taken to Stripe's secure payment page, where you enter your name, email, phone
-        number, delivery address and card details, and pay the deposit.
+        number, delivery address and card details, choose a requested delivery date and an hourly
+        time window, and pay the deposit.
       </li>
       <li>
         <strong>The contract is formed when your deposit payment succeeds.</strong> You then see a
@@ -86,9 +90,15 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       will contact you and either agree a substitute with you or refund the affected part.
     </p>
     <p>
-      <strong>Keep your order reference.</strong> It appears on the confirmation page and on your
-      Stripe card receipt, and it is how we find your order if you contact us.
-      <span class="todo">TODO: automated order confirmation email is not operational yet — until it is, the confirmation page is the customer's only copy and this section should say so plainly</span>
+      As soon as your deposit clears we email a confirmation to the address you gave Stripe. It
+      itemises what you ordered, states the deposit you paid and the <strong>exact cash balance due
+      on delivery</strong>, and repeats the delivery address and the date and time window you asked
+      for. Keep it: that email is your durable copy of the contract. If it has not arrived within a
+      few minutes, check your spam folder and then write to us and we will send it again.
+    </p>
+    <p>
+      <strong>Keep your order reference too.</strong> It appears on the confirmation page, in that
+      email and on your Stripe card receipt, and it is how we find your order if you contact us.
     </p>
   </section>
 
@@ -112,8 +122,9 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
         <dd>
           <strong>The remaining 50%, in cash, to the person who delivers your kit</strong>, at the
           moment of delivery. The exact euro amount is shown on your confirmation page. Please have
-          it ready: we cannot take cards, mobile payments or bank transfers at the door.
-          <span class="todo">TODO: confirm whether change can be given, and whether any alternative to cash will be accepted at the door</span>
+          it ready: the checkout only ever charges the deposit, so there is no card, mobile-payment
+          or bank-transfer option at the door.
+          <span class="todo">OWNER INPUT NEEDED: two door policies only you can set — (a) will the driver carry change, or must the buyer bring the exact amount? (b) is any alternative to cash accepted at the door (MobilePay, bank transfer before delivery), or is it strictly cash? Both need to be stated here before launch, because a buyer who turns up without the right money has to know in advance what happens.</span>
         </dd>
       </div>
     </dl>
@@ -133,9 +144,10 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
     <h2>Where, when and how</h2>
     <h3>Delivery area</h3>
     <p>
-      We deliver in <strong>Lappeenranta, Finland</strong>, to student housing and other addresses
-      in the area. We do not deliver outside Finland.
-      <span class="todo">TODO: define the delivery area precisely — the checkout currently accepts any Finnish address, so either restrict it or state here what happens to an order from outside the area</span>
+      We deliver in <strong>Lappeenranta, Finland</strong>, and the surrounding area — student
+      housing and ordinary addresses alike. We do not deliver outside Finland: the payment page
+      only accepts a Finnish delivery address, so an order cannot be placed to any other country.
+      <span class="todo">OWNER INPUT NEEDED: the delivery area has to be defined here in words a buyer can check against their own address — postal codes, named municipalities, or a distance from Lappeenranta centre. The payment page accepts ANY Finnish address, so today nothing stops an order from Rovaniemi, and this page is the only place the limit can be stated.</span>
     </p>
     <p>
       If you place an order for an address we cannot serve, we will contact you as soon as we notice,
@@ -144,9 +156,12 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
 
     <h3>Timing</h3>
     <p>
-      Delivery is arranged with you individually — usually around your move-in date. After you order
-      we contact you to agree a date and a time window. Everything arrives in a
-      <strong>single drop</strong>; we do not part-ship.
+      On the payment page you pick the <strong>delivery date you want</strong> — the earliest is the
+      day after you order, and you can choose any day in the following four weeks — and a
+      <strong>one-hour window</strong> somewhere between 09:00 and 20:00. That is a request, not a
+      booked slot: we confirm the date and time with you afterwards, and if we cannot make the one
+      you chose we agree another with you. Everything arrives in a <strong>single drop</strong>; we
+      do not part-ship.
     </p>
     <p>
       Where no specific date has been agreed, we will deliver without undue delay and in any case
@@ -175,7 +190,7 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
         kit still cannot be delivered, we may cancel the order. We will refund your deposit less our
         reasonable, documented costs actually incurred (such as the delivery attempts). We will not
         keep the deposit as a penalty, and we will show you the figures.
-        <span class="todo">TODO: have a lawyer check this cancellation and cost-deduction clause against KSL chapter 5 — an unfair standard term is void</span>
+        <span class="todo">OWNER INPUT NEEDED: this cancellation-and-cost-deduction clause is the one term on these pages most likely to be struck down. Have a Finnish lawyer check it against the Consumer Protection Act (kuluttajansuojalaki 38/1978) chapters 4 and 5 before launch — an unfair standard term is simply void, and a deposit deduction that looks like a penalty is the classic example.</span>
       </li>
       <li>
         <strong>Wrong address.</strong> Tell us as soon as you can if your address or move-in date
