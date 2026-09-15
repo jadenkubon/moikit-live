@@ -50,6 +50,7 @@ export interface NotifyOrder {
   addressCity: string | null;
   deliveryDate: string | null; // requested delivery date, ISO "YYYY-MM-DD"
   deliveryWindow: string | null; // preferred time window, e.g. "10:00–11:00"
+  notes: string | null; // buyer's delivery instructions, free text
 }
 
 const eur = (cents: number) => "€" + (cents / 100).toFixed(2);
@@ -154,6 +155,7 @@ async function sendOwnerAlert(env: any, o: NotifyOrder): Promise<void> {
         <h3 style="font-size:15px;margin:0 0 6px">Deliver to</h3>
         <p style="margin:0 0 6px;color:#4a534f">${addressBlock(o)}</p>
         ${fmtDeliveryDate(o.deliveryDate) ? `<p style="margin:0 0 18px;color:#B5623C;font-weight:600">Requested delivery: ${fmtDeliveryDate(o.deliveryDate)}${o.deliveryWindow ? `, ${o.deliveryWindow}` : ""}</p>` : `<p style="margin:0 0 18px;color:#8a8175;font-size:13px">No delivery date/time requested</p>`}
+        ${o.notes ? `<p style="margin:0 0 18px;padding:10px 12px;background:#FBEBD3;border-radius:6px"><strong>Delivery instructions:</strong> ${esc(o.notes)}</p>` : ""}
         <h3 style="font-size:15px;margin:0 0 6px">Items to pack (${o.lines.length})</h3>
         <table style="width:100%;border-collapse:collapse">${itemRows(o)}</table>
         ${moneyBlock(o)}
@@ -195,7 +197,8 @@ async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void>
     ${moneyBlock(o)}
     <h3 style="font-size:15px;margin:22px 0 6px">Deliver to</h3>
     <p style="margin:0 0 6px;color:#4a534f">${addressBlock(o)}</p>
-    ${delivery ? `<p style="margin:0 0 18px;color:#8a8175;font-size:13px">Requested delivery date: <strong style="color:#16211F">${delivery}</strong></p>` : ""}
+    ${delivery ? `<p style="margin:0 0 6px;color:#8a8175;font-size:13px">Requested delivery date: <strong style="color:#16211F">${delivery}</strong></p>` : ""}
+    ${o.notes ? `<p style="margin:0 0 18px;color:#8a8175;font-size:13px">Your delivery instructions: <strong style="color:#16211F">${esc(o.notes)}</strong></p>` : ""}
     <h3 style="font-size:15px;margin:22px 0 6px">What happens next</h3>
     <ol style="margin:0 0 18px;padding-left:18px;color:#4a534f">
       <li>We email you to confirm your address and move-in date.</li>
@@ -223,6 +226,7 @@ async function sendCustomerConfirmation(env: any, o: NotifyOrder): Promise<void>
     [o.customerName, o.addressLine, [o.addressPostal, o.addressCity].filter(Boolean).join(" ")]
       .filter((p) => p && String(p).trim())
       .join(", "),
+    ...(o.notes ? [`Delivery instructions: ${o.notes}`] : []),
     ``,
     balanceCents > 0
       ? `What happens next: we confirm your address and move-in date, deliver everything in one drop, and you pay the remaining balance in cash on delivery.`

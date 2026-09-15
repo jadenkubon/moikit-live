@@ -190,6 +190,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
           type: "dropdown",
           dropdown: { options: deliveryTimeOptions() },
         },
+        // Delivery instructions — where to leave it, buzzer code, neighbour, etc.
+        // Optional, and Stripe's hard cap is 3 custom fields, so this is the last slot.
+        {
+          key: "delivery_notes",
+          label: { type: "custom", custom: "Delivery instructions (optional)" },
+          type: "text",
+          optional: true,
+          text: { maximum_length: 255 },
+        },
       ],
       // Stamp the PaymentIntent itself with our order REF, so the charge is
       // labelled in the Stripe dashboard (and on any Stripe receipt) with an

@@ -176,7 +176,7 @@ export const COMPARISON_ROWS = [
 export const FAQS = [
   {
     q: "Do I need to be home for the delivery?",
-    a: "No. Tell us the address and your move-in date and we deliver so your kit is waiting. Delivery is €30. If you'd like it set up inside, mention it in your order notes.",
+    a: "No. Tell us the address and your move-in date and we deliver so your kit is waiting. Delivery is €30. If you need it left somewhere specific — a buzzer code, a neighbour, inside the door — there's a delivery instructions box on the payment page.",
   },
   {
     q: "Can I change what's in a kit or order a single room?",

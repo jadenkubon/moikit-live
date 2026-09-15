@@ -107,6 +107,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const deliveryWindow =
     Number.isInteger(th) && th >= 0 && th < 24 ? `${pad2(th)}:00–${pad2(th + 1)}:00` : null;
 
+  // Delivery instructions the buyer typed at checkout (optional free text).
+  const notesField = (session.custom_fields ?? []).find((f) => f.key === "delivery_notes");
+  const deliveryNotes = String((notesField as any)?.text?.value ?? "").trim() || null;
+
   // Through Hyperdrive the Worker talks to a local endpoint (Hyperdrive owns the
   // origin TLS) — forcing client SSL there would break it. Only require SSL on a
   // direct Supabase connection.
@@ -137,14 +141,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
           stripe_payment_intent_id, stripe_checkout_session_id,
           amount_charged_cents, shipping_cents, currency,
           customer_name, customer_email, customer_phone,
-          address_line, address_postal, address_city, delivery_date, delivery_window, paid_at,
+          address_line, address_postal, address_city, delivery_date, delivery_window, notes, paid_at,
           terms_version, terms_accepted_at
         ) values (
           ${stamp}, ${tier}, 'ok',
           ${(session.payment_intent as string | null) ?? null}, ${session.id},
           ${amountCharged}, ${shippingCents}, ${(session.currency ?? "eur").toUpperCase()},
           ${ship?.name ?? cust?.name ?? null}, ${cust?.email ?? null}, ${cust?.phone ?? null},
-          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, ${deliveryDate}, ${deliveryWindow}, now(),
+          ${addr?.line1 ?? null}, ${addr?.postal_code ?? null}, ${addr?.city ?? null}, ${deliveryDate}, ${deliveryWindow}, ${deliveryNotes}, now(),
           ${termsVersion}, ${termsAcceptedAt}
         )
         on conflict (stamp) do nothing
@@ -197,6 +201,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       addressCity: addr?.city ?? null,
       deliveryDate,
       deliveryWindow,
+      notes: deliveryNotes,
     });
   }
 
