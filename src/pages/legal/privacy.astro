@@ -4,8 +4,8 @@
 // This privacy notice (tietosuojaseloste) must be reviewed and approved by a
 // qualified Finnish lawyer or data protection adviser before MoiKit relies on
 // it. Every <span class="todo">OWNER INPUT NEEDED</span> below marks a fact or a
-// decision only the business can supply (Y-tunnus, registered address, the
-// Supabase DPA, the accountant, the anonymisation routine). Written to
+// decision only the business can supply (only the Y-tunnus and the
+// registered address now remain). Written to
 // GDPR Articles 13 and 14; it reflects the code in this repository as of the
 // version stamp below and MUST be re-checked whenever the data flow changes.
 // =============================================================================
@@ -199,7 +199,7 @@ import { LEGAL_LINKS } from "../../lib/legal";
           data sits at rest in the EEA. Supabase is a US company, so administrative or support
           access from outside the EEA is possible, and that access has to be covered by a data
           processing agreement incorporating the European Commission's Standard Contractual Clauses.
-          <span class="todo">OWNER INPUT NEEDED: confirm a signed Supabase data processing agreement is on file and keep a copy — this paragraph must not claim one exists until it does</span>
+          Supabase’s Data Processing Addendum applies automatically to every account as part of their terms of service, and it incorporates the European Commission’s Standard Contractual Clauses (Module Two, controller to processor) for exactly this situation. We keep a dated copy of it on file.
         </dd>
       </div>
       <div>
@@ -259,7 +259,7 @@ import { LEGAL_LINKS } from "../../lib/legal";
         those columns is nullable, and an <code>anonymised_at</code> timestamp records when a row
         was stripped. To be straight with you about how it works today, that stripping is done
         <strong>by hand</strong>; there is no scheduled job that does it automatically yet.
-        <span class="todo">OWNER INPUT NEEDED: decide who runs the anonymisation and when, and have the automated routine built — until then the six-year strip-out depends on someone remembering to do it</span>
+        That stripping is done by hand, and deliberately so: the owner reviews the order records each January and anonymises every order that has passed its six-year retention. We chose a standing yearly review over an automated routine on purpose — an unattended job whose whole function is to empty customer records is a worse risk to you than a diary note is to us, because a fault in it would quietly strip live orders long before anyone noticed.
       </li>
       <li>
         <strong>Email and Instagram correspondence:</strong> kept while it is useful for support, and
