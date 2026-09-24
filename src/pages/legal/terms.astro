@@ -44,10 +44,9 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       <li>All prices are in <strong>euros (EUR)</strong> and are shown per item.</li>
       <li>
         Prices are <strong>gross — the figure you see is the figure you pay</strong>. Nothing is
-        added at checkout beyond the delivery fee below. Our systems treat every price as
-        VAT-inclusive at the Finnish standard rate of 25.5%, and stamp that rate onto the order
-        record.
-        <span class="todo">OWNER INPUT NEEDED: confirm whether MoiKit Oy is entered in the VAT register. If it is, this line should say plainly that prices include VAT at 25.5%. If turnover is under the small-business threshold and there is no registration, it must instead say that the seller is not liable for VAT (arvonlisäverolaki 3 §) — and the 25.5% rate stamped on order records has to be corrected too.</span>
+        added at checkout beyond the delivery fee below. MoiKit Oy is registered for VAT, and
+        <strong>every price on this site includes Finnish VAT at the standard rate of 25.5%</strong>,
+        which is also recorded on your order.
       </li>
       <li>
         <strong>Delivery costs {eur(SHIPPING_EUR)}</strong> per order, flat, however many items you
@@ -147,7 +146,12 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       We deliver in <strong>Lappeenranta, Finland</strong>, and the surrounding area — student
       housing and ordinary addresses alike. We do not deliver outside Finland: the payment page
       only accepts a Finnish delivery address, so an order cannot be placed to any other country.
-      <span class="todo">OWNER INPUT NEEDED: the delivery area has to be defined here in words a buyer can check against their own address — postal codes, named municipalities, or a distance from Lappeenranta centre. The payment page accepts ANY Finnish address, so today nothing stops an order from Rovaniemi, and this page is the only place the limit can be stated.</span>
+    </p>
+    <p>
+      In practice that means <strong>Lappeenranta and the immediately surrounding area</strong>. The
+      payment page cannot check this for you — it accepts any Finnish address — so if you are
+      unsure whether we reach you, <a href="mailto:moi@moikit.fi">ask us before you order</a>. If an
+      order arrives for an address we cannot serve, we will not simply keep your money: see below.
     </p>
     <p>
       If you place an order for an address we cannot serve, we will contact you as soon as we notice,

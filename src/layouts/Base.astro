@@ -10,6 +10,14 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+// The coming-soon modal blocks the whole page, so it must NEVER cover /legal/*.
+// Two reasons: the withdrawal function has to stay reachable for a buyer's full
+// 14-day window even if we close the shop again mid-flight (Article 11a), and
+// the terms/privacy a buyer already accepted must remain readable after the
+// fact. Closing the storefront is a sales decision; it is not a licence to hide
+// the documents people are relying on.
+const isLegalPage = Astro.url.pathname.startsWith("/legal/");
 ---
 
 <!doctype html>
@@ -31,6 +39,6 @@ const { title, description } = Astro.props;
     <Header />
     <slot />
     <Footer />
-    <ComingSoonModal />
+    {!isLegalPage && <ComingSoonModal />}
   </body>
 </html>

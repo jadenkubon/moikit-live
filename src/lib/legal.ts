@@ -19,4 +19,6 @@ export const LEGAL_LINKS = {
   privacy: "/legal/privacy/",
   terms: "/legal/terms/",
   withdrawal: "/legal/withdrawal/",
+  /** The Article 11a withdrawal FUNCTION (the form), not the policy. */
+  withdrawForm: "/legal/withdraw/",
 } as const;

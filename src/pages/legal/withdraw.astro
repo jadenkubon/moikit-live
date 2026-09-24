@@ -1,0 +1,162 @@
+---
+// =============================================================================
+// The Article 11a WITHDRAWAL FUNCTION itself (not the policy — that lives at
+// /legal/withdrawal/). EU distance-selling law requires an online means to
+// withdraw, a clearly labelled button, an on-screen acknowledgement, and
+// confirmation on a durable medium. The acknowledgement below is rendered from
+// the server's response (real reference + timestamp), never faked client-side:
+// if the record did not save, the buyer must not see a confirmation.
+// =============================================================================
+import Legal from "../../layouts/Legal.astro";
+import { LEGAL_LINKS } from "../../lib/legal";
+
+export const prerender = false;
+---
+
+<Legal
+  title="Withdraw from your order"
+  eyebrow="Withdrawal · Peruuttaminen"
+  heading="Withdraw from your order."
+  intro="You have 14 days to change your mind, and you do not have to give a reason. Fill this in and we will confirm it by email straight away. Your withdrawal counts from the moment you send this — not from when we reply."
+>
+  <section>
+    <span class="num">01 — Send your withdrawal</span>
+    <h2>The form</h2>
+    <p>
+      Only your email address is required — it is how we send your confirmation. Everything else
+      just helps us find your order faster. If you cannot find your order reference, send it
+      anyway: your withdrawal is still valid without it.
+    </p>
+
+    <form id="wd-form" class="wd">
+      <label>
+        <span>Order reference <em>(optional)</em></span>
+        <input type="text" name="orderRef" placeholder="e.g. 1615CB8C" autocomplete="off" />
+      </label>
+      <label>
+        <span>Your name <em>(optional)</em></span>
+        <input type="text" name="name" autocomplete="name" />
+      </label>
+      <label>
+        <span>Email address <em>(required)</em></span>
+        <input type="email" name="email" required autocomplete="email" />
+      </label>
+      <label>
+        <span>Anything you want to tell us <em>(optional)</em></span>
+        <textarea name="message" rows="3" maxlength="2000"></textarea>
+      </label>
+
+      <button type="submit" id="wd-submit">I withdraw from this contract</button>
+      <p id="wd-error" class="wd-error" hidden></p>
+    </form>
+
+    <div id="wd-done" class="wd-done" hidden>
+      <h3>Your withdrawal has been received.</h3>
+      <dl>
+        <div><dt>Reference</dt><dd id="wd-ref"></dd></div>
+        <div><dt>Received</dt><dd id="wd-at"></dd></div>
+      </dl>
+      <p>
+        We have emailed you a confirmation — keep it, it is your durable record. We will be in
+        touch to arrange collection and your refund.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <span class="num">02 — What happens next</span>
+    <h2>After you send it</h2>
+    <ul>
+      <li>We confirm receipt by email immediately, and record the date and time.</li>
+      <li>
+        We refund you <strong>within 14 days</strong> of receiving your withdrawal, using the same
+        payment method you paid with, unless you agree otherwise.
+      </li>
+      <li>
+        If your kit has already arrived, keep it available — we collect it. The full detail of how
+        returns and refunds work is in the
+        <a href={LEGAL_LINKS.withdrawal}>Withdrawal Policy</a>.
+      </li>
+    </ul>
+    <p>
+      You can also withdraw by simply emailing <a href="mailto:moi@moikit.fi">moi@moikit.fi</a> — any
+      clear statement of your decision is valid. This form exists so there is an easy online way,
+      and so you get an instant written confirmation.
+    </p>
+  </section>
+</Legal>
+
+<style>
+  .wd { display: grid; gap: 1rem; margin: 1.5rem 0 0; max-width: 34rem; }
+  .wd label { display: grid; gap: 0.35rem; }
+  .wd label span { font-size: 0.9rem; font-weight: 600; }
+  .wd label em { font-weight: 400; font-style: normal; opacity: 0.6; }
+  .wd input, .wd textarea {
+    font: inherit; padding: 0.6rem 0.75rem; border: 1px solid #E4D8C4;
+    border-radius: 0.5rem; background: #fff; color: #16211F; width: 100%;
+  }
+  .wd input:focus, .wd textarea:focus { outline: 2px solid #1F3A3D; outline-offset: 1px; }
+  .wd button {
+    font: inherit; font-weight: 600; padding: 0.7rem 1.25rem; border: 0;
+    border-radius: 0.5rem; background: #B5623C; color: #F6EFE2; cursor: pointer;
+    justify-self: start;
+  }
+  .wd button:hover { background: #16211F; }
+  .wd button:disabled { opacity: 0.55; cursor: default; }
+  .wd-error { color: #B5623C; font-size: 0.9rem; margin: 0; }
+  .wd-done {
+    margin: 1.5rem 0 0; padding: 1.25rem 1.5rem; border-radius: 1rem;
+    background: #EDE3D0; border: 1px solid #E4D8C4; max-width: 34rem;
+  }
+  .wd-done h3 { margin: 0 0 0.75rem; }
+  .wd-done dl { display: grid; gap: 0.35rem; margin: 0 0 1rem; }
+  .wd-done dl div { display: flex; justify-content: space-between; gap: 1rem; }
+  .wd-done dt { opacity: 0.65; }
+  .wd-done dd { margin: 0; font-weight: 600; }
+</style>
+
+<script>
+  const form = document.getElementById("wd-form") as HTMLFormElement | null;
+  const btn = document.getElementById("wd-submit") as HTMLButtonElement | null;
+  const errEl = document.getElementById("wd-error") as HTMLElement | null;
+  const done = document.getElementById("wd-done") as HTMLElement | null;
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!btn || !errEl || !done) return;
+    errEl.hidden = true;
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = "Sending…";
+
+    const fd = new FormData(form);
+    try {
+      const res = await fetch("/api/withdraw", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          orderRef: fd.get("orderRef"),
+          name: fd.get("name"),
+          email: fd.get("email"),
+          message: fd.get("message"),
+        }),
+      });
+      const data = (await res.json()) as { ok?: boolean; reference?: string; receivedAt?: string; error?: string };
+      if (!res.ok || !data.ok) throw new Error(data.error || "Something went wrong.");
+
+      // Only shown once the server confirms the record was actually saved.
+      (document.getElementById("wd-ref") as HTMLElement).textContent = data.reference ?? "—";
+      (document.getElementById("wd-at") as HTMLElement).textContent = data.receivedAt
+        ? new Date(data.receivedAt).toLocaleString("en-GB")
+        : "—";
+      form.hidden = true;
+      done.hidden = false;
+      done.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (err) {
+      errEl.textContent = (err as Error).message;
+      errEl.hidden = false;
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
+</script>
