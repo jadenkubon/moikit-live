@@ -1,6 +1,7 @@
 ---
 import { KITS } from "../data/kits";
 import { LEGAL_LINKS } from "../lib/legal";
+import { t } from "../lib/i18n";
 ---
 
 <footer class="bg-ink text-cream">
@@ -13,16 +14,15 @@ import { LEGAL_LINKS } from "../lib/legal";
           ></span>
           <span class="font-display text-xl font-bold">MoiKit</span>
         </div>
-        <p class="mt-4 max-w-[280px] text-[14.5px] leading-relaxed text-cream/65">
-          Your home essentials, sorted. Move into an empty apartment and have a functional home the
-          day you arrive.
+        <p data-i18n="footer.blurb" class="mt-4 max-w-[280px] text-[14.5px] leading-relaxed text-cream/65">
+          {t("footer.blurb")}
         </p>
-        <p class="mt-[18px] font-mono text-xs tracking-[.04em] text-cream/50">
-          Lappeenranta · Finland · EUR
+        <p data-i18n="footer.place" class="mt-[18px] font-mono text-xs tracking-[.04em] text-cream/50">
+          {t("footer.place")}
         </p>
       </div>
       <div>
-        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber">Kits</div>
+        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber" data-i18n="footer.kits">{t("footer.kits")}</div>
         {KITS.map((k) => (
           <a href={`/kits/${k.slug}/`} class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">
             {k.name}
@@ -30,14 +30,14 @@ import { LEGAL_LINKS } from "../lib/legal";
         ))}
       </div>
       <div>
-        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber">Company</div>
-        <a href="/#faq" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">FAQ</a>
-        <a href={LEGAL_LINKS.terms} class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">Terms of Sale</a>
-        <a href={LEGAL_LINKS.withdrawal} class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">Right of Withdrawal</a>
-        <a href={LEGAL_LINKS.privacy} class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">Privacy Notice</a>
+        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber" data-i18n="footer.company">{t("footer.company")}</div>
+        <a href="/#faq" data-i18n="nav.faq" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">{t("nav.faq")}</a>
+        <a href={LEGAL_LINKS.terms} data-i18n="footer.terms" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">{t("footer.terms")}</a>
+        <a href={LEGAL_LINKS.withdrawal} data-i18n="footer.withdrawal" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">{t("footer.withdrawal")}</a>
+        <a href={LEGAL_LINKS.privacy} data-i18n="footer.privacy" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">{t("footer.privacy")}</a>
       </div>
       <div>
-        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber">Say moi</div>
+        <div class="mb-4 font-mono text-[11px] uppercase tracking-[.2em] text-amber" data-i18n="footer.contact">{t("footer.contact")}</div>
         <a href="https://instagram.com/moi.kit_fi" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">@moi.kit_fi</a>
         <a href="mailto:moi@moikit.fi" class="mb-[11px] block text-[14.5px] text-cream/80 no-underline">moi@moikit.fi</a>
       </div>
@@ -46,9 +46,9 @@ import { LEGAL_LINKS } from "../lib/legal";
     <div class="flex flex-wrap items-center justify-between gap-3">
       <span class="text-[13px] text-cream/50">© 2026 MoiKit</span>
       <div class="flex flex-wrap gap-[22px]">
-        <a href={LEGAL_LINKS.terms} class="text-[13px] text-cream/50 no-underline">Terms</a>
-        <a href={LEGAL_LINKS.withdrawal} class="text-[13px] text-cream/50 no-underline">Returns</a>
-        <a href={LEGAL_LINKS.privacy} class="text-[13px] text-cream/50 no-underline">Privacy</a>
+        <a href={LEGAL_LINKS.terms} data-i18n="footer.termsShort" class="text-[13px] text-cream/50 no-underline">{t("footer.termsShort")}</a>
+        <a href={LEGAL_LINKS.withdrawal} data-i18n="footer.returnsShort" class="text-[13px] text-cream/50 no-underline">{t("footer.returnsShort")}</a>
+        <a href={LEGAL_LINKS.privacy} data-i18n="footer.privacyShort" class="text-[13px] text-cream/50 no-underline">{t("footer.privacyShort")}</a>
       </div>
     </div>
   </div>

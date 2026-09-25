@@ -1,0 +1,86 @@
+---
+// Floating EN/FI switch, bottom-right. Renders nothing language-specific on the
+// server beyond the default label; all swapping happens in the inline script
+// below, which is deliberately NOT bundled (define:vars) so it runs as soon as
+// the body is parsed rather than after a module fetch — a Finnish reader should
+// not watch the page repaint from English.
+import { COPY, DEFAULT_LANG, LANG_STORAGE_KEY, t } from "../lib/i18n";
+---
+
+<button
+  id="lang-toggle"
+  type="button"
+  aria-label={t("lang.aria")}
+  class="fixed bottom-5 right-5 z-40 rounded-full border border-sand bg-cream/95 px-4 py-2.5 font-mono text-[12.5px] tracking-[.06em] text-ink shadow-lg backdrop-blur transition-colors hover:bg-sand-soft"
+>{t("lang.toFi")}</button>
+
+<script is:inline define:vars={{ COPY, DEFAULT_LANG, LANG_STORAGE_KEY }}>
+  (function () {
+    var btn = document.getElementById("lang-toggle");
+
+    function read() {
+      try {
+        var v = localStorage.getItem(LANG_STORAGE_KEY);
+        return v === "fi" || v === "en" ? v : DEFAULT_LANG;
+      } catch (e) {
+        return DEFAULT_LANG; // private mode / blocked storage
+      }
+    }
+    function save(lang) {
+      try { localStorage.setItem(LANG_STORAGE_KEY, lang); } catch (e) { /* non-fatal */ }
+    }
+    function phrase(key, lang) {
+      var e = COPY[key];
+      return e && e[lang] ? e[lang] : null;
+    }
+
+    function apply(lang) {
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        var v = phrase(el.getAttribute("data-i18n"), lang);
+        if (v !== null) el.textContent = v;
+      });
+
+      document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+        var v = phrase(el.getAttribute("data-i18n-html"), lang);
+        if (v !== null) el.innerHTML = v;
+      });
+
+      // data-i18n-attr="placeholder:form.email,aria-label:nav.menu"
+      document.querySelectorAll("[data-i18n-attr]").forEach(function (el) {
+        el.getAttribute("data-i18n-attr").split(",").forEach(function (pair) {
+          var bits = pair.split(":");
+          if (bits.length !== 2) return;
+          var v = phrase(bits[1].trim(), lang);
+          if (v !== null) el.setAttribute(bits[0].trim(), v);
+        });
+      });
+
+      if (btn) {
+        // The button always advertises the language it switches TO, so it stays
+        // readable to someone who cannot read what is currently on screen.
+        btn.textContent = lang === "fi" ? phrase("lang.toEn", lang) : phrase("lang.toFi", lang);
+        btn.setAttribute("aria-label", phrase("lang.aria", lang));
+      }
+
+      // Let other scripts (e.g. the header's rotating strapline) re-render.
+      document.dispatchEvent(new CustomEvent("moikit:langchange", { detail: { lang: lang } }));
+    }
+
+    var current = read();
+    if (current !== DEFAULT_LANG) apply(current);
+    else if (btn) btn.textContent = phrase("lang.toFi", DEFAULT_LANG);
+
+    if (btn) {
+      btn.addEventListener("click", function () {
+        current = current === "fi" ? "en" : "fi";
+        save(current);
+        apply(current);
+      });
+    }
+
+    // Expose for any page script that needs the active language.
+    window.moikitLang = function () { return current; };
+  })();
+</script>

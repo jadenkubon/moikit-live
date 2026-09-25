@@ -1,8 +1,10 @@
 ---
+import { t } from "../lib/i18n";
+
 const nav = [
-  { href: "/#kits", label: "The kits" },
-  { href: "/#how", label: "How it works" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/#kits", key: "nav.kits" as const },
+  { href: "/#how", key: "nav.how" as const },
+  { href: "/#faq", key: "nav.faq" as const },
 ];
 ---
 
@@ -11,7 +13,7 @@ const nav = [
     <span
       id="trust-rotator"
       class="font-mono text-[11.5px] uppercase tracking-[.18em] whitespace-nowrap animate-trust"
-    >◆&ensp;One delivery&ensp;◆</span>
+    >◆&ensp;{t("trust.delivery")}&ensp;◆</span>
   </div>
 
   <header class="border-b border-sand bg-cream/85 backdrop-blur-md">
@@ -25,31 +27,53 @@ const nav = [
 
       <nav class="flex items-center gap-7">
         {nav.map((n) => (
-          <a href={n.href} class="hidden text-[15px] font-medium text-body-2 no-underline md:block">
-            {n.label}
+          <a
+            href={n.href}
+            data-i18n={n.key}
+            class="hidden text-[15px] font-medium text-body-2 no-underline md:block"
+          >
+            {t(n.key)}
           </a>
         ))}
         <a
           href="/#kits"
+          data-i18n="nav.shop"
           class="rounded-full bg-teal px-5 py-[11px] font-display text-[14.5px] font-semibold text-cream no-underline transition-opacity hover:opacity-90"
-        >Shop kits</a>
+        >{t("nav.shop")}</a>
       </nav>
     </div>
   </header>
 </div>
 
 <script>
+  import { COPY } from "../lib/i18n";
+
+  // The strapline is script-driven and carries ◆ decorations, so it is NOT
+  // marked data-i18n (the generic swap would strip the decoration). It instead
+  // re-reads the dictionary whenever LangToggle announces a change.
   const el = document.getElementById("trust-rotator");
-  const points = ["One delivery", "Ready when you arrive", "Lappeenranta-based"];
+  const KEYS = ["trust.delivery", "trust.ready", "trust.local"] as const;
+
+  const lang = () => (document.documentElement.lang === "fi" ? "fi" : "en");
+  const phrase = (i: number) => COPY[KEYS[i % KEYS.length]][lang()];
+
   let i = 0;
+  const render = () => {
+    if (el) el.textContent = `◆ ${phrase(i)} ◆`;
+  };
+
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (el && !reduce) {
     setInterval(() => {
       i++;
-      el.textContent = `◆ ${points[i % points.length]} ◆`;
+      render();
       el.style.animation = "none";
       void el.offsetWidth;
       el.style.animation = "";
     }, 2600);
   }
+
+  // Swap the currently shown phrase immediately on a language change, rather
+  // than leaving the old language up until the next 2.6s tick.
+  document.addEventListener("moikit:langchange", render);
 </script>
