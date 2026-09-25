@@ -161,8 +161,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
           quantity: 1,
           price_data: {
             currency: "eur",
+            // No tax_behavior: MoiKit Oy is not in the Finnish VAT register, so
+            // the price carries no VAT and telling Stripe it is tax-inclusive
+            // would assert a tax position we do not have. Restore
+            // tax_behavior: "inclusive" (and vat_rate_bp = 2550) if MoiKit ever
+            // crosses the turnover threshold and registers.
             unit_amount: depositCents,
-            tax_behavior: "inclusive",
             product_data: {
               // REF is in the line-item name so it lands on the customer's Stripe
               // receipt — their only durable copy of the order reference once the
