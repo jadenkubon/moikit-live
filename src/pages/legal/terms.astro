@@ -25,8 +25,8 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
     <h2>The seller</h2>
     <ul>
       <li><strong>MoiKit Oy</strong>, Lappeenranta, Finland</li>
-      <li>Business ID (Y-tunnus): <span class="todo">OWNER INPUT NEEDED: Y-tunnus (business ID)</span></li>
-      <li>VAT number (ALV-numero): <span class="todo">OWNER INPUT NEEDED: the FI VAT number, or a statement that MoiKit Oy is not entered in the VAT register</span></li>
+      <li>Business ID (Y-tunnus): <strong>3636736-5</strong></li>
+      <li>VAT number (ALV-numero): none — MoiKit Oy is not entered in the VAT register (see section 02)</li>
       <li>Registered and complaints address: <span class="todo">OWNER INPUT NEEDED: registered street address, postal code and city — this is also the address a consumer complaint must be able to reach</span></li>
       <li>Email: <a href="mailto:moi@moikit.fi">moi@moikit.fi</a> · Instagram: <a href="https://instagram.com/moi.kit_fi">@moi.kit_fi</a></li>
     </ul>
@@ -44,9 +44,10 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       <li>All prices are in <strong>euros (EUR)</strong> and are shown per item.</li>
       <li>
         Prices are <strong>gross — the figure you see is the figure you pay</strong>. Nothing is
-        added at checkout beyond the delivery fee below. MoiKit Oy is registered for VAT, and
-        <strong>every price on this site includes Finnish VAT at the standard rate of 25.5%</strong>,
-        which is also recorded on your order.
+        added at checkout beyond the delivery fee below. MoiKit Oy is <strong>not entered in the VAT register</strong>, because its turnover falls under
+        the small-business threshold in section 3 of the Finnish VAT Act (arvonlisäverolaki).
+        <strong>No VAT is charged or added</strong> — the figure you see is simply the figure you pay.
+        <span class="todo">OWNER INPUT NEEDED: confirm this with the Tax Administration or your accountant before launch. The €20,000 threshold is measured on TURNOVER, not profit — at €240–475 a kit that is roughly 50–80 orders in a 12-month accounting period, so a successful launch can cross it quickly. If you register, this paragraph flips back to VAT-inclusive at 25.5% and the VAT number must be shown.</span>
       </li>
       <li>
         <strong>Delivery costs {eur(SHIPPING_EUR)}</strong> per order, flat, however many items you
