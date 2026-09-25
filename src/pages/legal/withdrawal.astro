@@ -6,12 +6,11 @@
 // Consumer Protection Act (kuluttajansuojalaki 38/1978) chapter 6 and the EU
 // Consumer Rights Directive 2011/83/EU as amended by Directive (EU) 2023/2673.
 //
-// KNOWN COMPLIANCE GAP, flagged in the page itself: since 19 June 2026, Art. 11a
-// CRD requires online traders to provide a withdrawal FUNCTION (a button) on the
-// same interface where the contract is concluded, available for the whole
-// withdrawal period, plus a confirmation of receipt on a durable medium. MoiKit
-// does not have one. This page documents the email route as an interim measure
-// — it does not make the site compliant.
+// Art. 11a CRD withdrawal FUNCTION: BUILT. It lives at /legal/withdraw/ (form +
+// /api/withdraw + withdrawal_requests table) and provides the online button, the
+// on-screen acknowledgement and the confirmation on a durable medium. THIS page is
+// the POLICY; that page is the FUNCTION. Both must stay reachable for the whole
+// withdrawal period, which is why the coming-soon modal is disabled on /legal/*.
 // =============================================================================
 import Legal from "../../layouts/Legal.astro";
 import { LEGAL_LINKS } from "../../lib/legal";
@@ -60,7 +59,7 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
         proof of having given notice in time.
       </li>
       <li>
-        <strong>By post:</strong> MoiKit Oy, <span class="todo">OWNER INPUT NEEDED: postal address for withdrawal notices — a consumer must be given a physical address they can post a withdrawal to</span>
+        <strong>By post:</strong> MoiKit Oy, Punkkerikatu 6, asunto 19, 53850 Lappeenranta, Finland
       </li>
       <li>
         You can also message <a href="https://instagram.com/moi.kit_fi">@moi.kit_fi</a> on Instagram,
@@ -85,7 +84,7 @@ import { SHIPPING_EUR, eur } from "../../data/kits";
       above:
     </p>
     <ul>
-      <li>To: MoiKit Oy, <span class="todo">OWNER INPUT NEEDED: the same postal address as above — the statutory model form has to carry it</span>, moi@moikit.fi</li>
+      <li>To: MoiKit Oy, Punkkerikatu 6, asunto 19, 53850 Lappeenranta, Finland, moi@moikit.fi</li>
       <li>
         I/we (*) hereby give notice that I/we (*) withdraw from my/our (*) contract of sale of the
         following goods (*):
