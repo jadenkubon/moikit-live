@@ -7,11 +7,26 @@
 // the browser and swaps text in place when the reader picks Finnish. One source
 // of truth for both sides — a key can never drift between server and client.
 //
-// SCOPE, deliberately: marketing pages, the kit builder and the checkout UI.
-// NOT the legal pages (translated legal text carries real risk and must be
-// lawyer-reviewed) and NOT product item names — those are frozen English
-// snapshots in the database, so translating them on screen would make the site
-// and the order record disagree.
+// HARD BOUNDARY — this is a presentation layer and nothing more.
+//
+// Translation MUST NOT touch anything the ordering or payment path reads. In
+// practice that means: never edit `src/data/kits.ts`, and never key off it.
+// That file is the catalogue and pricing source of truth, imported by
+// `api/checkout.ts` and `api/stripe-webhook.ts`; a translation bug there would
+// stop being a cosmetic problem and start being a money problem.
+//
+// The visible consequence, accepted deliberately: copy that lives in kits.ts —
+// the FAQ answers, kit taglines and blurbs — stays ENGLISH even in Finnish
+// mode. That is a considered trade, not an oversight. Readers who need it will
+// use a browser translator; we are not risking the checkout for it.
+//
+// Also out of scope: the legal pages (translated legal text carries real risk
+// and needs a lawyer) and product item names, which are frozen English
+// snapshots on the order record — translating them on screen would make the
+// site and the database disagree about what was bought.
+//
+// So: only page/component templates get data-i18n. If a string's source is a
+// file the order path imports, leave it alone.
 //
 // FINNISH REVIEW: the Finnish below is a careful draft, not a native speaker's.
 // It is meant to be read top-to-bottom and corrected as one list — that is the
