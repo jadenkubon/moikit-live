@@ -228,6 +228,52 @@ export const COPY = {
     fi: "Kerro osoitteesi ja muuttop\u00e4iv\u00e4si. Vahvistamme tarkat tuotteesi ja ne odottavat valmiina.",
   },
 
+  // --- checkout success page ------------------------------------------------
+  // Labels only. Everything on that page that came back from Stripe — the
+  // customer name, city, email, kit name, item names, every amount and the
+  // reference — is order data and is NOT tagged. "success.yourOrder" is the
+  // fallback heading, applied only when Stripe gave us no kit name, so it can
+  // never overwrite a real one.
+  "success.eyebrow.paid": { en: "PAYMENT RECEIVED", fi: "MAKSU VASTAANOTETTU" },
+  "success.eyebrow.thanks": { en: "THANK YOU", fi: "KIITOS" },
+  "success.title.paid": { en: "Your kit is booked.", fi: "Settisi on varattu." },
+  "success.title.thanks": { en: "Your order is in.", fi: "Tilauksesi on vastaanotettu." },
+  "success.lede.paid": {
+    en: "Thanks — your deposit is paid. We'll email you to confirm the delivery date for your address in Lappeenranta.",
+    fi: "Kiitos — käsiraha on maksettu. Lähetämme sähköpostia ja vahvistamme toimituspäivän Lappeenrannan osoitteeseesi.",
+  },
+  "success.lede.thanks": {
+    en: "Thanks — we've got your order. We'll email you to confirm the delivery date. If anything looks wrong, just reply to that email.",
+    fi: "Kiitos — tilauksesi on vastaanotettu. Lähetämme sähköpostia ja vahvistamme toimituspäivän. Jos jokin näyttää väärältä, vastaa vain siihen viestiin.",
+  },
+  "success.yourOrder": { en: "Your order", fi: "Tilauksesi" },
+  "success.ref": { en: "REF", fi: "VIITE" },
+  "success.items": { en: "Items", fi: "Tuotteet" },
+  "success.delivery": { en: "Delivery", fi: "Toimitus" },
+  "success.total": { en: "Total", fi: "Yhteensä" },
+  "success.depositPaid": { en: "Deposit paid today", fi: "Tänään maksettu käsiraha" },
+  "success.balance": { en: "Balance — cash on delivery", fi: "Loppusumma — käteisellä toimituksessa" },
+  "success.paidInFull": { en: "Paid in full — nothing due on delivery", fi: "Maksettu kokonaan — ei maksettavaa toimituksessa" },
+  "success.requested": { en: "Requested delivery:", fi: "Toivottu toimitus:" },
+  "success.sentTo": { en: "Confirmation sent to", fi: "Vahvistus lähetetty osoitteeseen" },
+  "success.next": { en: "What happens next", fi: "Näin etenemme" },
+  "success.step1": { en: "We email you to confirm your address and move-in date.", fi: "Lähetämme sähköpostia ja vahvistamme osoitteesi ja muuttopäiväsi." },
+  "success.step2": { en: "We deliver everything in one drop.", fi: "Toimitamme kaiken yhdellä kerralla." },
+  "success.step3": { en: "You pay the remaining balance in cash when it arrives.", fi: "Maksat loppusumman käteisellä toimituksen yhteydessä." },
+  "success.backHome": { en: "Back to MoiKit", fi: "Takaisin MoiKitiin" },
+  "success.question": { en: "Question about my order", fi: "Kysymys tilauksestani" },
+
+  // --- pre-launch coming-soon modal ------------------------------------------
+  // "MoiKit — Lappeenranta" is a brand and a place name, so it is not tagged.
+  "soon.title": { en: "Coming soon", fi: "Tulossa pian" },
+  "soon.body": {
+    en: "We're putting the finishing touches on our kits. Leave your details and we'll let you know the moment MoiKit opens for orders.",
+    fi: "Viimeistelemme settejämme. Jätä tietosi, niin ilmoitamme heti kun MoiKit avautuu tilauksille.",
+  },
+  "soon.cta": { en: "Shop now", fi: "Osta nyt" },
+  "soon.footA": { en: "One delivery", fi: "Yksi toimitus" },
+  "soon.footB": { en: "Ready when you arrive", fi: "Valmiina kun saavut" },
+
   // --- language toggle ------------------------------------------------------
   // Each label is written in the language it switches TO, so it reads correctly
   // to someone who does not speak the language currently on screen.

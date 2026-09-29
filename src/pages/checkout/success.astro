@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Stripe from "stripe";
 import { kitBySlug, eur } from "../../data/kits";
+import { t } from "../../lib/i18n";
 
 // Server-rendered on the Worker: it reads the real Stripe session.
 export const prerender = false;
@@ -112,30 +113,40 @@ const deliveryLabel = deliveryDate
         aria-hidden="true">✓</span
       >
       <div>
-        <p class="font-mono text-[12.5px] tracking-[.08em] text-muted">
-          {paid ? "PAYMENT RECEIVED" : "THANK YOU"}
+        <p
+          class="font-mono text-[12.5px] tracking-[.08em] text-muted"
+          data-i18n={paid ? "success.eyebrow.paid" : "success.eyebrow.thanks"}
+        >
+          {paid ? t("success.eyebrow.paid") : t("success.eyebrow.thanks")}
         </p>
-        <h1 class="mt-1 font-display text-4xl font-bold leading-[1.05] tracking-[-.025em] md:text-[46px]">
-          {paid ? "Your kit is booked." : "Your order is in."}
+        <h1
+          class="mt-1 font-display text-4xl font-bold leading-[1.05] tracking-[-.025em] md:text-[46px]"
+          data-i18n={paid ? "success.title.paid" : "success.title.thanks"}
+        >
+          {paid ? t("success.title.paid") : t("success.title.thanks")}
         </h1>
       </div>
     </div>
 
-    <p class="mt-6 max-w-[560px] text-[19px] leading-relaxed text-body">
-      {
-        paid
-          ? "Thanks — your deposit is paid. We'll email you to confirm the delivery date for your address in Lappeenranta."
-          : "Thanks — we've got your order. We'll email you to confirm the delivery date. If anything looks wrong, just reply to that email."
-      }
+    <p
+      class="mt-6 max-w-[560px] text-[19px] leading-relaxed text-body"
+      data-i18n={paid ? "success.lede.paid" : "success.lede.thanks"}
+    >
+      {paid ? t("success.lede.paid") : t("success.lede.thanks")}
     </p>
 
     {
       paid && (
         <div class="mt-9 rounded-[20px] border border-sand bg-white/70 p-7">
           <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-sand pb-4">
-            <h2 class="font-display text-xl font-semibold">{kitName ?? "Your order"}</h2>
+            <h2
+              class="font-display text-xl font-semibold"
+              {...(kitName ? {} : { "data-i18n": "success.yourOrder" })}
+            >{kitName ?? t("success.yourOrder")}</h2>
             {ref && (
-              <span class="font-mono text-[12.5px] text-muted">REF {ref}</span>
+              <span class="font-mono text-[12.5px] text-muted">
+                <span data-i18n="success.ref">{t("success.ref")}</span> {ref}
+              </span>
             )}
           </div>
 
@@ -157,31 +168,31 @@ const deliveryLabel = deliveryDate
 
           <dl class="mt-4 space-y-2 text-[15px]">
             <div class="flex justify-between gap-4">
-              <dt class="text-body">Items</dt>
+              <dt class="text-body" data-i18n="success.items">{t("success.items")}</dt>
               <dd class="font-mono text-[13.5px] text-body">{c(subtotalCents)}</dd>
             </div>
             <div class="flex justify-between gap-4">
-              <dt class="text-body">Delivery</dt>
+              <dt class="text-body" data-i18n="success.delivery">{t("success.delivery")}</dt>
               <dd class="font-mono text-[13.5px] text-body">{c(shippingCents)}</dd>
             </div>
             <div class="flex justify-between gap-4 border-t border-sand pt-2 font-semibold">
-              <dt>Total</dt>
+              <dt data-i18n="success.total">{t("success.total")}</dt>
               <dd class="font-mono text-[13.5px]">{c(totalCents)}</dd>
             </div>
             {balanceCents > 0 ? (
               <>
                 <div class="flex justify-between gap-4 text-teal">
-                  <dt>Deposit paid today</dt>
+                  <dt data-i18n="success.depositPaid">{t("success.depositPaid")}</dt>
                   <dd class="font-mono text-[13.5px]">− {c(depositCents)}</dd>
                 </div>
                 <div class="mt-3 flex justify-between gap-4 rounded-2xl bg-amber/15 px-4 py-3 font-display text-base font-semibold">
-                  <dt>Balance — cash on delivery</dt>
+                  <dt data-i18n="success.balance">{t("success.balance")}</dt>
                   <dd class="font-mono text-[15px]">{c(balanceCents)}</dd>
                 </div>
               </>
             ) : (
               <div class="mt-3 flex justify-between gap-4 rounded-2xl bg-teal/10 px-4 py-3 font-display text-base font-semibold text-teal">
-                <dt>Paid in full — nothing due on delivery</dt>
+                <dt data-i18n="success.paidInFull">{t("success.paidInFull")}</dt>
                 <dd class="font-mono text-[15px]">{c(depositCents)}</dd>
               </div>
             )}
@@ -190,8 +201,8 @@ const deliveryLabel = deliveryDate
           {(name || email || city || deliveryLabel) && (
             <p class="mt-5 font-mono text-[12.5px] leading-relaxed text-muted">
               {[name, city].filter(Boolean).join(" · ")}
-              {deliveryLabel && <><br />Requested delivery: {deliveryLabel}</>}
-              {email && <><br />Confirmation sent to {email}</>}
+              {deliveryLabel && <><br /><span data-i18n="success.requested">{t("success.requested")}</span> {deliveryLabel}</>}
+              {email && <><br /><span data-i18n="success.sentTo">{t("success.sentTo")}</span> {email}</>}
             </p>
           )}
         </div>
@@ -199,12 +210,12 @@ const deliveryLabel = deliveryDate
     }
 
     <div class="mt-9 rounded-[20px] border border-sand bg-sand-soft/60 p-7">
-      <h2 class="font-display text-lg font-semibold">What happens next</h2>
+      <h2 class="font-display text-lg font-semibold" data-i18n="success.next">{t("success.next")}</h2>
       <ol class="mt-4 space-y-3 text-[15px] leading-relaxed text-body">
-        <li><span class="font-mono text-[12.5px] text-muted">01 —</span> We email you to confirm your address and move-in date.</li>
-        <li><span class="font-mono text-[12.5px] text-muted">02 —</span> We deliver everything in one drop.</li>
+        <li><span class="font-mono text-[12.5px] text-muted">01 —</span> <span data-i18n="success.step1">{t("success.step1")}</span></li>
+        <li><span class="font-mono text-[12.5px] text-muted">02 —</span> <span data-i18n="success.step2">{t("success.step2")}</span></li>
         {balanceCents > 0 && (
-          <li><span class="font-mono text-[12.5px] text-muted">03 —</span> You pay the remaining balance in cash when it arrives.</li>
+          <li><span class="font-mono text-[12.5px] text-muted">03 —</span> <span data-i18n="success.step3">{t("success.step3")}</span></li>
         )}
       </ol>
     </div>
@@ -213,12 +224,14 @@ const deliveryLabel = deliveryDate
       <a
         href="/"
         class="rounded-full bg-amber px-7 py-4 font-display text-base font-semibold text-ink no-underline shadow-[0_14px_30px_-14px_rgba(232,154,44,.8)] transition-transform hover:-translate-y-0.5"
-        >Back to MoiKit</a
+         data-i18n="success.backHome"
+        >{t("success.backHome")}</a
       >
       <a
         href="mailto:moi@moikit.fi"
         class="rounded-full border-[1.5px] border-teal px-[26px] py-4 font-display text-base font-semibold text-teal no-underline transition-colors hover:bg-teal hover:text-cream"
-        >Question about my order</a
+         data-i18n="success.question"
+        >{t("success.question")}</a
       >
     </div>
   </section>

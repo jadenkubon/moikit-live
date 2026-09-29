@@ -1,4 +1,6 @@
 ---
+import { t } from "../lib/i18n";
+
 const formUrl = "https://tally.so/r/WOBxka";
 ---
 
@@ -22,13 +24,16 @@ const formUrl = "https://tally.so/r/WOBxka";
     <h1
       id="coming-soon-title"
       class="mt-3 font-display text-[clamp(34px,7vw,46px)] font-bold leading-[1.05] tracking-[-.025em] text-ink"
+      data-i18n="soon.title"
     >
-      Coming soon
+      {t("soon.title")}
     </h1>
 
-    <p class="mx-auto mt-4 max-w-[42ch] text-[15.5px] leading-[1.55] text-body">
-      We&rsquo;re putting the finishing touches on our kits. Leave your details and
-      we&rsquo;ll let you know the moment MoiKit opens for orders.
+    <p
+      class="mx-auto mt-4 max-w-[42ch] text-[15.5px] leading-[1.55] text-body"
+      data-i18n="soon.body"
+    >
+      {t("soon.body")}
     </p>
 
     <a
@@ -36,12 +41,14 @@ const formUrl = "https://tally.so/r/WOBxka";
       target="_blank"
       rel="noopener"
       class="mt-7 inline-block rounded-full bg-amber px-7 py-4 font-display text-[16px] font-semibold text-ink no-underline shadow-[0_14px_30px_-14px_rgba(232,154,44,.8)] transition-transform hover:-translate-y-0.5"
+      data-i18n="soon.cta"
     >
-      Shop now
+      {t("soon.cta")}
     </a>
 
     <p class="mt-5 font-mono text-[11.5px] uppercase tracking-[.16em] text-muted">
-      One delivery &ensp;◆&ensp; Ready when you arrive
+      <span data-i18n="soon.footA">{t("soon.footA")}</span>&ensp;◆&ensp;<span
+        data-i18n="soon.footB">{t("soon.footB")}</span>
     </p>
   </div>
 </div>
@@ -51,7 +58,8 @@ const formUrl = "https://tally.so/r/WOBxka";
   const modal = document.querySelector(".coming-soon-modal");
   if (modal) {
     for (const el of Array.from(document.body.children)) {
-      if (el !== modal && !(el instanceof HTMLScriptElement)) el.setAttribute("inert", "");
+      if (el === modal || el.id === "lang-toggle") continue;
+      if (!(el instanceof HTMLScriptElement)) el.setAttribute("inert", "");
     }
     (modal.querySelector("a") as HTMLAnchorElement | null)?.focus();
   }
