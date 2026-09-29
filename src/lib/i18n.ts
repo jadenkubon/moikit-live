@@ -181,6 +181,53 @@ export const COPY = {
   },
   "home.final.cta": { en: "Browse the kits", fi: "Selaa settejä" },
 
+
+  // --- kit page / builder ---------------------------------------------------
+  "builder.cancelled.strong": { en: "Checkout cancelled.", fi: "Maksu peruutettu." },
+  "builder.cancelled.body": {
+    en: "Nothing was charged and your kit is exactly as you left it \u2014 pick up where you stopped whenever you're ready.",
+    fi: "Mit\u00e4\u00e4n ei veloitettu ja settisi on t\u00e4sm\u00e4lleen kuten j\u00e4tit sen \u2014 jatka siit\u00e4 mihin j\u00e4it kun sinulle sopii.",
+  },
+  "builder.cancelled.back": { en: "Back to the builder", fi: "Takaisin muokkaimeen" },
+  "builder.allKits": { en: "\u2190 All kits", fi: "\u2190 Kaikki setit" },
+  "builder.badge.rooms": { en: "\u2726 Bedroom + kitchen + bathroom", fi: "\u2726 Makuuhuone + keitti\u00f6 + kylpyhuone" },
+  "builder.badge.itemized": { en: "items, itemized", fi: "tuotetta, eritelty" },
+  "builder.badge.delivery": { en: "delivery", fi: "toimitus" },
+  "builder.customize": { en: "Customize this kit", fi: "Muokkaa t\u00e4t\u00e4 setti\u00e4" },
+  "builder.eyebrow": { en: "Build your kit", fi: "Rakenna settisi" },
+  "builder.title": { en: "Keep what you need. Drop what you don't.", fi: "Pid\u00e4 mit\u00e4 tarvitset. Poista mit\u00e4 et." },
+  "builder.intro": {
+    en: "Every item is listed with its price. Use \u2212 and + on single items, or drop a whole room if you only need part of the kit \u2014 just the bedroom, just the kitchen, whatever fits. Your total updates instantly, plus delivery.",
+    fi: "Jokainen tuote on listattu hintoineen. K\u00e4yt\u00e4 \u2212 ja + yksitt\u00e4isiin tuotteisiin, tai poista kokonainen huone jos tarvitset vain osan setist\u00e4 \u2014 pelk\u00e4n makuuhuoneen, pelk\u00e4n keitti\u00f6n, mik\u00e4 sopii. Loppusumma p\u00e4ivittyy heti, plus toimitus.",
+  },
+  "builder.dropRoom": { en: "Drop room", fi: "Poista huone" },
+  "builder.restoreRoom": { en: "Restore room", fi: "Palauta huone" },
+  "builder.aria.dec": { en: "Remove one", fi: "Poista yksi" },
+  "builder.aria.inc": { en: "Add one", fi: "Lis\u00e4\u00e4 yksi" },
+  "builder.yourKit": { en: "Your kit", fi: "Settisi" },
+  "builder.kitTotal": { en: "Kit total", fi: "Setin summa" },
+  // {a} included, {b} total, {c} individual pieces.
+  "builder.summary": { en: "{a} of {b} items \u00b7 {c} pieces", fi: "{a}/{b} tuotetta \u00b7 {c} kappaletta" },
+  "builder.terms": {
+    en: "I have read and accept the <a href=\"/legal/terms/\" class=\"text-amber underline underline-offset-2\">Terms of Sale</a> and the <a href=\"/legal/privacy/\" class=\"text-amber underline underline-offset-2\">Privacy Notice</a>, including how my delivery details are stored and used to fulfil this order.",
+    fi: "Olen lukenut ja hyv\u00e4ksyn <a href=\"/legal/terms/\" class=\"text-amber underline underline-offset-2\">myyntiehdot</a> ja <a href=\"/legal/privacy/\" class=\"text-amber underline underline-offset-2\">tietosuojaselosteen</a>, mukaan lukien miten toimitustietojani s\u00e4ilytet\u00e4\u00e4n ja k\u00e4ytet\u00e4\u00e4n t\u00e4m\u00e4n tilauksen toimittamiseen.",
+  },
+  "builder.acceptError": { en: "Please tick the box above before paying.", fi: "Rastita yll\u00e4 oleva ruutu ennen maksamista." },
+  "builder.pay": { en: "Pay with Stripe", fi: "Maksa Stripell\u00e4" },
+  "builder.redirecting": { en: "Redirecting\u2026", fi: "Ohjataan\u2026" },
+  "builder.depositPre": { en: "Pay a", fi: "Maksa nyt verkossa" },
+  "builder.depositPost": {
+    en: "deposit online now (50%), the rest in cash on delivery.",
+    fi: "k\u00e4siraha (50 %), loput k\u00e4teisell\u00e4 toimituksen yhteydess\u00e4.",
+  },
+  "builder.reset": { en: "Reset to the full kit", fi: "Palauta koko setti" },
+  "builder.compare.eyebrow": { en: "Compare & trade up", fi: "Vertaile ja p\u00e4ivit\u00e4" },
+  "builder.compare.title": { en: "See how the tiers stack up.", fi: "Katso miten tasot vertautuvat." },
+  "builder.closing": {
+    en: "Tell us your address and move-in date. We'll confirm your exact items and have it waiting.",
+    fi: "Kerro osoitteesi ja muuttop\u00e4iv\u00e4si. Vahvistamme tarkat tuotteesi ja ne odottavat valmiina.",
+  },
+
   // --- language toggle ------------------------------------------------------
   // Each label is written in the language it switches TO, so it reads correctly
   // to someone who does not speak the language currently on screen.
