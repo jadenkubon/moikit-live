@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import KitCard from "../components/KitCard.astro";
+import { t } from "../lib/i18n";
 import {
   kitBySlug,
   itemCount,
@@ -16,51 +17,20 @@ const basicRooms = Object.keys(ROOM_META)
   .filter((rk) => (basic.rooms[rk] ?? []).length > 0)
   .map((rk) => ({ label: ROOM_META[rk].label, items: basic.rooms[rk] }));
 
+// Copy lives in src/lib/i18n.ts; these are keys so the client can swap them.
 const steps = [
-  {
-    num: "STEP 01",
-    title: "Pick your kit",
-    body: "Basic, Premium or Platinum — or a custom mix. Every item and price is listed, so you know exactly what you're getting.",
-  },
-  {
-    num: "STEP 02",
-    title: "Tell us where and when",
-    body: "Your Lappeenranta address and move-in date. One delivery fee, no parcels to chase.",
-  },
-  {
-    num: "STEP 03",
-    title: "Move in, it's waiting",
-    body: "We deliver it all in one drop, ready and waiting — so your first evening is about settling in, not an errand.",
-  },
-];
+  { num: "home.step1.num", title: "home.step1.title", body: "home.step1.body" },
+  { num: "home.step2.num", title: "home.step2.title", body: "home.step2.body" },
+  { num: "home.step3.num", title: "home.step3.title", body: "home.step3.body" },
+] as const;
 
 const values = [
-  {
-    icon: "🗒",
-    chip: "bg-amber/15",
-    title: "Skip the checklist",
-    body: "We researched exactly what an empty apartment needs. You don't have to walk three stores with a 40-item list.",
-  },
-  {
-    icon: "🔑",
-    chip: "bg-rust/15",
-    title: "Made for Finnish rentals",
-    body: "Right sizes, right basics — mattress, duvet and cookware chosen to fit a bare Nordic apartment. Nothing turns up wrong or missing.",
-  },
-  {
-    icon: "📦",
-    chip: "bg-teal/15",
-    title: "One order, ready",
-    body: "One delivery, no hauling, no returns. Set up and waiting so your first night already feels like home.",
-  },
-];
+  { icon: "🗒", chip: "bg-amber/15", title: "home.value1.title", body: "home.value1.body" },
+  { icon: "🔑", chip: "bg-rust/15", title: "home.value2.title", body: "home.value2.body" },
+  { icon: "📦", chip: "bg-teal/15", title: "home.value3.title", body: "home.value3.body" },
+] as const;
 
-const audience = [
-  "LUT University students",
-  "Exchange & international arrivals",
-  "New renters",
-  "Anyone landing with a suitcase",
-];
+const audience = ["home.aud1", "home.aud2", "home.aud3", "home.aud4"] as const;
 
 const tierMeta = [
   { key: "basic", name: "Basic Kit" },
@@ -79,26 +49,27 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
   <section class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-10 px-7 pt-[40px] pb-10 lg:grid-cols-[1.05fr_.95fr]">
     <div>
       <div class="pt-2 pb-5 flex flex-wrap gap-[26px] font-mono text-[12.5px] text-muted">
-        <span>✦ One flat delivery fee</span>
-        <span>✦ Transparent pricing</span>
-        <span>✦ Ready when you land</span>
+        <span data-i18n="home.badge.fee">{t("home.badge.fee")}</span>
+        <span data-i18n="home.badge.pricing">{t("home.badge.pricing")}</span>
+        <span data-i18n="home.badge.ready">{t("home.badge.ready")}</span>
       </div>
-      <h1 class="font-display text-5xl font-bold leading-[1.02] tracking-[-.025em] md:text-[64px]">
-        Your new home,<br />ready instantly.
-      </h1>
-      <p class="mt-[22px] max-w-[480px] text-[19px] leading-relaxed text-body">
-        Finnish rentals come bare — no bed, no dishes, no towels. Order one MoiKit and walk into a
-        furnished, functional home the day you arrive. One order, sorted.
+      <h1
+        data-i18n-html="home.hero.title"
+        class="font-display text-5xl font-bold leading-[1.02] tracking-[-.025em] md:text-[64px]"
+        set:html={t("home.hero.title")}
+      />
+      <p data-i18n="home.hero.body" class="mt-[22px] max-w-[480px] text-[19px] leading-relaxed text-body">
+        {t("home.hero.body")}
       </p>
       <div class="mt-8 flex flex-wrap gap-3.5">
         <a
           href="#kits"
           class="rounded-full bg-amber px-7 py-4 font-display text-base font-semibold text-ink no-underline shadow-[0_14px_30px_-14px_rgba(232,154,44,.8)] transition-transform hover:-translate-y-0.5"
-        >See the kits</a>
+         data-i18n="home.cta.seeKits">{t("home.cta.seeKits")}</a>
         <a
           href="#how"
           class="rounded-full border-[1.5px] border-teal px-[26px] py-4 font-display text-base font-semibold text-teal no-underline transition-colors hover:bg-teal hover:text-cream"
-        >How it works</a>
+         data-i18n="nav.how">{t("nav.how")}</a>
       </div>
     </div>
 
@@ -120,9 +91,9 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
           />
         </div>
       </div>
-      <div class="chip absolute top-[120px] left-1.5 animate-float">✓ Sleep sorted</div>
-      <div class="chip absolute top-[66px] right-0 animate-float [animation-delay:.6s] [animation-duration:6.2s]">✓ Kitchen stocked</div>
-      <div class="chip absolute right-[22px] bottom-[120px] animate-float [animation-delay:.3s] [animation-duration:5.6s]">→ Ready day one</div>
+      <div data-i18n="home.chip.sleep" class="chip absolute top-[120px] left-1.5 animate-float">{t("home.chip.sleep")}</div>
+      <div class="chip absolute top-[66px] right-0 animate-float [animation-delay:.6s] [animation-duration:6.2s]" data-i18n="home.chip.kitchen">{t("home.chip.kitchen")}</div>
+      <div class="chip absolute right-[22px] bottom-[120px] animate-float [animation-delay:.3s] [animation-duration:5.6s]" data-i18n="home.chip.day1">{t("home.chip.day1")}</div>
     </div>
   </section>
 
@@ -130,12 +101,11 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
   <section id="kits" class="mx-auto max-w-[1180px] scroll-mt-24 px-7 pt-16 pb-6">
     <div class="mb-[34px] flex flex-wrap items-end justify-between gap-6">
       <div>
-        <div class="eyebrow">The kits</div>
-        <h2 class="section-title">Good, better, best — no guessing.</h2>
+        <div class="eyebrow" data-i18n="nav.kits">{t("nav.kits")}</div>
+        <h2 class="section-title" data-i18n="home.kits.title">{t("home.kits.title")}</h2>
       </div>
-      <p class="max-w-[340px] text-[15.5px] leading-relaxed text-body">
-        Every kit covers all three rooms — bedroom, kitchen and bathroom. Comfort and place
-        settings step up as you go, and you can drop any room or item you don't need.
+      <p data-i18n="home.kits.body" class="max-w-[340px] text-[15.5px] leading-relaxed text-body">
+        {t("home.kits.body")}
       </p>
     </div>
     <div class="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3">
@@ -151,7 +121,7 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
         type="button"
         class="inline-flex cursor-pointer items-center gap-2.5 rounded-full border-[1.5px] border-teal bg-transparent px-6 py-[13px] font-display text-[15px] font-semibold text-teal transition-colors hover:bg-teal hover:text-cream"
       >
-        <span data-label>Compare the tiers</span>
+        <span data-label data-i18n="home.compare.open">{t("home.compare.open")}</span>
         <span data-caret class="font-mono text-lg leading-none transition-transform">⌄</span>
       </button>
     </div>
@@ -159,8 +129,8 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
     <!-- tier compare -->
     <div id="compare-panel" class="hidden">
       <div class="mt-[26px] flex flex-wrap items-baseline gap-3.5">
-        <span class="font-mono text-xs uppercase tracking-[.16em] text-muted">Compare the tiers</span>
-        <span class="text-[13.5px] text-muted-2">Hover or tap a tier to see what's inside</span>
+        <span class="font-mono text-xs uppercase tracking-[.16em] text-muted" data-i18n="home.compare.open">{t("home.compare.open")}</span>
+        <span class="text-[13.5px] text-muted-2" data-i18n="home.compare.hint">{t("home.compare.hint")}</span>
       </div>
       <div class="mt-3.5 grid grid-cols-1 items-start gap-5 md:grid-cols-[236px_1fr]">
         <div class="flex flex-col gap-2.5">
@@ -194,16 +164,16 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
   <!-- HOW IT WORKS -->
   <section id="how" class="mt-[60px] scroll-mt-24 bg-teal text-cream">
     <div class="mx-auto max-w-[1180px] px-7 py-[76px]">
-      <div class="font-mono text-xs uppercase tracking-[.2em] text-amber">How it works</div>
+      <div class="font-mono text-xs uppercase tracking-[.2em] text-amber" data-i18n="nav.how">{t("nav.how")}</div>
       <h2 class="mt-3 mb-[46px] max-w-[640px] font-display text-3xl font-bold tracking-[-.02em] md:text-[40px]">
-        Three steps between you and a sorted home.
+        <span data-i18n="home.how.title">{t("home.how.title")}</span>
       </h2>
       <div class="grid grid-cols-1 gap-[26px] md:grid-cols-3">
         {steps.map((s) => (
           <div class="border-t-2 border-cream/20 pt-[22px]">
-            <div class="font-display text-[15px] font-bold tracking-[.05em] text-amber">{s.num}</div>
-            <h3 class="mt-3.5 font-display text-[23px] font-bold">{s.title}</h3>
-            <p class="mt-2.5 text-[15px] leading-relaxed text-cream/70">{s.body}</p>
+            <div class="font-display text-[15px] font-bold tracking-[.05em] text-amber" data-i18n={s.num}>{t(s.num)}</div>
+            <h3 class="mt-3.5 font-display text-[23px] font-bold" data-i18n={s.title}>{t(s.title)}</h3>
+            <p class="mt-2.5 text-[15px] leading-relaxed text-cream/70" data-i18n={s.body}>{t(s.body)}</p>
           </div>
         ))}
       </div>
@@ -212,9 +182,9 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
 
   <!-- WHY MOIKIT -->
   <section class="mx-auto max-w-[1180px] px-7 pt-[76px] pb-5">
-    <div class="eyebrow">Why MoiKit</div>
+    <div class="eyebrow" data-i18n="home.why.eyebrow">{t("home.why.eyebrow")}</div>
     <h2 class="mt-3 mb-[46px] max-w-[640px] font-display text-3xl font-bold tracking-[-.02em] md:text-[40px]">
-      Built to take the whole errand off your plate.
+      <span data-i18n="home.why.title">{t("home.why.title")}</span>
     </h2>
     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
       {values.map((v) => (
@@ -222,8 +192,8 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
           <div class:list={["flex h-[46px] w-[46px] items-center justify-center rounded-xl text-[22px]", v.chip]}>
             {v.icon}
           </div>
-          <h3 class="mt-5 font-display text-[21px] font-bold">{v.title}</h3>
-          <p class="mt-2.5 text-[15px] leading-relaxed text-body">{v.body}</p>
+          <h3 class="mt-5 font-display text-[21px] font-bold" data-i18n={v.title}>{t(v.title)}</h3>
+          <p class="mt-2.5 text-[15px] leading-relaxed text-body" data-i18n={v.body}>{t(v.body)}</p>
         </div>
       ))}
     </div>
@@ -232,27 +202,24 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
   <!-- WHAT'S INSIDE -->
   <section class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-14 px-7 py-16 lg:grid-cols-[1fr_.82fr]">
     <div>
-      <div class="eyebrow">What's inside, transparently</div>
-      <h2 class="section-title">See exactly what's in every kit.</h2>
-      <p class="mt-5 text-[17px] leading-relaxed text-body">
-        Every kit is fully itemized — we list each item and its price, so you always know exactly
-        what you're getting and what you're paying for, plus a delivery fee. And every kit is
-        modular: drop anything you don't need and the price drops with it. Here's the Basic Kit,
-        item by item.
+      <div class="eyebrow" data-i18n="home.inside.eyebrow">{t("home.inside.eyebrow")}</div>
+      <h2 class="section-title" data-i18n="home.inside.title">{t("home.inside.title")}</h2>
+      <p data-i18n="home.inside.body" class="mt-5 text-[17px] leading-relaxed text-body">
+        {t("home.inside.body")}
       </p>
       <div class="mt-7 flex flex-wrap items-center gap-3.5">
         <a
           href="/kits/basic/"
           class="rounded-full bg-teal px-6 py-3.5 font-display text-[15px] font-semibold text-cream no-underline transition-opacity hover:opacity-90"
-        >Customize the kits</a>
-        <span class="font-mono text-[13px] text-muted">Basic Kit · every item listed</span>
+         data-i18n="home.inside.cta">{t("home.inside.cta")}</a>
+        <span class="font-mono text-[13px] text-muted" data-i18n="home.inside.note">{t("home.inside.note")}</span>
       </div>
     </div>
     <div class="flex justify-center">
       <div class="w-full max-w-[400px] rounded-[18px] border border-sand bg-white px-[26px] pt-2 pb-[22px] shadow-[0_22px_50px_-30px_rgba(22,33,31,.4)]">
         <div class="flex items-center justify-between border-b border-sand pt-5 pb-1">
           <span class="font-display text-[17px] font-bold">Basic Kit</span>
-          <span class="font-mono text-xs text-muted">{itemCount(basic)} items</span>
+          <span class="font-mono text-xs text-muted">{itemCount(basic)} <span data-i18n="common.items">{t("common.items")}</span></span>
         </div>
         {basicRooms.map((room) => (
           <div class="pt-4">
@@ -269,10 +236,10 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
           </div>
         ))}
         <div class="mt-[18px] flex items-baseline justify-between border-t-2 border-ink pt-3.5">
-          <span class="font-display text-[15px] font-bold">Items total</span>
+          <span class="font-display text-[15px] font-bold" data-i18n="home.inside.itemsTotal">{t("home.inside.itemsTotal")}</span>
           <span class="font-display text-2xl font-bold">{eur(itemsTotal(basic))}</span>
         </div>
-        <div class="mt-2 text-right font-mono text-[11px] text-muted">+ delivery fee · fully itemized</div>
+        <div class="mt-2 text-right font-mono text-[11px] text-muted" data-i18n="home.inside.footnote">{t("home.inside.footnote")}</div>
       </div>
     </div>
   </section>
@@ -281,22 +248,20 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
   <section class="bg-rust text-cream">
     <div class="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-11 px-7 py-[70px] lg:grid-cols-2">
       <div>
-        <div class="font-mono text-xs uppercase tracking-[.2em] text-cream/75">
-          Built for Lappeenranta arrivals
+        <div class="font-mono text-xs uppercase tracking-[.2em] text-cream/75" data-i18n="home.local.eyebrow">
+          {t("home.local.eyebrow")}
         </div>
         <h2 class="mt-3 font-display text-3xl font-bold tracking-[-.02em] md:text-[38px]">
-          New in town, new apartment, 40-item shopping list?
+          <span data-i18n="home.local.title">{t("home.local.title")}</span>
         </h2>
-        <p class="mt-[18px] max-w-[460px] text-[17px] leading-relaxed text-cream/85">
-          We're students and newcomers too. MoiKit exists for the people landing here with a
-          suitcase — so your first days are about settling in, not running a checklist across three
-          stores in a city you don't know yet.
+        <p data-i18n="home.local.body" class="mt-[18px] max-w-[460px] text-[17px] leading-relaxed text-cream/85">
+          {t("home.local.body")}
         </p>
       </div>
       <div class="flex flex-wrap gap-3">
         {audience.map((a) => (
-          <span class="rounded-full border border-cream/25 bg-cream/15 px-[18px] py-[11px] text-[14.5px] font-medium">
-            {a}
+          <span class="rounded-full border border-cream/25 bg-cream/15 px-[18px] py-[11px] text-[14.5px] font-medium" data-i18n={a}>
+            {t(a)}
           </span>
         ))}
       </div>
@@ -306,9 +271,9 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
   <!-- FAQ -->
   <section id="faq" class="mx-auto max-w-[820px] scroll-mt-24 px-7 pt-5 pb-[76px]">
     <div class="mb-9 text-center">
-      <div class="eyebrow">Good to know</div>
+      <div class="eyebrow" data-i18n="home.faq.eyebrow">{t("home.faq.eyebrow")}</div>
       <h2 class="mt-3 font-display text-3xl font-bold tracking-[-.02em] md:text-4xl">
-        Questions, answered.
+        <span data-i18n="home.faq.title">{t("home.faq.title")}</span>
       </h2>
     </div>
     <div class="flex flex-col gap-3">
@@ -324,20 +289,20 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
     </div>
     <div class="mt-7 rounded-[22px] bg-teal p-10 text-center">
       <h3 class="font-display text-[28px] font-bold tracking-[-.01em] text-cream">
-        Still have a question?
+        <span data-i18n="home.faq.stillTitle">{t("home.faq.stillTitle")}</span>
       </h3>
-      <p class="mx-auto mt-3 max-w-[420px] text-base text-cream/80">
-        We answer DMs fast and love helping newcomers settle in.
+      <p data-i18n="home.faq.stillBody" class="mx-auto mt-3 max-w-[420px] text-base text-cream/80">
+        {t("home.faq.stillBody")}
       </p>
       <div class="mt-6 flex flex-wrap justify-center gap-3">
         <a
           href="https://instagram.com/moi.kit_fi"
           class="rounded-full bg-amber px-6 py-3.5 font-display text-[15px] font-semibold text-ink no-underline"
-        >DM @moi.kit_fi</a>
+         data-i18n="home.faq.dm">{t("home.faq.dm")}</a>
         <a
           href="#kits"
           class="rounded-full border-[1.5px] border-cream/40 px-6 py-[13px] font-display text-[15px] font-semibold text-cream no-underline transition-colors hover:bg-cream/10"
-        >See the kits</a>
+         data-i18n="home.cta.seeKits">{t("home.cta.seeKits")}</a>
       </div>
     </div>
   </section>
@@ -347,15 +312,15 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
     <div class="relative overflow-hidden rounded-[26px] bg-teal px-11 py-16 text-center">
       <div class="absolute -top-10 -right-[30px] h-[200px] w-[200px] rounded-full bg-amber/15"></div>
       <h2 class="relative font-display text-3xl font-bold tracking-[-.02em] text-cream md:text-[44px]">
-        Moving soon? Let's get your place sorted.
+        <span data-i18n="home.final.title">{t("home.final.title")}</span>
       </h2>
-      <p class="relative mx-auto mt-[18px] max-w-[520px] text-lg text-cream/80">
-        Tell us the address and the date. We'll have your home waiting when you walk in.
+      <p data-i18n="home.final.body" class="relative mx-auto mt-[18px] max-w-[520px] text-lg text-cream/80">
+        {t("home.final.body")}
       </p>
       <a
         href="#kits"
         class="relative mt-[30px] inline-block rounded-full bg-amber px-[34px] py-[17px] font-display text-[17px] font-semibold text-ink no-underline transition-transform hover:-translate-y-0.5"
-      >Browse the kits</a>
+       data-i18n="home.final.cta">{t("home.final.cta")}</a>
     </div>
   </section>
 </Base>
@@ -374,6 +339,8 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
 </style>
 
 <script>
+  import { COPY } from "../lib/i18n";
+
   // Hero video → still image when finished
   const frame = document.getElementById("box-frame");
   const video = frame?.querySelector("video");
@@ -399,7 +366,9 @@ const specs = COMPARISON_ROWS.filter((r) => r.label !== "Price");
     const caret = toggle.querySelector("[data-caret]") as HTMLElement;
     toggle.addEventListener("click", () => {
       const open = panel.classList.toggle("hidden") === false;
-      label.textContent = open ? "Hide the tier comparison" : "Compare the tiers";
+      const key = open ? "home.compare.close" : "home.compare.open";
+      label.setAttribute("data-i18n", key);
+      label.textContent = COPY[key][document.documentElement.lang === "fi" ? "fi" : "en"];
       caret.style.transform = open ? "rotate(180deg)" : "";
     });
   }
